@@ -1,1 +1,3 @@
-# chrome-extension
+# Notion Capture
+
+Just getting started
