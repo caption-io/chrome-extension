@@ -4,7 +4,11 @@
 </script>
 
 <div class="container">
+    
     <Header />
+    <div class="header">
+        New Form
+    </div>
     <DatabaseSelect />
 </div>
 
@@ -14,8 +18,15 @@
         min-height: 500px;
         display: flex;
         flex-direction: column;
-        row-gap: 8px;
-        margin: 0px 8px 0px 8px;
+        row-gap: 12px;
+        margin: 0px 12px 0px 12px;
+    }
+
+    .header {
+        font-size: 16px;
+        font-weight: 600;
+        font-family: 'Inter', sans-serif;
+        color: rgb(155, 155, 155);
     }
 
 </style>

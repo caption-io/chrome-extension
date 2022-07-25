@@ -1,5 +1,5 @@
-import type { IStorage } from "src/types";
-
-chrome.storage.sync.get({ count: 0 } as IStorage, ({ count }: IStorage) => {
-    console.log("content", count);
-});
+async function getCurrentTab() {
+	let queryOptions = { active: true, lastFocusedWindow: true };
+	let [tab] = await browser.tabs.query(queryOptions);
+	console.log(tab);
+}
