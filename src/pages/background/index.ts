@@ -1,7 +1,7 @@
-import {Tabs} from 'webextension-polyfill';
+browser.action.onClicked.addListener((tab) => {
+    browser.tabs.sendMessage(tab.id, {
+        type: "popupModal",
+    });
+});
 
-async function getCurrentTab() {
-    let queryOptions = { active: true, lastFocusedWindow: true };
-    let [tab] = await browser.tabs.query(queryOptions);
-    console.log(tab);
-}
+export {};

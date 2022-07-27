@@ -2,7 +2,7 @@
 </script>
 
 <div class="header-container">
-	<div class="header">Notion Capture</div>
+	<div class="header">NOTION CAPTURE</div>
 	<div class="settings">Settings</div>
 </div>
 
@@ -13,12 +13,16 @@
 		align-items: center;
 		height: 38px;
 		padding: 0px 12px;
-		background-color: #ffffff;
+		background-color: #FAFAFA;
 		margin: 0px -12px 0px -12px;
 		.header {
 			font-size: 16px;
-			font-weight: 600;
-			font-family: 'Inter', sans-serif;
+			font-weight: 900;
+            color: #009ADD;
 		}
 	}
+
+    .settings {
+        padding-right: 16px;
+    }
 </style>

@@ -14,8 +14,6 @@
 
 <style lang="less">
     .container {
-        min-width: 450px;
-        min-height: 500px;
         display: flex;
         flex-direction: column;
         row-gap: 12px;
