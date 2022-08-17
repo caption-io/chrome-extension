@@ -41,7 +41,13 @@ export async function GetAllDatabases() {
 
 // page retrieve
 
-// page create
+// SECTION - Page - Create
+export async function CreatePage(pageInfo) {
+    const response = await notion.pages.create(
+        pageInfo);
+    return response;
+};
+// !SECTION
 
 // page updaate
 

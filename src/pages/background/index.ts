@@ -4,4 +4,43 @@ browser.action.onClicked.addListener((tab) => {
     });
 });
 
+browser.contextMenus.create({
+    id: "ncpopup",
+    title: "Notion Capture",
+    contexts: ["all"],
+});
+
+browser.contextMenus.create({
+    id: "ncpopup-capture",
+    title: "Capture Page to Default",
+    contexts: ["all"],
+    parentId: "ncpopup",
+});
+browser.contextMenus.create({
+    id: "ncpopup-capture-selected",
+    title: "Capture Selected Text to Default",
+    contexts: ["all"],
+    parentId: "ncpopup",
+});
+
+browser.contextMenus.create({
+    id: "ncpopup-divider",
+    type: "separator",
+    contexts: ["selection"],
+    parentId: "ncpopup",
+});
+
+browser.contextMenus.create({
+    id: "ncpopup-highlight-default",
+    title: "Catpure Highlight to Default",
+    contexts: ["selection"],
+    parentId: "ncpopup",
+});
+
+browser.contextMenus.create({
+    id: "ncpopup-highlight-custom",
+    title: "Catpure Highlight to Custom",
+    contexts: ["selection"],
+    parentId: "ncpopup",
+});
 export {};

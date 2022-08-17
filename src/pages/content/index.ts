@@ -24,9 +24,9 @@ z-index: 99999;
 `
 	);
     modal.setAttribute('id', 'ncpopup');
-	modal.innerHTML = `<iframe id="popup-content"; onload='javascript:(function(o){o.style.height=o.contentWindow.document.body.scrollHeight+"px";}(this));' style="height:400px; width:400px; display: block;"></iframe>
-<div style="position:absolute; top:2px; right:0px; margin:0px; padding:0px;">
-<button style="padding: 8px 8px; font-size: 16px; border: none; border-radius: 20px; background: none;">x</button>
+	modal.innerHTML = `<iframe id="popup-content"; style="height: 100vh; width: 100vw; background: none; pointer-events: auto; width:400px; display: block;"></iframe>
+<div  style="position:absolute; top:2px; right:0px; margin:0px; padding:0px;">
+<button style="display: none; padding: 8px 8px; font-size: 16px; border: none; border-radius: 20px; background: none;">x</button>
 </div>`;
 	document.body.appendChild(modal);
 	const dialog = document.querySelector('#ncpopup');
