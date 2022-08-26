@@ -2,8 +2,7 @@
 	import { dndzone } from 'svelte-dnd-action';
 	import { flip } from 'svelte/animate';
 
-	import PropsTitle from './props/PropsTitle.svelte';
-	import PropsRichText from './props/PropsRichText.svelte';
+
 	import PropsNumber from './props/PropsNumber.svelte';
 	import PropsSelect from './props/PropsSelect.svelte';
 	import PropsMultiSelect from './props/PropsMultiSelect.svelte';
@@ -12,12 +11,10 @@
 	import PropsPeople from './props/PropsPeople.svelte';
 	import PropsFiles from './props/PropsFiles.svelte';
 	import PropsCheckbox from './props/PropsCheckbox.svelte';
-	import PropsUrl from './props/PropsUrl.svelte';
-	import PropsEmail from './props/PropsEmail.svelte';
 	import PropsPhoneNumber from './props/PropsPhoneNumber.svelte';
 	import PropsRelation from './props/PropsRelation.svelte';
 	import PropsFormula from './props/PropsFormula.svelte';
-import TextInput from './TextInput.svelte';
+    import TextInput from './ui/TextInput.svelte';
 
 	export let dbprops;
 	let items;

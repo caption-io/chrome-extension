@@ -2,7 +2,10 @@
 	import { CreatePage } from '../scripts/api-endpoints';
 	import DatabaseProps from './DatabaseProps.svelte';
 	import DatabaseSelect from './DatabaseSelect.svelte';
-	import Icons from './Icons.svelte';
+	import Icons from './ui/Icons.svelte';
+    import Button from './ui/Button.svelte';
+    import {fade,fly} from 'svelte/transition';
+
 
 	export let flowData = {
 		name: 'Simple Web Clip',
@@ -29,37 +32,64 @@
 
 	$: apiJSONFormatter(propValues);
 	$: console.log(selectedDb);
+
+
 </script>
 
 <div class="flow-page">
 	<div class="flow-header">
 		<div>
-			<Icons name="back" link={true} />
-			<h2>{flowData.name}</h2>
-			<Icons name="sliders" link={true} />
+			<Icons
+                name='back'
+                color='default'
+                size='med'
+                link={true}
+            />
+			<h2>
+				{flowData.name}
+			</h2>
+			<Icons
+				name='sliders'
+				color='default'
+                link={true}
+            />
 		</div>
 	</div>
 	<div class="input-label">
-		<Icons name="database" link={false} />
+		<Icons 
+            name='database'
+            size='med'
+            position='left'
+        />
 		<h3>Database</h3>
 		<div class="options-handle">
-			<Icons name="more" link={true} />
+			<Icons 
+                name='more'
+                size='med'
+                position='center'
+                link={true}
+            />
 		</div>
 	</div>
 	<DatabaseSelect bind:dbProps bind:selectedDb />
 	<div class="divider" />
 	{#if dbProps}
+    <div transition:fly="{{ y: 200, duration: 500 }}">
 		<DatabaseProps bind:dbprops={dbProps} bind:selection={propValues} />
+        <Button
+		props={{
+			value: 'Capture',
+			size: 'big',
+			color: 'outline',
+			onClick: handleClick,
+		}} />
+    </div>
 	{/if}
-	<div class="button primary large">
-		<button on:click={() => CreatePage(apiPostContent)}>Capture</button>
-	</div>
 </div>
 
 <style lang="less">
 	.flow-page {
 		padding: 16px;
-
 	}
 
 	.flow-header {
@@ -71,14 +101,14 @@
 		-webkit-backface-visibility: hidden;
 		backface-visibility: hidden;
 		z-index: 9000;
-		
+
 		&::before,
 		&::after {
 			content: '';
 			position: sticky;
 			display: block;
 			height: 16px;
-            margin: 0px -16px;
+			margin: 0px -16px;
 		}
 		&::before {
 			top: 24px;
@@ -99,11 +129,11 @@
 			z-index: 9002;
 			position: sticky;
 			top: 0px;
-            padding: 0px 16px;
-            > h2 {
-			margin-right: auto;
-			margin-left: 8px;
-		}
+			padding: 0px 16px;
+			> h2 {
+				margin-right: auto;
+				margin-left: 8px;
+			}
 		}
 	}
 </style>

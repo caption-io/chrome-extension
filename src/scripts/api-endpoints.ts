@@ -4,8 +4,6 @@ const notion = new Client({
 	auth: 'secret_P1YEBheytEkSTQnT126JOpZdo8WbsF2SxfsjnzcXFGr',
 });
 
-// SECTION: Database Query
-
 export async function queryDatabase(databaseId: string, filterInput?, sortInput?) {
 	const response = await notion.databases.query({
 		database_id: databaseId,
@@ -15,10 +13,6 @@ export async function queryDatabase(databaseId: string, filterInput?, sortInput?
 	return response;
 }
 
-// !SECTION
-
-// SECTION - Search - Get all databases
-
 export async function GetAllDatabases() {
 	const response = await notion.search({
 		filter: {
@@ -26,45 +20,26 @@ export async function GetAllDatabases() {
 			value: 'database',
 		},
 	}).then((response) => {
-        return response;
+        const formattedResponse = {
+            display: response.results.map((result) => {
+                return {
+                    text: result.title[0].plain_text,
+                    value: result.id,
+                    icon: result.icon ? result.icon.file.url : null,
+                    properties: result.properties,
+                }
+            }),
+            full: response.results,
+        }
+        return formattedResponse;
     }
     );
-	return response;
+    return response;
 }
 
-// !SECTION
-// database update
 
-// database create
-
-// database retrieve
-
-// page retrieve
-
-// SECTION - Page - Create
 export async function CreatePage(pageInfo) {
     const response = await notion.pages.create(
         pageInfo);
     return response;
 };
-// !SECTION
-
-// page updaate
-
-// block retrieve
-
-// block update
-
-// block children retrieve
-
-// block children append
-
-// comment retrieve
-
-// comment create
-
-// user retrieve
-
-// user list all
-
-// user token bot retrieve

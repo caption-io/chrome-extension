@@ -1,3 +1,9 @@
+browser.runtime.onInstalled.addListener(() => {
+    browser.storage.local.set({
+        flows: []
+    })
+});
+
 browser.action.onClicked.addListener((tab) => {
     browser.tabs.sendMessage(tab.id, {
         type: "popupModal",
@@ -35,6 +41,13 @@ browser.contextMenus.create({
     title: "Catpure Highlight to Default",
     contexts: ["selection"],
     parentId: "ncpopup",
+});
+
+browser.contextMenus.onClicked.addListener((info, tab) => {
+    if (info.menuItemId === "ncpopup-highlight-default") {
+        console.log(info);
+        console.log(tab);
+    }
 });
 
 browser.contextMenus.create({

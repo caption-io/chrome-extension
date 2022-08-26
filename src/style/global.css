@@ -8,10 +8,11 @@ body {
   --bg: #ffffff;
   --bg-dark: #F8F8F9;
   --bg-darker: #F0F0F0;
+  --bg-darkest: #e7e7e7;
   --ui-blue: #2185D0;
   --ui-blue-hover: #3c95da;
   --ui-red: #DB2828;
-  --ui-red-hover: #e3342f;
+  --ui-red-hover: #ee524d;
   --border-color: #DEDEDF;
   --divider-color: #F2F2F2;
   --text-dark: #666666;
@@ -40,33 +41,17 @@ body {
   margin: 0px;
   background-color: #ffffff;
   font-family: var(--font-family);
-  padding-bottom: 8px;
+  padding-bottom: 0px;
   overflow: overlay;
+}
+body * {
+  font-family: var(--font-family);
 }
 h2 {
   font-size: 1rem;
   font-weight: 600;
   color: var(--text-dark);
   margin: 0px;
-}
-.icon {
-  transition: 200ms;
-  border-radius: var(--border-radius);
-  padding-right: 4px;
-}
-.icon.clickable {
-  cursor: pointer;
-  padding: 4px;
-}
-.icon.clickable:hover {
-  background-color: var(--bg-darker);
-}
-.icon.medium {
-  height: 16px;
-  width: 16px;
-}
-.icon.dark > svg {
-  fill: #909090;
 }
 .button {
   display: flex;
@@ -100,7 +85,7 @@ h2 {
   height: 1px;
   background-color: var(--divider-color);
   width: calc(100% + 32px);
-  margin: 24px -16px 24px -16px;
+  margin: 0px -16px 0px -16px;
 }
 ::-webkit-scrollbar-button {
   opacity: 0 !important;
@@ -121,23 +106,6 @@ h2 {
   margin: 1px !important;
   opacity: 0 !important;
   margin-top: 40px;
-}
-.select-item {
-  display: flex;
-  align-items: center;
-  min-height: 28px;
-  font-weight: 500;
-  font-size: 14px;
-  width: fit-content;
-  padding: 0px 8px;
-  margin: 4px 0px;
-  border-radius: var(--border-radius);
-}
-.select-item > .icon {
-  height: 18px;
-  width: 18px;
-  margin-right: 4px;
-  margin-top: 1px;
 }
 .svelecte-control {
   --sv-active-border: 1px solid #5991ec !important;
@@ -331,13 +299,14 @@ h2 {
 .text-input {
   width: 100%;
   padding-left: 8px;
-  max-height: 36px;
+  min-height: 36px;
   border: none;
   outline: none;
   font-size: 14px;
   font-family: var(--font-family);
   font-weight: 500;
   color: #5D5D5D;
+  word-wrap: break-word;
 }
 .type-icon {
   height: 16px;

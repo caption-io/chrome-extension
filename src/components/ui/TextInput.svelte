@@ -1,8 +1,8 @@
 <script lang="ts">
 	import Icons from './Icons.svelte';
 	import Svelecte, { addFormatter } from 'svelecte';
-	import { webData } from '../scripts/stores';
-    import { iconOnlyRenderer, webDataRenderer } from '../scripts/svelecte-renderers';
+	import { webData } from '../../scripts/stores';
+    import { iconOnlyRenderer, webDataRenderer } from '../../scripts/svelecte-renderers';
 
 	export let propType;
     export let props;
