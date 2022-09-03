@@ -1,7 +1,7 @@
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { resolve } from 'path';
 import { defineConfig } from 'vite';
-import { less } from 'svelte-preprocess-less';
+import { sass } from 'svelte-preprocess-sass';
 import AutoImport from 'unplugin-auto-import/vite';
 
 const srcDir = resolve(__dirname, 'src');
@@ -17,7 +17,19 @@ export default defineConfig({
   plugins: [
     svelte({
         preprocess: {
-            style: less(),
+            style: sass(
+				{
+					includePaths: ['src'],
+				},
+				{
+					name: 'sass',
+					// this is the important part
+					// it will be used to match the lang="scss" attribute
+					// in your Svelte components
+					// you can use any name you want
+					lang: 'sass',
+				}
+			),
         },
         compilerOptions: {
             dev: true,

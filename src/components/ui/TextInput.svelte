@@ -1,39 +1,37 @@
 <script lang="ts">
-	import Icons from './Icons.svelte';
-	import Svelecte, { addFormatter } from 'svelecte';
-	import { webData } from '../../scripts/stores';
-    import { iconOnlyRenderer, webDataRenderer } from '../../scripts/svelecte-renderers';
+	import Icons from './Icons.svelte'
+	import Svelecte, { addFormatter } from 'svelecte'
+	import { webData } from '../../scripts/stores'
+	import { iconOnlyRenderer, webDataRenderer } from '../../scripts/svelecte-renderers'
 
-	export let propType;
-    export let props;
-    
-    console.log(props);
+	export let propType
+	export let props
 
-    let webDataValue = "none";
-    let webDataInput;
-    let selected;
+	console.log(props)
 
-    function setInputValue(selected, value) {
-        console.log(selected, value);
-        if (!selected || selected.text === 'None') {
-            webDataInput = "";
-            console.log("none");
-        } else {
-            webDataInput = selected.value;
-            console.log(selected.value);
-        }
-    }
+	let webDataValue = 'none'
+	let webDataInput
+	let selected
 
-    $: setInputValue(selected, webDataValue);
+	function setInputValue(selected, value) {
+		console.log(selected, value)
+		if (!selected || selected.text === 'None') {
+			webDataInput = ''
+			console.log('none')
+		} else {
+			webDataInput = selected.value
+			console.log(selected.value)
+		}
+	}
 
-	let typeValue = 'web';
+	$: setInputValue(selected, webDataValue)
 
-	$: console.log(Object.values($webData.textValues));
+	let typeValue = 'web'
 
-	
-	addFormatter('icononly', iconOnlyRenderer);
-    addFormatter('webdata', webDataRenderer);
+	$: console.log(Object.values($webData.textValues))
 
+	addFormatter('icononly', iconOnlyRenderer)
+	addFormatter('webdata', webDataRenderer)
 </script>
 
 <div style="width: 100%; margin-bottom: 8px;">
@@ -45,9 +43,14 @@
 		</div>
 	</div>
 	<div class="prop-input-text">
-			<div class="prop-input-text-select">
-				<Svelecte options={Object.values($webData.textValues)} renderer="webdata" placeholder="Web data..." bind:value={webDataValue} bind:readSelection={selected}/>
-			</div>
-            <input class="text-input" type="text" bind:value={webDataInput} />
+		<div class="prop-input-text-select">
+			<Svelecte
+				options={Object.values($webData.textValues)}
+				renderer="webdata"
+				placeholder="Web data..."
+				bind:value={webDataValue}
+				bind:readSelection={selected} />
+		</div>
+		<input class="text-input" type="text" bind:value={webDataInput} />
 	</div>
 </div>
