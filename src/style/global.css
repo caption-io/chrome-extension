@@ -1,0 +1,33 @@
+.light-mode {
+  --bg: #ffffff;
+  --bg-dark: #F8F8F9;
+  --bg-darker: #F0F0F0;
+  --bg-darkest: #e7e7e7;
+  --ui-blue: #2185D0;
+  --ui-blue-hover: #3c95da;
+  --ui-red: #DB2828;
+  --ui-red-hover: #ee524d;
+  --border-color: #DEDEDF;
+  --divider-color: #F2F2F2;
+  --text-dark: #666666;
+  --notion-light-gray: #f1f0ef;
+  --notion-gray: #e3e2e0;
+  --notion-brown: #eee0da;
+  --notion-orange: #fadec9;
+  --notion-yellow: #fdecc8;
+  --notion-green: #dbeddb;
+  --notion-blue: #d3e5ef;
+  --notion-purple: #e8deee;
+  --notion-pink: #f5e0e9;
+  --notion-red: #ffe2dd;
+  --notion-text-light-gray: #32302c;
+  --notion-text-gray: #32302c;
+  --notion-text-brown: #442a1e;
+  --notion-text-orange: #49290e;
+  --notion-text-yellow: #402c1b;
+  --notion-text-green: #1c3829;
+  --notion-text-blue: #183347;
+  --notion-text-purple: #412454;
+  --notion-text-pink: #4c2337;
+  --notion-text-red: #5d1715;
+}

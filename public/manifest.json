@@ -11,12 +11,18 @@
     },
     "content_scripts": [
         {
-            "matches": ["<all_urls>"],
-            "js": ["src/pages/content/index.js"]
+            "matches": [
+                "<all_urls>"
+            ],
+            "js": [
+                "src/pages/content/index.js"
+            ],
+            "run_at": "document_start"
         }
     ],
     "background": {
-        "service_worker": "src/pages/background/index.js"
+        "service_worker": "src/pages/background/index.js",
+        "type": "module"
     },
     "options_page": "src/pages/options/index.html",
     "action": {
@@ -28,5 +34,30 @@
             "128": "/icons/get_started128.png"
         }
     },
-    "permissions": ["storage"]
+    "permissions": [
+        "storage",
+        "tabs",
+        "scripting",
+        "contextMenus"
+    ],
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "src/pages/popup/index.html",
+                "src/pages/content/index.js",
+                "src/pages/popup/index.js"
+            ],
+            "matches": [
+                "<all_urls>"
+            ]
+        }
+    ],
+    "content_security_policy":  {
+        "script-src": "'self' 'sha256-GwwZSoQXYK90k1NirGsDXK5cKOVFDVjmJ1sZPKvWaaA='",
+        "object-src": "'self'"
+
+    },
+    "host_permissions": [
+        "*://*/*"
+    ]
 }
