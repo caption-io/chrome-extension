@@ -10,13 +10,20 @@
 		email: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M7.5 1C3.914063 1 1 3.914063 1 7.5C1 11.085938 3.914063 14 7.5 14C8.71875 14 9.863281 13.664063 10.839844 13.078125L10.324219 12.21875C9.5 12.714844 8.535156 13 7.5 13C4.457031 13 2 10.542969 2 7.5C2 4.457031 4.457031 2 7.5 2C10.542969 2 13 4.457031 13 7.5L13 8.601563C13 9.375 12.375 10 11.605469 10L11.398438 10C10.628906 10 10 9.375 10 8.601563L10 6.398438C10 5.082031 8.917969 4 7.601563 4L7.398438 4C6.082031 4 5 5.082031 5 6.398438L5 8.601563C5 9.917969 6.082031 11 7.398438 11L7.601563 11C8.375 11 9.0625 10.621094 9.5 10.046875C9.941406 10.621094 10.625 11 11.398438 11L11.605469 11C12.917969 11 14 9.921875 14 8.601563L14 7.5C14 3.914063 11.085938 1 7.5 1 Z M 7.398438 5L7.601563 5C8.371094 5 9 5.625 9 6.398438L9 8.601563C9 9.375 8.371094 10 7.601563 10L7.398438 10C6.625 10 6 9.375 6 8.601563L6 6.398438C6 5.625 6.625 5 7.398438 5Z"/></svg>`,
 		rich_text: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M2 3L2 4L14 4L14 3 Z M 2 5L2 6L10 6L10 5 Z M 2 7L2 8L14 8L14 7 Z M 2 9L2 10L10 10L10 9 Z M 2 11L2 12L14 12L14 11Z"/></svg>`,
 		grab_handle: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16"><path fill="#D9D9D9" d="M7 12a1 1 0 1 1-2 0 1 1 0 0 1 2 0Zm4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0Zm0-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0Zm0-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM7 4a1 1 0 1 1-2 0 1 1 0 0 1 2 0Zm0 4a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"/></svg>`,
+		trash: `<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 16 16"><path d="M 6.496094 1 C 5.675781 1 5 1.675781 5 2.496094 L 5 3 L 2 3 L 2 4 L 3 4 L 3 12.5 C 3 13.324219 3.675781 14 4.5 14 L 10.5 14 C 11.324219 14 12 13.324219 12 12.5 L 12 4 L 13 4 L 13 3 L 10 3 L 10 2.496094 C 10 1.675781 9.324219 1 8.503906 1 Z M 6.496094 2 L 8.503906 2 C 8.785156 2 9 2.214844 9 2.496094 L 9 3 L 6 3 L 6 2.496094 C 6 2.214844 6.214844 2 6.496094 2 Z M 4 4 L 11 4 L 11 12.5 C 11 12.78125 10.78125 13 10.5 13 L 4.5 13 C 4.21875 13 4 12.78125 4 12.5 Z M 5 5 L 5 12 L 6 12 L 6 5 Z M 7 5 L 7 12 L 8 12 L 8 5 Z M 9 5 L 9 12 L 10 12 L 10 5 Z"/></svg>`,
 	}
 
 	// prop types
 	export type Name = keyof typeof icons | null
 	export type Url = string | null
 	export type Size = 'small' | 'med' | 'big'
-	export type Color = 'default' | 'primary' | 'secondary' | 'outline' | 'danger'
+	export type Color =
+		| 'default'
+		| 'primary'
+		| 'secondary'
+		| 'outline'
+		| 'danger'
+		| 'inverted'
 	export type Position = 'left' | 'right' | 'center'
 	export type Disabled = boolean
 	export type Link = boolean
@@ -35,13 +42,12 @@
 	// css class definitions
 	const cssClass = `icon
     ${' ' + size}
-    ${' ' + color}
     ${' ' + position}
     ${' ' + disabled}
     ${link ? ' link' : ''}`
 </script>
 
-<div class={cssClass} on:click>
+<div class={`${cssClass} ${color}`} on:click>
 	{#if name && !url}
 		{@html icons[name]}
 	{/if}
@@ -50,60 +56,64 @@
 	{/if}
 </div>
 
-<style lang="sass">
-	@import '../../style/global'
-	.icon 
-		display: flex
-		align-items: center
-		justify-content: center
-		&.small 
-			width: 14px
-			height: 14px
-		
-		&.med 
-			width: 16px
-			height: 16px
-		
-		&.big 
-			width: 16px
-			height: 16px
-		
-		&.default 
-			fill: var(--text-dark)
-		
-		&.primary 
-			fill: var(--bg-dark)
-		
-		&.secondary 
-			fill: #ff00aa
-		
-		&.danger 
-			fill: var(--ui-red)
-		
-		&.success 
-			fill: #aaff00
-		
-		&.left 
-			margin: 1px 4px 0 0
-		
-		&.right 
-			margin: 1px 0 0 4px
-		
-		&.center 
-			margin: 1px 0 0 0
-		
-		&.link 
-			border-radius: 4px
-			padding: 4px
-			cursor: pointer
-			margin: 0px
-			&:hover 
-				background-color: var(--bg-darker)
-			
-		
-	
-	.url-icon 
-		width: 100%
-		height: 100%
-	
+<style lang="scss">
+	@use '../../style/global' as *;
+	.icon {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		&.small {
+			width: 14px;
+			height: 14px;
+		}
+		&.med {
+			width: 16px;
+			height: 16px;
+		}
+		&.big {
+			width: 16px;
+			height: 16px;
+		}
+		&.default {
+			fill: var(--text-dark);
+		}
+		&.primary {
+			fill: var(--bg-dark);
+		}
+		&.secondary {
+			fill: #ff00aa;
+		}
+		&.danger {
+			fill: var(--ui-red);
+		}
+		&.success {
+			fill: #aaff00;
+		}
+		&.inverted {
+			fill: var(--text-inverted);
+		}
+		&.left {
+			margin: 1px 4px 0 0;
+		}
+		&.right {
+			margin: 1px 0 0 4px;
+		}
+		&.center {
+			margin: 1px 0 0 0;
+		}
+		&.link {
+			border-radius: 4px;
+			padding: 4px;
+			cursor: pointer;
+			margin: 0px;
+			&:hover {
+				background-color: var(--bg-darker);
+			}
+		}
+
+		.url-icon {
+			width: 100%;
+			height: 100%;
+		}
+	}
 </style>

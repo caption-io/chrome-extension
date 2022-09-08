@@ -1,7 +1,6 @@
 <script context="module" lang="ts">
-
 	// import icons list
-	import  Icons, { icons }  from './Icons.svelte'
+	import Icons, { icons } from './Icons.svelte'
 
 	// prop types
 	export type Value = string | null
@@ -10,7 +9,6 @@
 	export type Icon = keyof typeof icons
 	export type IconPosition = 'left' | 'right'
 	export type Disabled = boolean
-
 </script>
 
 <script lang="ts">
@@ -31,100 +29,94 @@
 		${' ' + style}
 		${disabled ? 'disabled' : ''}
 		`
-
 </script>
 
 <div class="button-container">
 	<button class={cssClass} on:click on:mousedown={() => (pressed = true)}>
 		{#if value && icon && iconPosition === 'left'}
-			<Icons
-				name={icon}
-				size={size}
-				color={style}
-				position={iconPosition}
-				disabled={disabled}
-			/>
+			<Icons name={icon} {size} color={style} position={iconPosition} {disabled} />
 		{/if}
 		{#if !value && icon}
-		<Icons
-				name={icon}
-				size={size}
-				color={style}
-				position={'center'}
-				disabled={disabled}
-			/>
+			<Icons name={icon} {size} color={style} position={'center'} {disabled} />
 		{/if}
 		{#if value}
-		{value}
+			{value}
 		{/if}
 		{#if value && icon && iconPosition === 'right'}
-			<Icons
-				name={icon}
-				size={size}
-				color={style}
-				position={iconPosition}
-				disabled={disabled}
-			/>
+			<Icons name={icon} {size} color={style} position={iconPosition} {disabled} />
 		{/if}
 	</button>
 </div>
 
-<style lang="sass">
-	@use '../../style/global' as g
+<style lang="scss">
+	@use '../../style/global' as g;
 
-	.button-container 
-		display: flex
-		flex-direction: row
-		justify-content: center
-		align-items: center
-		margin: 0
-		width: 100%
-		.button 
-			@include g.flex($dir: row, $justify: center)
-			border: 1px solid transparent
-			background: none
-			font-weight: 400
-			transition: 250ms
-			cursor: pointer
-			&.small 
-				padding: 0 0.5rem
-				height: 1.5rem
-				font-size: 0.8rem
-			&.med 
-				padding: 0 1rem
-				height: 2rem
-			&.big 
-				width: 100%
-				height: 2rem
-			&.primary 
-				background-color: var(--ui-blue)
-				color: #fff
-				&:hover 
-					background-color: var(--ui-blue-hover)
-			&.secondary 
-				background-color: var(--bg-darker)
-				color: var(--text-dark)
-				&:hover 
-					background-color: var(--bg-darkest)
-			&.danger 
-				background-color: var(--bg)
-				border: 1px solid var(--ui-red)
-				font-weight: 500
-				color: var(--ui-red)
-				&:hover 
-					border: 1px solid var(--ui-red-hover)
-					background-color: var(--ui-red-hover)
-					color: #fff
-			&.outline 
-				border: 1px solid var(--ui-blue)
-				font-weight: 500
-				color: var(--ui-blue)
-				&:hover 
-					border: 1px solid var(--ui-blue-hover)
-					color: var(--ui-blue-hover)
-			&.disabled 
-				background-color: #e0e0e0
-				color: #bdbdbd
-				pointer-events: none
-	
+	.button-container {
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+		margin: 0;
+		width: 100%;
+		.button {
+			@include g.flex($dir: row, $justify: center);
+			border: 1px solid transparent;
+			border-radius: 4px;
+			background: none;
+			font-weight: 400;
+			transition: 250ms;
+			cursor: pointer;
+			&.small {
+				height: 1.5rem;
+				font-size: 0.75rem;
+			}
+			&.med {
+				padding: 0 1rem;
+				height: 2rem;
+			}
+			&.big {
+				width: 100%;
+				height: 2rem;
+			}
+			&.primary {
+				background-color: var(--ui-blue);
+				color: #fff;
+				&:hover {
+					background-color: var(--ui-blue-hover);
+				}
+			}
+			&.secondary {
+				background-color: var(--bg-darker);
+				color: var(--text-dark);
+				&:hover {
+					background-color: var(--bg-darkest);
+				}
+			}
+			&.danger {
+				background-color: var(--bg);
+				border: 1px solid var(--ui-red);
+				font-weight: 500;
+				color: var(--ui-red);
+				&:hover {
+					border: 1px solid var(--ui-red-hover);
+					background-color: var(--ui-red-hover);
+					color: #fff;
+				}
+			}
+			&.outline {
+				border: 1px solid var(--ui-blue);
+				font-weight: 500;
+				color: var(--ui-blue);
+				&:hover {
+					border: 1px solid var(--ui-blue-hover);
+					color: var(--ui-blue-hover);
+				}
+			}
+			&.disabled {
+				background-color: #e0e0e0;
+				color: #bdbdbd;
+				pointer-events: none;
+			}
+		}
+	}
 </style>

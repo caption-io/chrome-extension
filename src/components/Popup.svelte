@@ -35,12 +35,13 @@
 	{/if}
 </div>
 
-<style lang="sass">
-	@use '../style/global'
-	.container
-		display: flex
-		flex-direction: column
-		width: 400px
-		height: auto
-		pointer-events: all
+<style lang="scss">
+	@use '../style/global' as *;
+	.container {
+		display: flex;
+		flex-direction: column;
+		width: 400px;
+		height: auto;
+		pointer-events: all;
+	}
 </style>

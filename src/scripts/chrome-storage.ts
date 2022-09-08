@@ -19,6 +19,7 @@ export async function updateFlow(flow) {
     chrome.storage.local.set({
         flows: flows.map(f => f.id === flow.id ? flow : f)
     })
+	console.log('chrome-storage.ts | updateFlow() | Updated Flows:', await getFlows());
 }
 
 export async function findFlowById(id) {
