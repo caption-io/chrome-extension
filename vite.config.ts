@@ -18,7 +18,7 @@ export default defineConfig({
 		svelte({
 			preprocess: sveltePreprocess(),
 			compilerOptions: {
-				dev: true,
+				dev: true
 			},
 		}),
 		AutoImport({

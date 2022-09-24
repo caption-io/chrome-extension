@@ -1,0 +1,92 @@
+
+
+svg {
+	pointer-events: none;
+}
+
+
+
+body {
+--font-family: 'Albert Sans', sans-serif;
+--trans: transparent;
+}
+
+* {
+font-family: var(--font-family);
+}
+
+.svelecte {
+	width: 100%;
+}
+.sv-control {
+	--sv-min-height: 36px;
+	--sv-border: 1px solid #ccd9f7;
+	height: 1.75rem;
+	width: 100%;
+	border: 1px solid #ccd9f7;
+}
+
+
+.light-mode {
+	--bg: #FFFFFF;
+	--bg-dark: hsl(200, 35%, 97%);
+	--bg-darker: hsl(208, 30%, 94%);
+	--bg-darkest: hsl(208, 10%, 87%);
+	--white: #FFFFFF;
+
+	--grey: hsl(217, 24%, 20%);
+	--grey-light: hsl(200, 30%, 90%);
+	--grey-mid: rgba(234, 241, 247, 1);
+	--grey-dark: rgba(58, 72, 95, 1);
+	--grey-trans: rgba(234, 241, 247, 0.01);
+
+	--invert: #FFFFFF;
+	--invert-dark: #FFFFFF;
+
+	--blue: #0180ff;
+	--blue-light: #cce6ff;
+	--blue-mid: #4da6ff;
+	--blue-dark: #001c3c;
+
+	--red: #ff5060;
+	--red-light: hsl(355, 100%, 92%);
+	--red-mid: #ff858f;
+	--red-dark: #330004;
+
+	--green: #20cc67;
+	--green-light: #d3f8e2;
+	--green-mid: #7ee1a3;
+	--green-dark: #072c16;
+
+	--border-color: rgba(0,0,0,0.1);
+	--border-color-light: rgba(0,0,0,0.05);
+	--divider-color: rgba(0,0,0,0.1);
+
+	--text-dark: #666666;
+	--text-light: #999999;
+	--text-inverted: #fafafa;
+	--text-colored: #0D47A1;
+
+	--notion-light-gray: #f1f0ef;
+	--notion-gray: #e3e2e0;
+	--notion-brown: #eee0da;
+	--notion-orange: #fadec9;
+	--notion-yellow: #fdecc8;
+	--notion-green: #dbeddb;
+	--notion-blue: #d3e5ef;
+	--notion-purple: #e8deee;
+	--notion-pink: #f5e0e9;
+	--notion-red: #ffe2dd;
+
+	--notion-text-light-gray: rgb(50, 48, 44);
+	--notion-text-gray: rgb(50, 48, 44);
+	--notion-text-brown: rgb(68, 42, 30);
+	--notion-text-orange: rgb(73, 41, 14);
+	--notion-text-yellow: rgb(64, 44, 27);
+	--notion-text-green: rgb(28, 56, 41);
+	--notion-text-blue: rgb(24, 51, 71);
+	--notion-text-purple: rgb(65, 36, 84);
+	--notion-text-pink: rgb(76, 35, 55);
+	--notion-text-red: rgb(93, 23, 21);
+}
+

@@ -1,3 +1,6 @@
+import {addFormatter} from 'svelecte';
+import {icons} from '../icons';
+
 export function iconOnlyRenderer(items, isSelected) {
     function setIcon(items) {
         switch (items) {
@@ -60,3 +63,27 @@ export function webDataRenderer(items, isSelected) {
         </div>
         `;
 }
+
+export function databaseSelect(items) {
+	const setIcon = (i) => {
+		if (i) {
+			return `
+				<img style="width: 16px; height: 16px;" src="${items.icon}" alt="icon" />
+			`
+		} else {
+			return `
+			<svg style="width:16px;height:16px;opacity:0.6;" viewBox="0 0 24 24"> <path fill="var(--grey)" d="M6,2A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2H6M6,4H13V9H18V20H6V4M8,12V14H16V12H8M8,16V18H13V16H8Z" /> </svg>`
+		}
+	}
+	let icon = setIcon(items.icon);
+	
+	return `
+		<div class="web-icon">
+			${icon}
+		</div>
+		<div class="web-type">
+			${items.text}
+		</div>
+		`;
+}
+

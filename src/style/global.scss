@@ -1,4 +1,6 @@
-@import './variables.scss';
+@use "sass:color";
+
+$app-colors: "grey", "blue", "red", "green", "invert";
 
 @mixin flex($dir: row, $justify: flex-start, $align: center) {
 	display: flex;
@@ -7,11 +9,12 @@
 	align-items: $align;
 }
 
-@mixin h1($color: var(--ui-blue)) {
+@mixin h1($color: var(--text-colored)) {
 	font-size: 1rem;
 	font-weight: 700;
 	color: $color;
 	padding: 0;
+	margin: 0;
 	text-transform: uppercase;
 }
 
@@ -36,51 +39,134 @@
 	font-size: 0.875rem;
 	font-weight: $weight;
 	color: $color;
-	font-family: $font-family;
+	font-family: var(--font-family);
 }
 
-// .n-select-item 
-// 	font-weight: 700
-// 	height: 24px
-// 	&.active 
-// 		border-radius: 4px 0px 0px 4px
+@mixin ui-text-small($color: var(--text-light), $weight: 400) {
+	font-size: 0.75rem;
+	font-weight: $weight;
+	color: $color;
+	font-family: var(--font-family);
+}
 
-// .n-select-default 
-// 	background: var(--notion-light-gray)
-// 	color: var(--notion-text-light-gray)
+@mixin hover-effect($color: var(--bg-dark)) {
+	transition: 0.2s ease-in-out;
 
-// .n-select-gray 
-// 	background: var(--notion-gray)
-// 	color: var(--notion-text-gray)
+	&:hover {
+		filter: brightness(1.05);
+	}
+}
 
-// .n-select-brown 
-// 	background: var(--notion-brown)
-// 	color: var(--notion-text-brown)
+@mixin click($color, $id) {
+	@keyframes click-#{$id} {
+		0% {
+			box-shadow: 0 0 0 2px $color;
 
-// .n-select-orange 
-// 	background: var(--notion-orange)
-// 	color: var(--notion-text-orange)
+		}
 
-// .n-select-yellow 
-// 	background: var(--notion-yellow)
-// 	color: var(--notion-text-yellow)
+		50% {
+			box-shadow: 0 0 0 4px $color;
+		}
 
-// .n-select-green 
-// 	background: var(--notion-green)
-// 	color: var(--notion-text-green)
+		100% {
+			box-shadow: 0 0 0 2px $color;
+		}
+	}
 
-// .n-select-blue 
-// 	background: var(--notion-blue)
-// 	color: var(--notion-text-blue)
+	animation: click-#{$id} 0.2s ease-in-out;
+}
 
-// .n-select-purple 
-// 	background: var(--notion-purple)
-// 	color: var(--notion-text-purple)
+@mixin scrollbar() {
+	&::-webkit-scrollbar {
+		width: 0.5rem;
+		opacity: 0;
+		transition: 200ms ease-in-out;
+	}
+	&::-webkit-scrollbar-button {
+		height: 0px;
+	}
+	&::-webkit-scrollbar-thumb {
+		background: var(--bg-darkest);
+		border: 0px none #ffffff;
+		border-radius: 8px;
+		height: 3rem;
+	}
+	&:hover {
+		&::-webkit-scrollbar {
+			opacity: 1;
+		}
+	}
+}
 
-// .n-select-pink 
-// 	background: var(--notion-pink)
-// 	color: var(--notion-text-pink)
+.icon-item {
+	height: 32px;
+	width: 32px;
 
-// .n-select-red 
-// 	background: var(--notion-red)
-// 	color: var(--notion-text-red)
+	img {
+		height: 100%;
+		width: 100%;
+	}
+}
+
+.sv-control {
+	@include flex (row, flex-start, center);
+	border: 1px solid var(--border-color);
+	min-height: 2.25rem;
+	outline: none;
+	&.is-active {
+		border: var(--blue) solid 1px !important;
+		outline: none !important;
+		box-shadow: 0 0 0 3px var(--blue-light);
+	}
+	
+}
+
+@keyframes on-initial {
+	0% {
+		opacity: 0;
+		transform: scale(0%);
+	}
+
+	100% {
+		opacity: 1;
+		transform: scale(100%);
+	}
+}
+
+.sv-control {
+	border: 1px solid var(--border-color) !important;
+}
+
+.sv-dropdown {
+	margin-top: .25rem;
+	transform: scaleY(0%);
+	transform-origin: top;
+	transition: transform 0.2s ease-in-out;
+	display: block !important;
+	opacity: 0;
+	animation: none 0.2s ease-in-out on-initial;
+	&[aria-expanded="true"] {
+		transform: scaleY(100%);
+		opacity: 1;
+	}
+}
+.sv-item {
+	height: 2rem !important;
+}
+.sv-dd-item-active > .sv-item {
+	background-color: var(--bg-dark) !important;
+
+}
+.sv-item-content {
+	@include flex(row, flex-start, center);
+
+	
+	.web-icon {
+		margin: 2px 0.25rem 0 0;
+	}
+	.web-type {
+		@include ui-text-default(var(--text-dark), 500);
+		margin-left: 1px;
+	}
+}
+

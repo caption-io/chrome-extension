@@ -1,8 +1,8 @@
-import Organizer from "src/components/Organizer.svelte";
+import Popup from "src/components/Popup.svelte";
 
 function restoreOptions() {
     chrome.storage.sync.get({ count: 0 } as IStorage, ({ count }: IStorage) => {
-        const app = new Organizer({
+        const app = new Popup({
             target: document.body,
             props: { count },
         });

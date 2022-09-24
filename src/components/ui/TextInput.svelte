@@ -1,56 +1,83 @@
 <script lang="ts">
-	import Icons from './Icons.svelte'
-	import Svelecte, { addFormatter } from 'svelecte'
-	import { webData } from '../../scripts/stores'
-	import { iconOnlyRenderer, webDataRenderer } from '../../scripts/svelecte-renderers'
+    import Icons, { icons } from './Icons.svelte';
 
-	export let propType
-	export let props
+    export let placeholder: string = 'placeholder not set';
+    export let inputIcon: keyof typeof icons | null = null;
+    export let labelText: string | null = null;
+    export let labelIcon: keyof typeof icons | null = null;
+    export let value: string;
 
-	console.log(props)
-
-	let webDataValue = 'none'
-	let webDataInput
-	let selected
-
-	function setInputValue(selected, value) {
-		console.log(selected, value)
-		if (!selected || selected.text === 'None') {
-			webDataInput = ''
-			console.log('none')
-		} else {
-			webDataInput = selected.value
-			console.log(selected.value)
-		}
-	}
-
-	$: setInputValue(selected, webDataValue)
-
-	let typeValue = 'web'
-
-	$: console.log(Object.values($webData.textValues))
-
-	addFormatter('icononly', iconOnlyRenderer)
-	addFormatter('webdata', webDataRenderer)
+    let focused: boolean = false;
 </script>
 
-<div style="width: 100%; margin-bottom: 8px;">
-	<div class="input-label">
-		<Icons name={props.type} link={false} />
-		<h3>{props.name}</h3>
-		<div class="options-handle">
-			<Icons name="more" link={true} />
-		</div>
-	</div>
-	<div class="prop-input-text">
-		<div class="prop-input-text-select">
-			<Svelecte
-				options={Object.values($webData.textValues)}
-				renderer="webdata"
-				placeholder="Web data..."
-				bind:value={webDataValue}
-				bind:readSelection={selected} />
-		</div>
-		<input class="text-input" type="text" bind:value={webDataInput} />
-	</div>
+<div class="main">
+    {#if labelText !== null}
+        <div class="input-label">
+            {#if labelIcon !== null}
+                <Icons name={labelIcon} link={false} />
+            {/if}
+            <h3>{labelText}</h3>
+            <div class="options-handle">
+                <Icons name="more" link={true} />
+            </div>
+        </div>
+    {/if}
+    <div class={`input-container ${focused ? ' focused' : ''}`}>
+        {#if inputIcon !== null}
+            <Icons
+                name={inputIcon}
+                color={'grey'}
+                position="left"
+            />
+        {/if}
+        <input
+            class="text-input"
+            type="text"
+            bind:value
+			wrap="soft"
+            {placeholder}
+            on:focus={() => (focused = true)}
+            on:blur={() => (focused = false)}
+        />
+    </div>
 </div>
+
+<style lang="scss">
+    @use '../../style/global' as *;
+
+    .main {
+        width: 100%;
+        .input-container {
+            @include flex(row, flex-start, center);
+            min-height: 2.25rem;
+            border: 1px solid var(--border-color);
+			box-shadow: 0 0 0 0px var(--blue-200);
+            border-radius: 4px;
+            box-sizing: border-box;
+			padding: 0 0.5rem;
+			background: var(--white);
+			transition: 200ms;
+			&.focused {
+				box-shadow: 0 0 0 3px var(--blue-light);
+				border: 1px solid var(--blue);
+			}
+            .text-input {
+                width: 100%;
+                outline: none;
+                border: none;
+                background: transparent;
+                font-family: var(--font-family);
+                font-weight: 400;
+				font-size: 0.875rem;
+				min-height: 36px;
+                &.colored {
+                    color: var(--blue-dark);
+                }
+                &::placeholder {
+                    color: var(--blue-800);
+                    opacity: 0.75;
+                }
+            }
+        }
+    }
+</style>

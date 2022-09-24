@@ -4,35 +4,29 @@ chrome.runtime.onMessage.addListener(request => {
 	}
 });
 
+function resizeIFrameToFitContent( iFrame ) {
+
+    iFrame.width  = iFrame.contentWindow.document.body.scrollWidth;
+    iFrame.height = iFrame.contentWindow.document.body.scrollHeight;
+}
+
 function showModal() {
-	const modal = document.createElement('div');
+	const modal = document.createElement('iframe');
 	modal.setAttribute(
 		'style',
 		`
-box-sizing:border-box;
-overflow:hidden;
-border: 1px solid #ffffff;
-top:16px;
-right:16px;
-border:none;
-margin:0;
-padding:0;
-border-radius:12px;
-background-color:white;
-position: fixed; box-shadow: 0px 0px 40px rgba(0, 0, 0, 0.55);
-z-index: 99999;
+		top:0px;
+		right:0px;
+		
+		position: fixed; 
+		z-index: 9999;
 `
 	);
-    modal.setAttribute('id', 'ncpopup');
-	modal.innerHTML = `<iframe id="popup-content"; style="height: 100vh; width: 100vw; background: none; pointer-events: auto; width:400px; display: block;"></iframe>
-<div  style="position:absolute; top:2px; right:0px; margin:0px; padding:0px;">
-<button style="display: none; padding: 8px 8px; font-size: 16px; border: none; border-radius: 20px; background: none;">x</button>
-</div>`;
+	modal.setAttribute('id', 'caption-popup');
+	modal.setAttribute('allowtransparency', 'true');
 	document.body.appendChild(modal);
-	const dialog = document.querySelector('#ncpopup');
-	const iframe = document.getElementById('popup-content');
-	iframe.src = chrome.runtime.getURL('src/pages/popup/index.html');
-	iframe.frameBorder = 0;
+	modal.src = chrome.runtime.getURL('src/pages/popup/index.html');
+	modal.frameBorder = "0";
 }
 // browser.action.onClicked.addListener(tab => {
 // 	browser.scripting.executeScript({

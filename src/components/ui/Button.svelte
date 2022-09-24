@@ -1,122 +1,195 @@
 <script context="module" lang="ts">
 	// import icons list
-	import Icons, { icons } from './Icons.svelte'
+	import Icons, { icons } from "./Icons.svelte";
 
 	// prop types
-	export type Value = string | null
-	export type Size = 'small' | 'med' | 'big'
-	export type Style = 'primary' | 'secondary' | 'outline' | 'danger'
-	export type Icon = keyof typeof icons
-	export type IconPosition = 'left' | 'right'
-	export type Disabled = boolean
+	export type Value = string | null;
+	export type Size = "small" | "med" | "big";
+	export type IconPosition = "left" | "right";
+	export type Disabled = boolean;
 </script>
 
 <script lang="ts">
 	// exported props
-	export let value: Value = null
-	export let size: Size = 'med'
-	export let style: Style = 'primary'
-	export let icon: Icon = null
-	export let iconPosition: IconPosition = 'left'
-	export let disabled: Disabled = false
+	export let value: Value = null;
+	export let size: Size = "med";
+	export let style: ButtonStyles = "primary";
+	export let color: AppColors = "blue";
+	export let icon: keyof typeof icons = null;
+	export let iconPosition: IconPosition = "left";
+	export let disabled: Disabled = false;
 
 	// local variables
-	let pressed = false
+	let pressed = false;
+	let cssClass;
+
+	function clickAnim() {
+		pressed = true;
+		setTimeout(() => {
+			pressed = false;
+		}, 200);
+	}
 
 	// css class definitions
-	const cssClass = `button
-		${' ' + size}
-		${' ' + style}
-		${disabled ? 'disabled' : ''}
-		`
+	$: cssClass = `button
+		${" " + size}
+		${" " + style}
+		${" " + color}
+		${pressed ? " click" : ""}
+		${disabled ? "disabled" : ""}
+		`;
 </script>
 
-<div class="button-container">
-	<button class={cssClass} on:click on:mousedown={() => (pressed = true)}>
-		{#if value && icon && iconPosition === 'left'}
-			<Icons name={icon} {size} color={style} position={iconPosition} {disabled} />
-		{/if}
-		{#if !value && icon}
-			<Icons name={icon} {size} color={style} position={'center'} {disabled} />
-		{/if}
-		{#if value}
+<div
+	class={`button-container${!value ? ` icon-only` : ""}${
+		size === "small" ? " small" : ""
+	}`}
+>
+	<button class={cssClass} on:click on:mousedown={clickAnim}>
+		{#if value && icon && iconPosition === "left"}
+			<Icons
+				name={icon}
+				size={size}
+				color={style === "primary" ? "invert" : color}
+				position={iconPosition}
+				{disabled}
+			/>
 			{value}
 		{/if}
-		{#if value && icon && iconPosition === 'right'}
-			<Icons name={icon} {size} color={style} position={iconPosition} {disabled} />
+		{#if !value && icon}
+			<Icons name={icon} {size} {color} position={"center"} {disabled} />
+		{/if}
+		{#if value && !icon}
+			{value}
+		{/if}
+		{#if value && icon && iconPosition === "right"}
+			{value}
+			<Icons name={icon} {size} {color} position={iconPosition} {disabled} />
 		{/if}
 	</button>
 </div>
 
 <style lang="scss">
-	@use '../../style/global' as g;
+	@use "../../style/global" as *;
+
+	$button-styles: ("primary", "secondary", "outline", "simple", "disabled");
+	$button-colors: ("grey", "blue", "red", "green", "bluegrey");
+
+	$btn-sizes: (
+		"small": (
+			0.75rem,
+			auto,
+			0.5rem 0.5rem,
+		),
+		"med": (
+			2rem,
+			100%,
+			0 1rem,
+		),
+		"big": (
+			2.5rem,
+			100%,
+			inherit,
+		),
+	);
+
+	@mixin btn-colors($col, $sty) {
+		@if $sty == primary {
+			background-color: var(--#{$col});
+			color: var(--white);
+			transition: filter 200ms, box-shadow 200ms;
+			&:hover {
+				box-shadow: 0 0 0 2px var(--#{$col}-mid);
+				filter: brightness(1.05);
+			}
+			&.click {
+				@include click(var(--#{$col}-mid), #{$col}-#{$sty});
+			}
+		}
+		@if $sty == secondary {
+			background-color: var(--#{$col}-light);
+			color: var(--#{$col});
+			font-weight: 500;
+			&:hover {
+				box-shadow: 0 0 0 2px var(--#{$col}-mid);
+				filter: brightness(0.95);
+			}
+			&.click {
+				@include click(var(--#{$col}-mid), #{$col}-#{$sty});
+			}
+		}
+		@if $sty == outline {
+			background-color: var(--trans);
+			border: 1px solid var(--#{$col});
+			color: var(--#{$col});
+			&:hover {
+				background-color: var(--trans);
+				box-shadow: 0 0 0 2px var(--#{$col}-light);
+			}
+			&.click {
+				@include click(var(--#{$col}-light), #{$col}-#{$sty});
+			}
+		}
+		@if $sty == simple {
+			background-color: var(--#{$col}-trans);
+			color: var(--#{$col}-dark);
+			font-weight: 600;
+			transition: background 200ms, box-shadow 400ms;
+			&:hover {
+				background-color: var(--#{$col}-light);
+				filter: brightness(0.95);
+				box-shadow: 0 0 0 2px var(--#{$col}-mid);
+			}
+			&.click {
+				@include click(var(--#{$col}), #{$col}-#{$sty});
+			}
+		}
+		@if $sty == disabled {
+			background-color: var(--#{$col}-light);
+			color: var(--#{$col}-mid);
+			filter: saturate(0.6);
+			&:hover {
+				cursor: not-allowed;
+			}
+		}
+	}
 
 	.button-container {
-		display: flex;
-		flex-direction: row;
-		justify-content: center;
-		align-items: center;
+		@include flex(row, center, center);
 		margin: 0;
 		width: 100%;
+		&.small {
+			width: auto;
+		}
 		.button {
-			@include g.flex($dir: row, $justify: center);
-			border: 1px solid transparent;
+			@include flex(row, center, center);
+			border: none;
 			border-radius: 4px;
 			background: none;
-			font-weight: 400;
-			transition: 250ms;
+			transition: 150ms;
 			cursor: pointer;
-			&.small {
-				height: 1.5rem;
-				font-size: 0.75rem;
-			}
-			&.med {
-				padding: 0 1rem;
-				height: 2rem;
-			}
-			&.big {
-				width: 100%;
-				height: 2rem;
-			}
-			&.primary {
-				background-color: var(--ui-blue);
-				color: #fff;
-				&:hover {
-					background-color: var(--ui-blue-hover);
+			white-space: nowrap;
+			@each $size, $props in $btn-sizes {
+				&.#{$size} {
+					height: nth($props, 1);
+					width: nth($props, 2);
+					padding: nth($props, 3);
+					box-sizing: border-box;
 				}
 			}
-			&.secondary {
-				background-color: var(--bg-darker);
-				color: var(--text-dark);
-				&:hover {
-					background-color: var(--bg-darkest);
+
+			@each $button-style in $button-styles {
+				&.#{$button-style} {
+					@each $button-color in $button-colors {
+						&.#{$button-color} {
+							@include btn-colors($button-color, $button-style);
+						}
+					}
 				}
 			}
-			&.danger {
-				background-color: var(--bg);
-				border: 1px solid var(--ui-red);
-				font-weight: 500;
-				color: var(--ui-red);
-				&:hover {
-					border: 1px solid var(--ui-red-hover);
-					background-color: var(--ui-red-hover);
-					color: #fff;
-				}
-			}
-			&.outline {
-				border: 1px solid var(--ui-blue);
-				font-weight: 500;
-				color: var(--ui-blue);
-				&:hover {
-					border: 1px solid var(--ui-blue-hover);
-					color: var(--ui-blue-hover);
-				}
-			}
-			&.disabled {
-				background-color: #e0e0e0;
-				color: #bdbdbd;
-				pointer-events: none;
-			}
+		}
+		&.icon-only {
+			width: 2.25rem;
 		}
 	}
 </style>

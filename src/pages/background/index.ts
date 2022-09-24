@@ -1,6 +1,10 @@
 browser.runtime.onInstalled.addListener(() => {
 	browser.storage.local.set({
-		flows: []
+		flows: [],
+		settings: {
+			defaultFlow: null,
+			colorMode: 'light'
+		}
 	})
 })
 

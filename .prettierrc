@@ -1,0 +1,9 @@
+{
+	"svelteBracketNewLine": true,
+	"printWidth": 80,
+	"singleAttributePerLine": true,
+	"embeddedLanguageFormatting": "auto",
+	"useTabs": true,
+	"tabWidth": 2,
+	"proseWrap": "always"
+}
