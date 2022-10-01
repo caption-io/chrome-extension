@@ -1,30 +1,30 @@
 <script lang="ts">
-    import Icons, { icons } from './Icons.svelte';
+    import Icon from './Icon.svelte';
 
     export let placeholder: string = 'placeholder not set';
-    export let inputIcon: keyof typeof icons | null = null;
-    export let labelText: string | null = null;
-    export let labelIcon: keyof typeof icons | null = null;
+	export let type: string;
+    export let inputIcon: Icons | null = null;
+    export let labelText: string = null;
+    export let labelIcon: Icons = null;
     export let value: string;
 
     let focused: boolean = false;
 </script>
 
 <div class="main">
-    {#if labelText !== null}
+    {#if labelText}
         <div class="input-label">
-            {#if labelIcon !== null}
-                <Icons name={labelIcon} link={false} />
+            {#if labelIcon}
+                <Icon name={labelIcon} size="med" position="left" color="grey" light={true} link={false} />
             {/if}
-            <h3>{labelText}</h3>
-            <div class="options-handle">
-                <Icons name="more" link={true} />
-            </div>
+            <div class="label-text">
+				<h3>{labelText}</h3>
+			</div>
         </div>
     {/if}
     <div class={`input-container ${focused ? ' focused' : ''}`}>
-        {#if inputIcon !== null}
-            <Icons
+        {#if inputIcon}
+            <Icon
                 name={inputIcon}
                 color={'grey'}
                 position="left"
@@ -46,7 +46,9 @@
     @use '../../style/global' as *;
 
     .main {
-        width: 100%;
+		@include flex(column, flex-start, flex-start);
+		@include inputLabel();
+		width: 100%;
         .input-container {
             @include flex(row, flex-start, center);
             min-height: 2.25rem;
@@ -57,6 +59,7 @@
 			padding: 0 0.5rem;
 			background: var(--white);
 			transition: 200ms;
+			width: 100%;
 			&.focused {
 				box-shadow: 0 0 0 3px var(--blue-light);
 				border: 1px solid var(--blue);

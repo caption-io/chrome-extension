@@ -21,4 +21,10 @@ export const selectedFlow = writable(null);
 export const tooltip = writable({show: false, text: ""});
 
 export const flows = writable([]);
-export const settings = writable({});
+export const settings = writable({
+	defaultFlow: null,
+	colorMode: 'light',
+	notionToken: null
+});
+
+export const tags = writable([]);

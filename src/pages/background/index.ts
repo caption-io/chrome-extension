@@ -3,16 +3,26 @@ browser.runtime.onInstalled.addListener(() => {
 		flows: [],
 		settings: {
 			defaultFlow: null,
-			colorMode: 'light'
+			colorMode: 'light',
+			notionToken: null,
+			tags: {
+				app: [],
+				user: [],
+			}
 		}
 	})
 })
 
 browser.action.onClicked.addListener((tab) => {
-	browser.tabs.sendMessage(tab.id, {
-		type: "popupModal",
-	})
-})
+	browser.storage.local.get("settings")
+		.then((result) => {
+			if (result.settings.notionToken !== null) {
+				browser.action.setPopup({ popup: "src/pages/popup/index.html" });
+			} else {
+				browser.runtime.openOptionsPage();
+			}
+		})
+});
 
 browser.contextMenus.create({
 	id: "ncpopup",

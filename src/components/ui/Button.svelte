@@ -1,6 +1,6 @@
 <script context="module" lang="ts">
 	// import icons list
-	import Icons, { icons } from "./Icons.svelte";
+	import Icon from "./Icon.svelte";
 
 	// prop types
 	export type Value = string | null;
@@ -15,7 +15,7 @@
 	export let size: Size = "med";
 	export let style: ButtonStyles = "primary";
 	export let color: AppColors = "blue";
-	export let icon: keyof typeof icons = null;
+	export let icon: Icons | null = null;
 	export let iconPosition: IconPosition = "left";
 	export let disabled: Disabled = false;
 
@@ -47,7 +47,7 @@
 >
 	<button class={cssClass} on:click on:mousedown={clickAnim}>
 		{#if value && icon && iconPosition === "left"}
-			<Icons
+			<Icon
 				name={icon}
 				size={size}
 				color={style === "primary" ? "invert" : color}
@@ -57,14 +57,14 @@
 			{value}
 		{/if}
 		{#if !value && icon}
-			<Icons name={icon} {size} {color} position={"center"} {disabled} />
+			<Icon name={icon} {size} {color} position={"center"} {disabled} />
 		{/if}
 		{#if value && !icon}
 			{value}
 		{/if}
 		{#if value && icon && iconPosition === "right"}
 			{value}
-			<Icons name={icon} {size} {color} position={iconPosition} {disabled} />
+			<Icon name={icon} {size} {color} position={iconPosition} {disabled} />
 		{/if}
 	</button>
 </div>

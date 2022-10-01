@@ -4,7 +4,7 @@
 	import { createEventDispatcher } from "svelte";
 
 	// IMPT: Components
-	import Icons from "../ui/Icons.svelte";
+	import Icon from "../ui/Icon.svelte";
 
 	export let options: ContextMenuOptions[];
 
@@ -34,7 +34,7 @@
 				on:click={() => dispatch('message', {text: option.message})}
 			>
 				{#if option.icon}
-					<Icons
+					<Icon
 						name={option.icon}
 						size="med"
 						color={option.style === "danger" ? "red" : "grey"}

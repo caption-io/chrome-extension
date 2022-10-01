@@ -17,6 +17,14 @@ export const getSettings = async (): Promise<UserSettings> => {
 		.then((result: Promise<UserBrowserStorage>) => result['settings'])
 }
 
+export async function setSetting(key: string, value: any) {
+	return await browser.storage.local.set({ settings: { [key]: value } })
+		.then(result => {
+			return result;
+		}).catch(error => {
+			console.log(error);
+		});
+}
 
 export async function newFlows(flow) {
 	const flows = await getFlows()
@@ -40,8 +48,16 @@ export async function updateFlowName(flow) {
 	})
 }	
 
+export async function updateFlowTags(flow) {
+	const flows = await getFlows()
+	chrome.storage.local.set({
+		flows: flows.map(f => f.id === flow.id ? { ...f, tags: flow.tags } : f)
+	})
+}
+
 export async function findFlowById(id) {
 	const flows = await getFlows()
+	console.log("findFlowById", flows)
 	return flows.find(f => f.id === id)
 }
 

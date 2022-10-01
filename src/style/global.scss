@@ -1,6 +1,7 @@
-@use "sass:color";
-
 $app-colors: "grey", "blue", "red", "green", "invert";
+$notion-colors: (
+	"default""gray""brown""orange""yellow""green""blue""purple""pink""red"
+);
 
 @mixin flex($dir: row, $justify: flex-start, $align: center) {
 	display: flex;
@@ -8,6 +9,8 @@ $app-colors: "grey", "blue", "red", "green", "invert";
 	justify-content: $justify;
 	align-items: $align;
 }
+
+// SECT: TEXT
 
 @mixin h1($color: var(--text-colored)) {
 	font-size: 1rem;
@@ -35,6 +38,15 @@ $app-colors: "grey", "blue", "red", "green", "invert";
 	margin: 0;
 }
 
+@mixin ui-text($color: var(--text-dark), $size: 0.875, $weight: 400) {
+	font-size: $size;
+	font-weight: $weight;
+	color: $color;
+	font-family: var(--font-family);
+}
+
+// TODO: DELETE BELOW MIXINS IN FAVOR OF ABOVE
+
 @mixin ui-text-default($color: var(--text-dark), $weight: 400) {
 	font-size: 0.875rem;
 	font-weight: $weight;
@@ -48,6 +60,8 @@ $app-colors: "grey", "blue", "red", "green", "invert";
 	color: $color;
 	font-family: var(--font-family);
 }
+
+// !SECT
 
 @mixin hover-effect($color: var(--bg-dark)) {
 	transition: 0.2s ease-in-out;
@@ -82,18 +96,34 @@ $app-colors: "grey", "blue", "red", "green", "invert";
 		opacity: 0;
 		transition: 200ms ease-in-out;
 	}
+
 	&::-webkit-scrollbar-button {
 		height: 0px;
 	}
+
 	&::-webkit-scrollbar-thumb {
-		background: var(--bg-darkest);
-		border: 0px none #ffffff;
-		border-radius: 8px;
+		background: var(--bg-darker);
+		border-radius: 3px;
 		height: 3rem;
 	}
+
 	&:hover {
 		&::-webkit-scrollbar {
 			opacity: 1;
+		}
+	}
+}
+
+@mixin inputLabel() {
+	.input-label {
+		@include flex(row, flex-start, center);
+		margin: 0 0 0.5rem 0.175rem;
+
+		.label-text {
+			> h3 {
+				@include h3();
+				flex-grow: 1;
+			}
 		}
 	}
 }
@@ -108,19 +138,6 @@ $app-colors: "grey", "blue", "red", "green", "invert";
 	}
 }
 
-.sv-control {
-	@include flex (row, flex-start, center);
-	border: 1px solid var(--border-color);
-	min-height: 2.25rem;
-	outline: none;
-	&.is-active {
-		border: var(--blue) solid 1px !important;
-		outline: none !important;
-		box-shadow: 0 0 0 3px var(--blue-light);
-	}
-	
-}
-
 @keyframes on-initial {
 	0% {
 		opacity: 0;
@@ -133,40 +150,282 @@ $app-colors: "grey", "blue", "red", "green", "invert";
 	}
 }
 
-.sv-control {
-	border: 1px solid var(--border-color) !important;
-}
+.svelecte {
+	width: 100%;
 
-.sv-dropdown {
-	margin-top: .25rem;
-	transform: scaleY(0%);
-	transform-origin: top;
-	transition: transform 0.2s ease-in-out;
-	display: block !important;
-	opacity: 0;
-	animation: none 0.2s ease-in-out on-initial;
-	&[aria-expanded="true"] {
-		transform: scaleY(100%);
-		opacity: 1;
-	}
-}
-.sv-item {
-	height: 2rem !important;
-}
-.sv-dd-item-active > .sv-item {
-	background-color: var(--bg-dark) !important;
-
-}
-.sv-item-content {
-	@include flex(row, flex-start, center);
-
-	
-	.web-icon {
-		margin: 2px 0.25rem 0 0;
-	}
-	.web-type {
+	.sv-item {
 		@include ui-text-default(var(--text-dark), 500);
-		margin-left: 1px;
+		min-height: 1.5rem !important;
+		padding: 0 !important;
+		cursor: pointer !important;
+		height: 1.75rem !important;
+		border-radius: var(--border-radius);
+		overflow: hidden;
+		margin: 0 !important;
+		width: 100%;
+		background-color: transparent !important;
+
+		.sv-item-content {
+			@include ui-text-default(var(--text-dark) !important, 500 !important);
+			box-sizing: border-box;
+			padding: 0 !important;
+			height: 100%;
+			width: fit-content;
+			& > :first-child() {
+				padding: 0 0.5rem !important;
+				&.n-status {
+					padding: 0 0.75rem !important;
+				}
+			}
+
+
+		}
+
+		@each $color in $notion-colors {
+			&:has(.n-select.#{$color}) {
+				.n-select.#{$color} {
+					background-color: var(--notion-#{$color}) !important;
+					color: var(--notion-text-#{$color}) !important;
+				}
+
+				.status-dot {
+					background-color: var(--notion-text-#{$color}) !important;
+				}
+
+				& > .sv-item-btn {
+					background-color: var(--notion-#{$color}) !important;
+					filter: brightness(1.05);
+
+					& > svg {
+						fill: var(--notion-text-#{$color}) !important;
+					}
+
+					&:hover {
+						filter: brightness(1.08);
+					}
+				}
+			}
+		}
+
+		.n-select {
+			@include flex(row, flex-start, center);
+			height: 100%;
+			.sv-item-icon {
+				padding: 1px 0 0 0 !important;
+				img,
+				svg {
+					padding: 0 0.25rem 0 0.25rem !important;
+				}
+			}
+	
+			.sv-item-text {
+				padding: 0 !important;
+			}
+			&.n-status {
+				border-radius: 1rem !important;
+				.status-dot {
+					border-radius: 1rem;
+					height: 0.5rem !important;
+					width: 0.5rem !important;
+					margin: auto 0.25rem auto 0;
+					padding: 0;
+				}
+			}
+		}
+
+		.sv-item-btn {
+			border-radius: 0 !important;
+			background-color: var(--bg-dark) !important;
+
+			&:hover {
+				filter: brightness(1.03);
+			}
+		}
+
+	}
+
+	.sv-control {
+		border: 1px solid var(--border-color) !important;
+		height: auto !important;
+		box-sizing: border-box;
+		width: 100%;
+
+		.sv-content {
+			padding: 0.25rem !important;
+			gap: 0.25rem;
+
+			.inputBox {
+				margin: 0 0 0 0.35rem !important;
+				&::placeholder {
+				@include ui-text(var(--text-light), 0.875rem, 500);
+
+				}
+			}
+
+
+		}
+	}
+
+	.sv-dropdown {
+		margin-top: 0.25rem !important;
+		bottom: unset !important;
+		.sv-dropdown-scroll {
+			@include scrollbar();
+			padding: 0.25rem 0 !important;
+			overflow-y: auto !important;
+
+			.sv-dropdown-content {
+				display: flex;
+				flex-direction: column;
+				row-gap: 0.25rem;
+
+				.sv-item-content {
+					:first-child:not(.n-status) {
+						border-top-left-radius: 0.25rem !important;
+						border-bottom-left-radius: 0.25rem !important;
+					}
+
+					:last-child:not(.n-status) {
+						border-top-right-radius: 0.25rem !important;
+						border-bottom-right-radius: 0.25rem !important;
+					}
+				}
+
+				.empty-list-row {
+					@include flex(row, center, center);
+					@include ui-text-default(var(--text-light), 600);
+					height: 3rem;
+				}
+				.optgroup-header {
+					@include ui-text(var(--text-light), 0.75rem, 500);
+				}
+				.sv-item {
+					margin-left: 0.25rem !important;
+				}
+				.sv-dd-item-active {
+					background-color: var(--bg-dark) !important;
+				}
+			}
+		}
 	}
 }
 
+.form-control {
+	@include ui-text(var(--text-dark), 0.875rem, 500);
+	border: none;
+	border-radius: 0;
+	outline: none;
+	width: 100%;
+
+	&::placeholder {
+		@include ui-text(var(--text-light), 0.875, 500);
+	}
+}
+
+.sdt-calendar-colors {
+	--sdt-primary: #0180ff !important;
+	--sdt-btn-bg-hover: hsl(200, 35%, 97%) !important;
+	--sdt-color: hsl(217, 24%, 20%) !important;
+}
+.sdt-background  {
+	content: "";
+	background: rgba(0,0,0,.5);
+	height: 600px;
+	width: 400px;
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 10000;
+	overflow: hidden;
+	@include flex(column, center, center)
+}
+.std-calendar-wrap {
+	top: 147px !important;
+	left: 55px !important;
+	font-family: var(--font-family) !important;
+	box-shadow: 0 0 2rem 0 rgba(0, 0, 0, 0.07)  !important;
+	border: 1px solid rgba(0,0,0,0.1) !important;
+	border-radius: 0.25rem !important;
+	.sdt-timer {
+		width: 280px !important;
+		.sdt-hand-circle {
+			background-color: #0180ff !important;
+		}
+		.sdt-meridian {
+			position: unset !important;
+			color: #666666 !important;
+			transition: 200ms ease-in-out !important;
+			&:hover {
+				background: hsl(200, 35%, 97%) !important;
+			}
+
+		}
+		.sdt-time-head {
+			.sdt-time-figure {
+				color: #999999 !important;
+				&.is-active {
+					color: #666666 !important;
+				}
+			}
+
+		}
+	}
+	.sdt-calendar {
+		height: 226px !important;
+	}
+	.sdt-cal-td {
+		transform: translateY(-7px) !important;
+	}
+
+	.std-btn-header {
+		padding: 0 0.5rem !important;
+		&:hover {
+			background-color: hsl(200, 35%, 97%) !important;
+		}
+	}
+	.sdt-svg {
+		fill: hsl(217, 24%, 20%) !important;
+		color: hsl(217, 24%, 20%) !important;
+	}
+	.std-btn-row {
+		@include flex(row !important, center, center);
+		margin: 0 0.25rem;
+		column-gap: 0.5rem;
+		button {
+			@include ui-text(var(--text-dark), 0.875rem, 500);
+			flex-grow: 1;
+		}
+		.sdt-today-btn {
+			background: #0180ff !important;
+			color: white !important;
+			border: 1px solid transparent !important;
+			transition: filter 200ms, box-shadow 200ms !important;
+			&:hover {
+				box-shadow: 0 0 0 2px #4da6ff;
+				filter: brightness(1.05);
+			}
+		}
+		.sdt-clear-btn {
+			background: #ffd6da;
+			color: #ff5060;
+			border: 1px solid transparent !important;
+			transition: filter 200ms, box-shadow 200ms !important;
+			&:hover {
+				box-shadow: 0 0 0 2px #ff858f;
+				filter: brightness(0.95);
+			}
+		}
+	}
+}
+
+// @each $color in $notion-colors {
+// 	.sv-dd-item:has(.sv-item > .sv-item-content > .n-multiselect.#{$color}) {
+// 		.sv-item-content {
+// 			width: fit-content !important;
+// 			background-color: var(--notion-#{$color}) !important;
+// 			padding: 0 0.5rem;
+// 			box-sizing: border-box;
+// 			border-radius: 4px;
+// 		}
+// 	}
+// }

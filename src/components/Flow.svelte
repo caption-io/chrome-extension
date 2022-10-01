@@ -1,8 +1,7 @@
 <script lang="ts">
 	// IMPT: Components
-	import Icons from "./ui/Icons.svelte";
+	import Icon from "./ui/Icon.svelte";
 	import Button from "./ui/Button.svelte";
-	import HorRule from "./ui/HorRule.svelte";
 	import ContextMenu from "./context-menu/ContextMenu.svelte";
 	import Props from "./Props.svelte";
 
@@ -13,8 +12,9 @@
 		updateFlow,
 		deleteFlow,
 		updateFlowName,
+		updateFlowTags
 	} from "../scripts/chrome-storage";
-	import { databaseSelect } from "../scripts/svelecte-renderers";
+	import { WithIcon } from "../scripts/svelecte-renderers";
 	import { clickAnimation } from "../scripts/ui-utils";
 
 	// IMPT: Packages
@@ -41,6 +41,7 @@
 		id: id,
 		defaultDatabase: defaultDatabase,
 		tags: tags,
+		favorite: false
 	};
 	let changesPending: boolean = false;
 	let showSettings: boolean = false;
@@ -59,7 +60,7 @@
 	(async (defaultDatabase) => {
 		defaultDatabase
 			? (async () => {
-					for await (let database of (await databases).display) {
+					for await (let database of (await databases)) {
 						if (database.value === defaultDatabase.value) {
 							flowData.defaultDatabase = database;
 							break;
@@ -75,8 +76,8 @@
 	$: ((f, s) => {
 		if (
 			isEqual(
-				omit(f, ["defaultDatabase.icon", "name"]),
-				omit(s, ["defaultDatabase.icon", "name"])
+				omit(f, ["defaultDatabase.icon", "text", "defaultDatabase.extras.props[...].icon"]),
+				omit(s, ["defaultDatabase.icon", "text", "defaultDatabase.extras.props[...].icon"])
 			)
 		) {
 			changesPending = false;
@@ -85,7 +86,7 @@
 
 	// set properties when new Notion database is selected
 	$: ((fd) => {
-		fd.defaultDatabase ? (props = fd.defaultDatabase.properties) : null;
+		fd.defaultDatabase ? (props = fd.defaultDatabase.extras.props) : null;
 	})(flowData);
 
 	// FUNC: Event Handlers
@@ -105,30 +106,42 @@
 		});
 	};
 
+	const saveTags = () => {
+		updateFlowTags(flowData).then(() => {
+		});
+	};
+
 	const deleteCurrentFlow = () => {
 		deleteFlow(flowData.id).then(() => selectedFlow.set(null));
 	};
 
 	const handleFlowOptionClick = (e) => {
 		if (e.detail.text === "delete") {
-					confirmDelete = true;
-					showSettings = false;
-			  } else if (e.detail.text === "rename") {
-					nameInput.focus();
-					nameInput.select();
-					showSettings = false;
-			  }
+			confirmDelete = true;
+			showSettings = false;
+		} else if (e.detail.text === "rename") {
+			nameInput.focus();
+			nameInput.select();
+			showSettings = false;
+		} else if (e.detail.text === "favorite") {
+			if (flowData.tags !== null) {
+			flowData.tags.includes("favorite")
+				? (flowData.tags = flowData.tags.filter((tag) => tag !== "favorite"))
+				: flowData.tags.push("favorite");
+			} else flowData.tags = ["favorite"];
+			saveTags();
+		}
 	};
 
 	// set selected flow to null to return to the flow list
 	const goBack = () => selectedFlow.set(null);
 
-	addFormatter("dbSelect", databaseSelect);
+	addFormatter("dbSelect", WithIcon);
 </script>
 
 <div class="flow-page">
 	<div class="flow-header">
-		<Icons
+		<Icon
 			name="back"
 			color="grey"
 			size="med"
@@ -153,7 +166,7 @@
 				on:click={saveChanges}
 			/>
 		{/if}
-		<Icons
+		<Icon
 			name="sliders"
 			color="blue"
 			link={true}
@@ -195,7 +208,7 @@
 	</div>
 	<div class="database-select">
 		<div class="input-label">
-			<Icons
+			<Icon
 				name="database"
 				size="med"
 				position="left"
@@ -208,7 +221,7 @@
 				on:mousedown={(e) => clickAnimation(e, "default")}
 			>
 				<div class="refresh-text">
-					<Icons
+					<Icon
 						name="refresh"
 						size="small"
 						position="left"
@@ -218,27 +231,30 @@
 				</div>
 			</div>
 		</div>
-		<div in:fade={{ duration: 200 }} >
+		<div in:fade={{ duration: 200 }}>
 			{#await databases}
 				<Svelecte options={[]} placeholder="Loading..." disabled={true} />
 			{:then dbs}
+			{#key dbs}
 				<Svelecte
-					options={dbs.display}
+					options={dbs}
 					renderer="dbSelect"
 					bind:value={selectedDatabase}
 					bind:readSelection={flowData.defaultDatabase}
 					placeholder="Select a database"
 					searchable={true}
 				/>
+			{/key}
 			{/await}
 		</div>
 	</div>
-	<HorRule noMargin={true} />
 	{#if flowData.defaultDatabase}
 		{#await databases}
 			<div class="loading">Loading...</div>
 		{:then dbs}
-			<Props options={props} />
+			{#key props}
+				<Props options={props} />
+			{/key}
 		{/await}
 	{:else}
 		<div class="no-db-selected">
@@ -247,8 +263,7 @@
 		</div>
 	{/if}
 	<div class="flow-footer">
-		Capture
-		<Icons name="inbox" size="med" color="invert" position="right" />
+		<Button value="Capture" style="primary" size="big" color="blue" icon="back" iconPosition="right" />
 	</div>
 	{#if confirmDelete}
 		<div
@@ -287,18 +302,19 @@
 		display: flex;
 		flex-direction: column;
 		box-sizing: border-box;
-		width: 350px;
+		width: 100%;
 		background: var(--bg);
-		height: 576px;
+		height: 600px;
 		.database-select {
 			padding: 0 0.75rem 0.75rem 0.75rem;
 			background-color: var(--bg-dark);
+			border-bottom: 1px solid var(--border-color-light);
 		}
 	}
 	.flow-footer {
 		@include flex(row, center, center);
-		height: 48px;
-		background: var(--blue);
+		padding: 0.5rem;
+		background: var(--bg-darker);
 		color: var(--white);
 		font-size: 0.815rem;
 		font-weight: 600;
@@ -311,7 +327,7 @@
 	}
 	.input-label {
 		@include flex(row, flex-start, center);
-		margin-bottom: 0.25rem;
+		margin: 0 0 0.25rem 0.175rem;
 		> h3 {
 			@include h3();
 			flex-grow: 1;
@@ -372,7 +388,7 @@
 				height: 1.5rem;
 				max-height: 1.5rem;
 				transition: 200ms;
-				cursor: pointer;
+				cursor: text;
 				border-radius: 0.25rem;
 				background: var(--bg-dark);
 				&:focus {

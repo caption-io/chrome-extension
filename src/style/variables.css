@@ -9,22 +9,14 @@ svg {
 body {
 --font-family: 'Albert Sans', sans-serif;
 --trans: transparent;
+--border-radius: 0.25rem;
 }
 
 * {
-font-family: var(--font-family);
+font-family: var(--font-family) !important;
 }
 
-.svelecte {
-	width: 100%;
-}
-.sv-control {
-	--sv-min-height: 36px;
-	--sv-border: 1px solid #ccd9f7;
-	height: 1.75rem;
-	width: 100%;
-	border: 1px solid #ccd9f7;
-}
+
 
 
 .light-mode {
@@ -49,7 +41,7 @@ font-family: var(--font-family);
 	--blue-dark: #001c3c;
 
 	--red: #ff5060;
-	--red-light: hsl(355, 100%, 92%);
+	--red-light: #ffd6da;
 	--red-mid: #ff858f;
 	--red-dark: #330004;
 
@@ -67,7 +59,7 @@ font-family: var(--font-family);
 	--text-inverted: #fafafa;
 	--text-colored: #0D47A1;
 
-	--notion-light-gray: #f1f0ef;
+	--notion-default: #f1f0ef;
 	--notion-gray: #e3e2e0;
 	--notion-brown: #eee0da;
 	--notion-orange: #fadec9;

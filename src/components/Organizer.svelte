@@ -1,21 +1,22 @@
 <script context="module" lang="ts">
 </script>
-
+<!-- SECT: SCRIPT -->
 <script lang="ts">
 	// IMPT: Packages
 	import { dndzone, SOURCES, TRIGGERS } from "svelte-dnd-action";
 	import { fly, fade } from "svelte/transition";
 	import { flip } from "svelte/animate";
 	import { nanoid } from "nanoid";
+	import { filter, groupBy, includes } from "lodash-es";
 
 	// IMPT: Components
 	import Button from "./ui/Button.svelte";
-	import Icons from "./ui/Icons.svelte";
+	import Icon from "./ui/Icon.svelte";
 	import Flow from "./Flow.svelte";
 	import TextInput from "./ui/TextInput.svelte";
 
 	// IMPT: Local
-	import { flows, selectedFlow, settings } from "../scripts/stores";
+	import { flows, selectedFlow, settings, tags } from "../scripts/stores";
 	import {
 		getFlows,
 		newFlows,
@@ -25,7 +26,8 @@
 
 	// VARS: Local
 	let activeFlow = null;
-	let items: FlowData[];
+	let items;
+	let itemsSearch;
 	let userSettings: UserSettings;
 	let dragDisabled = true;
 	const flipDurationMs = 200;
@@ -35,10 +37,8 @@
 		name: "Untitled",
 		id: flowId,
 		defaultDatabase: null,
-		tags: {
-			app: ["uncategorized"],
-			user: null,
-		},
+		tags: null,
+		favorite: false,
 	};
 
 	$: ((items) => {
@@ -77,7 +77,15 @@
 
 	selectedFlow.subscribe((flow) => (activeFlow = flow));
 
-	flows.subscribe((flows) => (items = flows));
+	$: itemsSearch = $flows.filter(flow => {
+		if (searchQuery)
+			return flow.name.toLowerCase().includes(searchQuery.toLowerCase());
+			else return true;
+	});
+
+	// $: items = groupBy(itemsSearch, "tags");
+	$: items = $flows;
+	$: itemTags = Object.keys(groupBy(items, "tags"));
 
 	settings.subscribe((settings) => {
 		userSettings = settings;
@@ -127,8 +135,12 @@
 	}
 
 	//! FUNCS
-</script>
 
+
+</script>
+<!-- !SECT -->
+
+<!-- SECT: MARKUP -->
 <div class="container">
 	<div
 		class="main"
@@ -147,41 +159,47 @@
 				inputIcon="search"
 			/>
 		</div>
-		<div class="list-options" />
-		<div
-			use:dndzone={{ items, dragDisabled, flipDurationMs }}
-			on:consider={handleDndConsider}
-			on:finalize={handleDndFinalize}
-			class="flow-list"
-		>
-			{#if items.length !== 0}
-				{#each items as flow (flow.id)}
-					<div
-						class="flow-item"
-						animate:flip={{ duration: flipDurationMs }}
-						in:fade={{ duration: 200 }}
-						on:click={() => setSelectedFlow(flow.id)}
-					>
-						<div
-							tabindex={dragDisabled ? 0 : -1}
-							aria-label="drag-handle"
-							class="handle"
-							style={dragDisabled ? "cursor: grab" : "cursor: grabbing"}
-							on:mousedown={startDrag}
-							on:touchstart={startDrag}
-							on:keydown={handleKeyDown}
-						>
-							<Icons name="grab_handle" color="grey" size="med" link={false} />
-						</div>
-						<div class="flow-name">
-							{flow.name}
-						</div>
-					</div>
-				{/each}
-			{:else}
-				<div class="no-flows">No flows found.</div>
-			{/if}
-		</div>
+		{#if items.length !== 0}
+				<section
+					use:dndzone={{ items, dragDisabled, flipDurationMs }}
+					on:consider={(e) => handleDndConsider(e)}
+					on:finalize={(e) => handleDndFinalize(e)}
+					class="flow-list"
+				>
+					{#each items as flow (flow.id)}
+					
+							<div
+								class="flow-item"
+								animate:flip={{ duration: flipDurationMs }}
+								in:fade={{ duration: 200 }}
+								on:click={() => setSelectedFlow(flow.id)}
+							>
+								<div
+									tabindex={dragDisabled ? 0 : -1}
+									aria-label="drag-handle"
+									class="handle"
+									style={dragDisabled ? "cursor: grab" : "cursor: grabbing"}
+									on:mousedown={startDrag}
+									on:touchstart={startDrag}
+									on:keydown={handleKeyDown}
+								>
+									<Icon
+										name="grab_handle"
+										color="grey"
+										size="med"
+										link={false}
+										light={true}
+									/>
+								</div>
+								<div class="flow-name">
+									{flow.name}
+								</div>
+							</div>
+					{/each}
+				</section>
+		{:else}
+			<div class="no-flows">No flows found.</div>
+		{/if}
 		<div class="options-container">
 			<Button
 				value="New Flow"
@@ -206,8 +224,8 @@
 	{#if $selectedFlow !== null}
 		{#key $selectedFlow.id}
 			<div
-				in:fly={{ y: 576, duration: 300 }}
-				out:fly={{ y: 576, duration: 400 }}
+				in:fly={{ x: 600, duration: 300 }}
+				out:fly={{ x: 600, duration: 400 }}
 				class="flow"
 			>
 				<Flow
@@ -219,7 +237,9 @@
 		{/key}
 	{/if}
 </div>
+<!-- !SECT -->
 
+<!-- SECT: STYLE -->
 <style lang="scss">
 	@use "../style/global" as *;
 
@@ -238,12 +258,13 @@
 		justify-content: flex-start;
 		align-items: flex-start;
 		position: relative;
+		width: 100%;
 	}
 
 	.main {
 		@include flex(column, center, center);
 		height: 600px;
-		width: 350px;
+		width: 100%;
 		position: relative;
 		overflow: hidden;
 		transition: 0.2s ease-in-out;
@@ -264,12 +285,6 @@
 		.header-text {
 			@include h1(var(--blue-900));
 		}
-	}
-	.list-options {
-		height: 36px;
-		width: 100%;
-		@include flex(row, flex-start, center);
-		border-bottom: 1px solid var(--border-color-light);
 	}
 	.handle {
 		border-radius: 0.3rem;
@@ -303,12 +318,9 @@
 
 	.flow {
 		position: absolute;
-		top: 1.5rem;
-		border-top-left-radius: 0.5rem;
-		border-top-right-radius: 0.5rem;
-		box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05) inset,
-			0 4px 8px 0 rgba(0, 0, 0, 0.1);
+		top: 0;
 		overflow: hidden;
+		width: 100%;
 	}
 	.options-container {
 		display: flex;
@@ -323,6 +335,7 @@
 	}
 
 	.no-flows {
+		flex-grow: 1;
 		font-size: 1rem;
 		font-weight: 600;
 		height: 4rem;
@@ -331,3 +344,4 @@
 		@include flex(row, center, center);
 	}
 </style>
+<!-- !SECT -->

@@ -3,12 +3,12 @@
 	import { createEventDispatcher } from "svelte";
 
 	// IMPT: Components
-	import Icons, { icons } from "../ui/Icons.svelte";
+	import Icon from "../ui/Icon.svelte";
 
 	// VARS: Props
 	export let label: string;
 	export let message: string;
-	export let icon: keyof typeof icons;
+	export let icon: Icons;
 	export let danger: boolean = false;
 
 	// VARS: Local

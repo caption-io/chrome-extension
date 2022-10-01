@@ -1,12 +1,9 @@
-import Popup from "src/components/Popup.svelte";
+import Popup from 'src/components/Popup.svelte'
 
-function restoreOptions() {
-    chrome.storage.sync.get({ count: 0 } as IStorage, ({ count }: IStorage) => {
-        const app = new Popup({
-            target: document.body,
-            props: { count },
-        });
-    });
+function loadPopup() {
+	const app = new Popup({
+		target: document.body,
+	})
 }
 
-document.addEventListener("DOMContentLoaded", restoreOptions);
+document.addEventListener('DOMContentLoaded', loadPopup)

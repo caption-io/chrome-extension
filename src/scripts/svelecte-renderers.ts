@@ -64,13 +64,17 @@ export function webDataRenderer(items, isSelected) {
         `;
 }
 
-export function databaseSelect(items) {
-	const setIcon = (i) => {
-		if (i) {
-			return `
-				<img style="width: 16px; height: 16px;" src="${items.icon}" alt="icon" />
-			`
+export function WithIcon(items: SvelecteOption) {
+	const setIcon = (icon) => {
+		if (Object.values(icons).includes(icon)) {
+	console.log("Svelect Icon Renderer | Local Icon: ",items.icon);
+
+			return icons[icon];
+		} else if (icon) {
+
+			return `<img style="width: 16px; height: 16px;" src="${items.icon}" alt="icon" />`
 		} else {
+			
 			return `
 			<svg style="width:16px;height:16px;opacity:0.6;" viewBox="0 0 24 24"> <path fill="var(--grey)" d="M6,2A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2H6M6,4H13V9H18V20H6V4M8,12V14H16V12H8M8,16V18H13V16H8Z" /> </svg>`
 		}
@@ -78,12 +82,48 @@ export function databaseSelect(items) {
 	let icon = setIcon(items.icon);
 	
 	return `
-		<div class="web-icon">
+	<div class="n-select">
+		<div class="sv-item-icon">
 			${icon}
 		</div>
-		<div class="web-type">
+		<div class="sv-item-text">
 			${items.text}
+		</div>
 		</div>
 		`;
 }
+
+
+export function SimpleSelect(item: SvelecteOption, isSelected: boolean) {
+	console.log("Incoming data: ",item);
+	if (isSelected) {
+ 		return `<div class="n-select ${item.extras.color}">${item.text}</div>`;
+	} else {
+		return `<div class="n-select ${item.extras.color}">${item.text}</div>`;
+	}
+}
+
+export function NMultiSelect(item: SvelecteOption, isSelected: boolean) {
+	if (isSelected) {
+		return `
+		<div class="n-multi-select n-select ${item.extras.color}">${item.text}</div>`
+	} else {
+		return `
+		<div class="n-multi-select n-select ${item.extras.color}">${item.text}</div>`
+	}
+
+}
+
+export function NStatus(item, isSelected) {
+	if (isSelected) {
+		return `
+		<div class="n-select n-status ${item.extras.color}"><div class="status-dot ${item.extras.color}"></div>${item.text}</div>`
+	} else {
+		return `
+		<div class="n-select n-status ${item.extras.color}"><div class="status-dot"></div>${item.text}</div>`
+	}
+
+
+}
+
 
