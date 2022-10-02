@@ -1,7 +1,11 @@
+
+// GRP: General
 $app-colors: "grey", "blue", "red", "green", "invert";
 $notion-colors: (
 	"default""gray""brown""orange""yellow""green""blue""purple""pink""red"
 );
+
+// SECT: Box, Border, & Shadow
 
 @mixin flex($dir: row, $justify: flex-start, $align: center) {
 	display: flex;
@@ -9,6 +13,36 @@ $notion-colors: (
 	justify-content: $justify;
 	align-items: $align;
 }
+
+@mixin scrollbar() {
+	&::-webkit-scrollbar {
+		width: 0.5rem;
+		opacity: 0;
+		transition: 200ms ease-in-out;
+	}
+
+	&::-webkit-scrollbar-button {
+		height: 0px;
+	}
+
+	&::-webkit-scrollbar-thumb {
+		background: var(--bg-darker);
+		border-radius: 3px;
+		height: 3rem;
+	}
+
+	&:hover {
+		&::-webkit-scrollbar {
+			opacity: 1;
+		}
+	}
+}
+
+@mixin input-shadow() {
+	box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.02),  0 0 4px 0 rgba(0, 0, 0, 0.02) inset;;
+}
+
+// !SECT
 
 // SECT: TEXT
 
@@ -45,7 +79,7 @@ $notion-colors: (
 	font-family: var(--font-family);
 }
 
-// TODO: DELETE BELOW MIXINS IN FAVOR OF ABOVE
+// TODO: Transfer below to universal ui-text() mixin
 
 @mixin ui-text-default($color: var(--text-dark), $weight: 400) {
 	font-size: 0.875rem;
@@ -63,6 +97,7 @@ $notion-colors: (
 
 // !SECT
 
+// SECT: Animation
 @mixin hover-effect($color: var(--bg-dark)) {
 	transition: 0.2s ease-in-out;
 
@@ -90,29 +125,41 @@ $notion-colors: (
 	animation: click-#{$id} 0.2s ease-in-out;
 }
 
-@mixin scrollbar() {
-	&::-webkit-scrollbar {
-		width: 0.5rem;
-		opacity: 0;
-		transition: 200ms ease-in-out;
-	}
+@mixin pulse() {
+	@keyframes pulse {
+		0% {
+			transform: scale(1);
+			opacity: .7;
+		}
 
-	&::-webkit-scrollbar-button {
-		height: 0px;
-	}
+		50% {
+			transform: scale(1.05);
+			opacity: 0.4;
+		}
 
-	&::-webkit-scrollbar-thumb {
-		background: var(--bg-darker);
-		border-radius: 3px;
-		height: 3rem;
-	}
-
-	&:hover {
-		&::-webkit-scrollbar {
-			opacity: 1;
+		100% {
+			transform: scale(1);
+			opacity: .7;
 		}
 	}
+
+	animation: pulse 2s ease-in-out infinite;
 }
+
+// TODO: Delete below if still unused
+@keyframes on-initial {
+	0% {
+		opacity: 0;
+		transform: scale(0%);
+	}
+
+	100% {
+		opacity: 1;
+		transform: scale(100%);
+	}
+}
+// !SECT
+
 
 @mixin inputLabel() {
 	.input-label {
@@ -138,21 +185,14 @@ $notion-colors: (
 	}
 }
 
-@keyframes on-initial {
-	0% {
-		opacity: 0;
-		transform: scale(0%);
-	}
 
-	100% {
-		opacity: 1;
-		transform: scale(100%);
-	}
-}
+
+// SECT: Svelecte
 
 .svelecte {
 	width: 100%;
 
+	// GRP: Item
 	.sv-item {
 		@include ui-text-default(var(--text-dark), 500);
 		min-height: 1.5rem !important;
@@ -171,7 +211,7 @@ $notion-colors: (
 			padding: 0 !important;
 			height: 100%;
 			width: fit-content;
-			& > :first-child() {
+			& > :first-child {
 				padding: 0 0.5rem !important;
 				&.n-status {
 					padding: 0 0.75rem !important;
@@ -189,7 +229,8 @@ $notion-colors: (
 				}
 
 				.status-dot {
-					background-color: var(--notion-text-#{$color}) !important;
+					background-color: var(--notion-#{$color}) !important;
+					filter: brightness(0.6) saturate(2);
 				}
 
 				& > .sv-item-btn {
@@ -214,7 +255,7 @@ $notion-colors: (
 				padding: 1px 0 0 0 !important;
 				img,
 				svg {
-					padding: 0 0.25rem 0 0.25rem !important;
+					padding: 0 0.25rem 0 0 !important;
 				}
 			}
 	
@@ -227,7 +268,7 @@ $notion-colors: (
 					border-radius: 1rem;
 					height: 0.5rem !important;
 					width: 0.5rem !important;
-					margin: auto 0.25rem auto 0;
+					margin: auto 0.5rem auto 0;
 					padding: 0;
 				}
 			}
@@ -236,6 +277,7 @@ $notion-colors: (
 		.sv-item-btn {
 			border-radius: 0 !important;
 			background-color: var(--bg-dark) !important;
+			margin-left: -3px;
 
 			&:hover {
 				filter: brightness(1.03);
@@ -244,11 +286,13 @@ $notion-colors: (
 
 	}
 
+	// GRP: Input
 	.sv-control {
 		border: 1px solid var(--border-color) !important;
 		height: auto !important;
 		box-sizing: border-box;
 		width: 100%;
+		@include input-shadow();
 
 		.sv-content {
 			padding: 0.25rem !important;
@@ -266,18 +310,23 @@ $notion-colors: (
 		}
 	}
 
+	// GRP: Dropdown
 	.sv-dropdown {
 		margin-top: 0.25rem !important;
 		bottom: unset !important;
+		box-shadow: 0 0 2rem 0 rgba(0, 0, 0, 0.07) !important;
+
+
+
 		.sv-dropdown-scroll {
 			@include scrollbar();
-			padding: 0.25rem 0 !important;
+			padding: 0.5rem 0 !important;
 			overflow-y: auto !important;
-
+			max-height: 350px !important;
 			.sv-dropdown-content {
 				display: flex;
 				flex-direction: column;
-				row-gap: 0.25rem;
+				row-gap: 0.5rem;
 
 				.sv-item-content {
 					:first-child:not(.n-status) {
@@ -300,7 +349,7 @@ $notion-colors: (
 					@include ui-text(var(--text-light), 0.75rem, 500);
 				}
 				.sv-item {
-					margin-left: 0.25rem !important;
+					margin-left: 0.5rem !important;
 				}
 				.sv-dd-item-active {
 					background-color: var(--bg-dark) !important;
@@ -309,13 +358,19 @@ $notion-colors: (
 		}
 	}
 }
+// !SECT
 
+// SECT: Svelty Picker
 .form-control {
 	@include ui-text(var(--text-dark), 0.875rem, 500);
 	border: none;
 	border-radius: 0;
 	outline: none;
 	width: 100%;
+	height: 2rem;
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
 
 	&::placeholder {
 		@include ui-text(var(--text-light), 0.875, 500);
@@ -343,9 +398,11 @@ $notion-colors: (
 	top: 147px !important;
 	left: 55px !important;
 	font-family: var(--font-family) !important;
-	box-shadow: 0 0 2rem 0 rgba(0, 0, 0, 0.07)  !important;
+	box-shadow: 0 0 2rem 0 rgba(0, 0, 0, 0.07), 0 0 0 400px rgba(0,0,0,0.2)  !important;
 	border: 1px solid rgba(0,0,0,0.1) !important;
 	border-radius: 0.25rem !important;
+	height: fit-content;
+	box-sizing: border-box;;
 	.sdt-timer {
 		width: 280px !important;
 		.sdt-hand-circle {
@@ -376,7 +433,9 @@ $notion-colors: (
 	.sdt-cal-td {
 		transform: translateY(-7px) !important;
 	}
-
+	.sdt-clock {
+		background: hsl(200, 35%, 97%) !important;
+	}
 	.std-btn-header {
 		padding: 0 0.5rem !important;
 		&:hover {
@@ -389,8 +448,9 @@ $notion-colors: (
 	}
 	.std-btn-row {
 		@include flex(row !important, center, center);
-		margin: 0 0.25rem;
+		padding: 0.5rem 0.25rem 0 0.25rem;
 		column-gap: 0.5rem;
+		box-sizing: border-box;
 		button {
 			@include ui-text(var(--text-dark), 0.875rem, 500);
 			flex-grow: 1;

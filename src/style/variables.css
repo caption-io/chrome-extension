@@ -22,7 +22,8 @@ font-family: var(--font-family) !important;
 .light-mode {
 	--bg: #FFFFFF;
 	--bg-dark: hsl(200, 35%, 97%);
-	--bg-darker: hsl(208, 30%, 94%);
+	--bg-darkish: hsl(200, 35%, 99%);
+	--bg-darker: hsl(208, 30%, 95%);
 	--bg-darkest: hsl(208, 10%, 87%);
 	--white: #FFFFFF;
 
@@ -44,6 +45,12 @@ font-family: var(--font-family) !important;
 	--red-light: #ffd6da;
 	--red-mid: #ff858f;
 	--red-dark: #330004;
+
+	--yellow: #ffcc00;
+	--yellow-light: #fff2cc;
+	--yellow-mid: #ffe066;
+	--yellow-dark: #332c00;
+	
 
 	--green: #20cc67;
 	--green-light: #d3f8e2;

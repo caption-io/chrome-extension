@@ -7,12 +7,13 @@
 
 	// IMPT: Local
 	import { GetAllDatabases } from "../scripts/api-endpoints";
-	import { selectedFlow, tooltip } from "../scripts/stores";
+	import { selectedFlow, flows } from "../scripts/stores";
 	import {
 		updateFlow,
 		deleteFlow,
 		updateFlowName,
-		updateFlowTags
+		updateFlowTags,
+		getFlows,
 	} from "../scripts/chrome-storage";
 	import { WithIcon } from "../scripts/svelecte-renderers";
 	import { clickAnimation } from "../scripts/ui-utils";
@@ -21,10 +22,23 @@
 	import { createEventDispatcher } from "svelte";
 	import Svelecte, { addFormatter } from "svelecte";
 	import { fade } from "svelte/transition";
-	import { isEqual, omit } from "lodash-es";
+	import { flow, isEqual, omit } from "lodash-es";
 
 	// VARS: Variable Setter Functions
-	const getDbs = async () => await GetAllDatabases();
+	const getDbs = async () =>
+		await GetAllDatabases().then((res) => {
+			if ($selectedFlow.defaultDatabase) {
+				for (let r in res) {
+					if ($selectedFlow.defaultDatabase.id === res[r].id) {
+						selectedFlow.set({
+							...$selectedFlow,
+							defaultDatabase: res[r],
+						});
+					}
+				}
+			}
+			return res;
+		});
 	const dispatch = createEventDispatcher();
 
 	// VARS: Props
@@ -32,22 +46,24 @@
 	export let id: FlowData["id"];
 	export let defaultDatabase: DefaultDatabase;
 	export let tags: FlowData["tags"];
-	export let sFlow: FlowData;
+	export let captureCount: FlowData["captureCount"];
+	export let storedFlow: FlowData;
 
 	// VARS: Local
 	let databases = getDbs();
-	let flowData = {
+	let flowData: FlowData = {
 		name: name,
 		id: id,
 		defaultDatabase: defaultDatabase,
 		tags: tags,
-		favorite: false
+		favorite: false,
+		captureCount: captureCount,
 	};
 	let changesPending: boolean = false;
 	let showSettings: boolean = false;
 	let confirmDelete: boolean = false;
 	let selectedDatabase = flowData.defaultDatabase
-		? flowData.defaultDatabase.value
+		? flowData.defaultDatabase
 		: null;
 	let nameInput: HTMLInputElement;
 	let props;
@@ -56,37 +72,41 @@
 
 	// FUNC: Start
 
-	// check that the the default DB is still valid
-	(async (defaultDatabase) => {
-		defaultDatabase
-			? (async () => {
-					for await (let database of (await databases)) {
-						if (database.value === defaultDatabase.value) {
-							flowData.defaultDatabase = database;
-							break;
-						} else flowData.defaultDatabase = null;
-					}
-			  })()
-			: null;
-	})(flowData.defaultDatabase);
+	// (async () => {
+	// 	if (flowData.defaultDatabase) {
+	// 		for  (database of await databases) {
+	// 			if (database.id === flowData.defaultDatabase.id) {
+	// 				selectedDatabase = database;
+	// 			}
+	// 		}
+	// 	}
+
+	// })();
 
 	// FUNC: Listeners
 
 	// watch for user changes to Flow vs the stored Flow
 	$: ((f, s) => {
-		if (
-			isEqual(
-				omit(f, ["defaultDatabase.icon", "text", "defaultDatabase.extras.props[...].icon"]),
-				omit(s, ["defaultDatabase.icon", "text", "defaultDatabase.extras.props[...].icon"])
-			)
+		console.log("f", f);
+		console.log("s", s);
+		if (!f.defaultDatabase && !s.defaultDatabase) {
+			changesPending = false;
+		} else if (!f.defaultDatabase && s.defaultDatabase) {
+			changesPending = true;
+		} else if (f.defaultDatabase && !s.defaultDatabase) {
+			changesPending = true;
+		} else if (
+			f.defaultDatabase &&
+			s.defaultDatabase &&
+			isEqual(f.defaultDatabase.name, s.defaultDatabase.name)
 		) {
 			changesPending = false;
 		} else changesPending = true;
-	})(flowData, $selectedFlow);
+	})(flowData, storedFlow);
 
 	// set properties when new Notion database is selected
-	$: ((fd) => {
-		fd.defaultDatabase ? (props = fd.defaultDatabase.extras.props) : null;
+	$: ((fd: FlowData) => {
+		fd.defaultDatabase ? (props = fd.defaultDatabase.props) : null;
 	})(flowData);
 
 	// FUNC: Event Handlers
@@ -107,12 +127,13 @@
 	};
 
 	const saveTags = () => {
-		updateFlowTags(flowData).then(() => {
-		});
+		updateFlowTags(flowData).then(() => {});
 	};
 
 	const deleteCurrentFlow = () => {
-		deleteFlow(flowData.id).then(() => selectedFlow.set(null));
+		deleteFlow(flowData.id).then(() => {
+		selectedFlow.set(null);
+		});
 	};
 
 	const handleFlowOptionClick = (e) => {
@@ -125,17 +146,24 @@
 			showSettings = false;
 		} else if (e.detail.text === "favorite") {
 			if (flowData.tags !== null) {
-			flowData.tags.includes("favorite")
-				? (flowData.tags = flowData.tags.filter((tag) => tag !== "favorite"))
-				: flowData.tags.push("favorite");
+				flowData.tags.includes("favorite")
+					? (flowData.tags = flowData.tags.filter((tag) => tag !== "favorite"))
+					: flowData.tags.push("favorite");
 			} else flowData.tags = ["favorite"];
 			saveTags();
 		}
 	};
 
+	// const loadFlows = async () =>
+	// 	await getFlows().then((res) => {
+	// 		flows.set(res);
+	// 		return res;
+	// 	});
+
 	// set selected flow to null to return to the flow list
 	const goBack = () => selectedFlow.set(null);
 
+	console.log(selectedDatabase);
 	addFormatter("dbSelect", WithIcon);
 </script>
 
@@ -174,10 +202,6 @@
 				showSettings = !showSettings;
 				clickAnimation(e, "default");
 			}}
-			on:mouseenter={() => {
-				tooltip.set({ show: true, text: "Flow Settings" });
-			}}
-			on:mouseleave={() => tooltip.set({ show: false, text: "" })}
 		/>
 		{#if showSettings}
 			<div class="flow-settings">
@@ -227,6 +251,7 @@
 						position="left"
 						color="grey"
 						light={true}
+						on:click={() => (databases = getDbs())}
 					/>Refresh
 				</div>
 			</div>
@@ -235,35 +260,45 @@
 			{#await databases}
 				<Svelecte options={[]} placeholder="Loading..." disabled={true} />
 			{:then dbs}
-			{#key dbs}
-				<Svelecte
-					options={dbs}
-					renderer="dbSelect"
-					bind:value={selectedDatabase}
-					bind:readSelection={flowData.defaultDatabase}
-					placeholder="Select a database"
-					searchable={true}
-				/>
-			{/key}
+				{#key dbs}
+					<Svelecte
+						options={dbs}
+						renderer="dbSelect"
+						bind:value={flowData.defaultDatabase}
+						placeholder="Select a database"
+						searchable={true}
+						valueAsObject={true}
+						clearable={true}
+					/>
+				{/key}
 			{/await}
 		</div>
 	</div>
 	{#if flowData.defaultDatabase}
 		{#await databases}
-			<div class="loading">Loading...</div>
+			<div class="waiting loading" in:fade={{ duration: 200, delay: 200 }}>
+				<div class="title">Loading...</div>
+			</div>
 		{:then dbs}
 			{#key props}
 				<Props options={props} />
 			{/key}
 		{/await}
 	{:else}
-		<div class="no-db-selected">
-			<h3>No database selected</h3>
-			<p>Select a database to view its properties.</p>
+		<div class="waiting" in:fade={{ duration: 200, delay: 200 }}>
+			<div class="title">No database selected</div>
+			<div class="subtitle">Select a database to view its properties.</div>
 		</div>
 	{/if}
 	<div class="flow-footer">
-		<Button value="Capture" style="primary" size="big" color="blue" icon="back" iconPosition="right" />
+		<Button
+			value="Capture"
+			style="primary"
+			size="big"
+			color="blue"
+			icon="inbox"
+			iconPosition="right"
+		/>
 	</div>
 	{#if confirmDelete}
 		<div
@@ -303,12 +338,30 @@
 		flex-direction: column;
 		box-sizing: border-box;
 		width: 100%;
-		background: var(--bg);
+		background: var(--bg-darkish);
 		height: 600px;
 		.database-select {
 			padding: 0 0.75rem 0.75rem 0.75rem;
 			background-color: var(--bg-dark);
-			border-bottom: 1px solid var(--border-color-light);
+			border-bottom: 1px solid var(--border-color);
+			box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.03) ;
+			z-index: 11;
+		}
+		.waiting {
+			@include flex(column, center, center);
+			@include ui-text(var(--text-light), 1rem, 600);
+			height: 100%;
+			width: 100%;
+			.title {
+				@include ui-text(var(--text-light), 1rem, 600);
+				margin-bottom: 0.5rem;
+			}
+			.subtitle {
+				@include ui-text(var(--text-light), 1rem, 400);
+			}
+			&.loading {
+				@include pulse();
+			}
 		}
 	}
 	.flow-footer {
@@ -321,6 +374,11 @@
 		margin: auto 0 0 0;
 		cursor: pointer;
 		transition: 0.2s ease;
+		box-shadow: 0 -10px 20px 0 rgba(0, 0, 0, 0.06) ;
+		z-index: 11;
+		border-top: 1px solid var(--border-color);
+
+
 		&:hover {
 			filter: brightness(1.1);
 		}
@@ -369,6 +427,7 @@
 		padding: 0.75rem 0.75rem 1.25rem 0.75rem;
 		margin: 0;
 		background: var(--bg-dark);
+
 		> h2 {
 			margin: 0 auto 0 0;
 			padding: 0;
@@ -422,6 +481,7 @@
 		align-items: center;
 		justify-content: center;
 		overflow: visible;
+		z-index: 20;
 		.delete-modal-content {
 			background-color: var(--bg);
 			padding: 1.5rem;

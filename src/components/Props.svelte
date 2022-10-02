@@ -14,8 +14,11 @@
 	} from "../scripts/svelecte-renderers";
 	import { queryDatabase } from "../scripts/api-endpoints";
 	import { isFullPage } from "@notionhq/client";
+	import {fade} from 'svelte/transition';
 
-	export let options: SvelecteOption[];
+	export let options: NotionProp[];
+	export let values: NotionProp[] = options;
+
 
 	let selects = ["select", "multi_select", "status"];
 	let textInputs = [
@@ -25,7 +28,7 @@
 		"email",
 		"phone_number",
 		"url",
-		"file",
+		"files",
 	];
 	let readOnly = [
 		"formula",
@@ -39,6 +42,9 @@
 
 	const propDefaultSort = [
 		"title",
+		"url",
+		"pageIcon",
+		"coverImage",
 		"select",
 		"multi_select",
 		"checkbox",
@@ -47,7 +53,6 @@
 		"number",
 		"people",
 		"files",
-		"url",
 		"email",
 		"phone_number",
 		"relation",
@@ -60,9 +65,17 @@
 		"rollup",
 	];
 
-	// if any sv-dropdowns are not completely visible, scroll to them
+	// sort options by propDefaultSort
+	options.sort((a, b) => {
+		return (
+			propDefaultSort.indexOf(a.type) -
+			propDefaultSort.indexOf(b.type)
+		);
+	});
 	
-		
+	const isIcon = (p: NotionPropTypes | Icons): p is Icons => {
+		return (p as Icons) !== undefined;
+	}
 
 	addFormatter("select", SimpleSelect);
 	addFormatter("multiselect", NMultiSelect);
@@ -70,36 +83,36 @@
 </script>
 
 <div class="main props-main">
-	{#each options as option (option.value)}
-		{@const propType = option.extras.type}
-		{#if !readOnly.includes(propType)}
+	{#each options as option (option.id)}
+		{#if !readOnly.includes(option.type)}
 			<div class="prop-container">
 				<div class="prop-input">
-					{#if selects.includes(propType)}
+					{#if selects.includes(option.type)}
 						<Select
-							options={option.extras.options}
-							type={propType}
-							labelText={option.text}
-							labelIcon={propType}
+							options={option.options}
+							type={option.type}
+							labelText={option.name}
+							labelIcon={isIcon(option.type) ? option.type : null}
 							clearable={true}
 							
 						/>
-					{:else if textInputs.includes(propType)}
+					{:else if textInputs.includes(option.type)}
 						<TextInput
-							type={propType}
-							labelText={option.text}
-							labelIcon={propType}
-							value=""
+							type={option.type}
+							option={option}
+							labelText={option.name}
+							labelIcon={isIcon(option.type) ? option.type : null}
+							bind:value={values[values.findIndex(o => o.name === option.name)].storedValue}
 						/>
-					{:else if propType === "checkbox"}
+					{:else if option.type === "checkbox"}
 						<div class="checkbox">
 							<input type="checkbox" />
-							<label>{option.text}</label>
+							<label>{option.name}</label>
 						</div>
-						{:else if propType === "date"}
-						<DateTime type="datetime" labelIcon={propType} labelText={option.text} includeEnd={true} />
+						{:else if option.type === "date"}
+						<DateTime type="datetime" labelIcon={option.type} labelText={option.name} includeEnd={true} />
 					{:else}
-						<div class="prop-type">{propType}</div>
+						<div class="prop-type" in:fade={{duration: 400, delay: 200}}>{option.type}</div>
 					{/if}
 				</div>
 			</div>

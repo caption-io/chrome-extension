@@ -22,45 +22,35 @@ export async function queryDatabase(databaseId: string, filterInput?, sortInput?
 
 const propFormatter = (result: DatabaseObjectResponse, prop: string) => {
 	const propOptions = result.properties[prop][result.properties[prop].type]
-	let props
+	let props: NotionSelectOption[] | NotionStatusOption[];
 	if (result.properties[prop].type === "select") {
-		props = propOptions.options.map(option => {
+		props = propOptions.options.map((option) :NotionSelectOption => {
 			return {
-				text: option.name,
-				value: option.id,
-				extras: {
-					color: option.color
-				}
+				name: option.name,
+				id: option.id,
+				color: option.color
 			}
 		})
 	} else if (result.properties[prop].type === "multi_select") {
-		props = propOptions.options.map(option => {
+		props = propOptions.options.map((option: NotionSelectOption) => {
 			return {
-				text: option.name,
-				value: option.id,
-				extras: {
-					color: option.color
-				}
+				name: option.name,
+				id: option.id,
+				color: option.color
 			}
 		})
 	} else if (result.properties[prop].type === "status") {
-		let statusProps = propOptions.options.map(option => {
+		let statusProps = propOptions.options.map((option): NotionSelectOption => {
 			return {
-				text: option.name,
-				value: option.id,
-				extras: {
-					color: option.color
-				}
+				name: option.name,
+				id: option.id,
+				color: option.color
 			}
 		})
-		
-		/*
-		for each group in propOptions.groups, create a an array with objects that have the group name as the groupHeader: and all statusProps whos value exists in propOptions.groups.option_ids
-		*/
 		props = propOptions.groups.map(group => {
 			return {
 				groupHeader: group.name,
-				items: statusProps.filter(prop => group.option_ids.includes(prop.value))
+				options: statusProps.filter(prop => group.option_ids.includes(prop.id))
 			}
 		})
 	}
@@ -80,10 +70,10 @@ export async function GetAllDatabases() {
 			return true
 		})
 	})
-	const formattedResponse: SvelecteOption[] = response.map((result: DatabaseObjectResponse) => {
+	const formattedResponse: NotionDatabase[] = response.map((result: DatabaseObjectResponse): NotionDatabase => {
 		return {
-			text: result.title.length > 0 ? result.title[0].plain_text : "Untitled",
-			value: result.id,
+			name: result.title.length > 0 ? result.title[0].plain_text : "Untitled",
+			id: result.id,
 			icon: !result.icon ? null
 				: result.icon.type === "emoji"
 					? result.icon.emoji
@@ -92,22 +82,39 @@ export async function GetAllDatabases() {
 						: result.icon.type === "external"
 							? result.icon.external.url
 							: null,
-			extras: {
-				props: Object.keys(result.properties).map(prop => {
-					return {
-						text: prop,
-						value: result.properties[prop].id,
-						extras: {
-							type: result.properties[prop].type,
-							options: propFormatter(result, prop)
-						}
+			props: Object.keys(result.properties).map(prop => {
+				return {
+					name: prop,
+					id: result.properties[prop].id,
+					storedValue: '',
+					type: result.properties[prop].type,
+					options: propFormatter(result, prop),
+					visible: false
+				}
+			}),
+			raw: result
 
-					}
-				}),
-				raw: result
-			}
 		}
 	})
+	// push a pageIcon and coverImage prop entry to each database
+	formattedResponse.forEach((database) => {
+		database.props.push({
+			name: "Page Icon",
+			id: "pageIcon",
+			storedValue: '',
+			type: "coverImage",
+			visible: true
+		})
+		database.props.push({
+			name: "Cover Image",
+			id: "coverImage",
+			storedValue: '',
+			type: "pageIcon",
+			visible: false
+		})
+	})
+
+
 	console.log("Formatted Response: ", formattedResponse)
 	return formattedResponse
 }

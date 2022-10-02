@@ -79,6 +79,7 @@
 		box-shadow: 0 0 2rem 0 rgba(0, 0, 0, 0.07);
 		background: var(--bg);
 		padding: 0.25rem;
+		z-index: 99;
 		.divider {
 			height: 1px;
 			background: var(--border-color-light);

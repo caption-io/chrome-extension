@@ -10,25 +10,28 @@ document.addEventListener('DOMContentLoaded', loadPopup)
 
 
 
-function scrollToElement(element) {
+function scrollToElement(element: Node) {
 	// if element is not completely visible in .props-main, smoothly scroll container .props-main to make it visible
 
 	const container = document.querySelector('.props-main')
 	const containerRect = container.getBoundingClientRect()
-	const elementRect = element.getBoundingClientRect()
+	const elementRect = element instanceof Element ? element.getBoundingClientRect() : null
+	if (container.contains(element)) {
 
-	if (elementRect.top < containerRect.top) {
-		container.scrollTo({
-			top: elementRect.top - containerRect.top + container.scrollTop + 16,
-			behavior: 'smooth'
-		})
-	} else if (elementRect.bottom > containerRect.bottom) {
-		container.scrollTo({
-			top: elementRect.bottom - containerRect.bottom + container.scrollTop + 16,
-			behavior: 'smooth'
-		})
+		if (elementRect.top < containerRect.top) {
+			container.scrollTo({
+				top: elementRect.top - containerRect.top + container.scrollTop + 16,
+				behavior: 'smooth'
+			})
+		} else if (elementRect.bottom > containerRect.bottom) {
+			container.style.transition = '0ms'
+			container.style.padding = (`0 0 ${elementRect.bottom - containerRect.bottom + 16}px 0`)
+			container.scrollTo({
+				top: elementRect.bottom - containerRect.bottom + container.scrollTop + 16,
+				behavior: 'smooth'
+			})
+		}
 	}
-
 	// if element bottom is at the bottom of the container, add bottom padding to container
 
 }
@@ -49,8 +52,11 @@ const observer = new MutationObserver((mutations) => {
 		} else if (mutation.type === 'attributes') {
 			if (mutation.target.classList.contains('sv-dropdown') && mutation.target.getAttribute('aria-expanded') === 'true') {
 				scrollToElement(mutation.target)
+			} else {
+				document.querySelector('.props-main').style.transition = '200ms ease'
+				document.querySelector('.props-main').style.padding = '0 0 0.5rem 0'
 			}
-		}
+		} 
 	})
 })
 

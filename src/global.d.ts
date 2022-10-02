@@ -19,19 +19,60 @@ declare type Icons = import('./icons').AppIcons
 declare type ButtonStyles = "primary" | "secondary" | "outline" | "simple" | "disabled"
 
 declare type SvelecteRenderer = "simple" | "with_icon" | "multi" | "data" | "select" | "multi_select" | "status"
-declare type SvelecteOption = {
-	text: string,
-	value: string,
-	icon?: Icons | string | (() => string),
-	extras?: {
-		props?: SvelecteOption[],
-		type?: PropertyItemPropertyItemListResponse[property_item.type],
-		options?: (() => SvelecteOption) | SvelecteOption,
-		color?: string,
-		group?: string,
-		raw?: any
-	}
+
+declare type NotionColors = "default" | "gray" | "brown" | "orange" | "yellow" | "green" | "blue" | "purple" | "pink" | "red"
+
+declare type NotionProp = {
+	name: string
+	id: string
+	type: NotionPropTypes
+	storedValue: string
+	options?: NotionSelectOption[] | NotionStatusOption[]
+	visible: boolean
 }
+
+declare type NotionSelectOption = {
+	name: string
+	id: string
+	color: NotionColors
+}
+
+declare type NotionStatusOption = {
+	groupHeader: "string"
+	options: NotionSelectOption[]
+}
+
+declare type NotionPropTypes = "title" |
+	"select" |
+	"multi_select" |
+	"checkbox" |
+	"date" |
+	"rich_text" |
+	"number" |
+	"people" |
+	"files" |
+	"url" |
+	"email" |
+	"phone_number" |
+	"relation" |
+	"status" |
+	"formula" |
+	"created_time" |
+	"last_edited_time" |
+	"created_by" |
+	"last_edited_by" |
+	"rollup" |
+	"pageIcon" |
+	"coverImage"
+
+declare type NotionDatabase = {
+	name: string
+	id: string
+	icon?: Icons | string | (() => string),
+	props?: NotionProp[],
+	raw?: any
+}
+
 declare type ContextMenuOptions = {
 	label: string,
 	message: string,
@@ -42,7 +83,8 @@ declare type ContextMenuOptions = {
 
 // TODO: Type this better
 declare type DefaultDatabase = SvelecteOption | (() => SvelectOption) & {
-	extras: {
+	text: string,
+	value: {
 		props: SvelecteOption[]
 	}
 }
@@ -61,21 +103,15 @@ declare type UserBrowserStorage = {
 declare type FlowData = {
 	name: string
 	id: string
-	defaultDatabase: DefaultDatabase
+	defaultDatabase: NotionDatabase
 	tags: string[] | null
 	favorite: boolean
-} | null
-
-declare type UserSettings = {
-	defaultFlow: FlowData[id] | null,
-	colorMode: 'light' | 'dark',
-	notionToken: string | null
+	captureCount: number
 }
 
-// GRP: Notion Stuff
-declare type NotionColors = "default" | "gray" | "brown" | "orange" | "yellow" | "green" | "blue" | "purple" | "pink" | "red"
-declare type NotionMultiSelectOption = {
-	id: string,
-	name: string,
-	color: NotionColors
+declare type UserSettings = {
+	defaultPopupFlow: FlowData[id],
+	defaultHighlightFlow: FlowData[id]
+	colorMode: 'light' | 'dark',
+	notionToken: string
 }

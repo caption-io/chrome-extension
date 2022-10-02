@@ -64,7 +64,7 @@
 		{/if}
 		{#if value && icon && iconPosition === "right"}
 			{value}
-			<Icon name={icon} {size} {color} position={iconPosition} {disabled} />
+			<Icon name={icon} {size} color={style === "primary" ? "invert" : color} position={iconPosition} {disabled} />
 		{/if}
 	</button>
 </div>

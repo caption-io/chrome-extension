@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Organizer from "./Organizer.svelte";
 	import Auth from "./Auth.svelte";
-	import { webData, colorMode, settings } from "../scripts/stores";
+	import { webData, settings } from "../scripts/stores";
 	import { getSettings } from "../scripts/chrome-storage";
 
 	let userLoggedIn: boolean = false;
@@ -47,7 +47,7 @@
 	// });
 </script>
 
-<div class={`container ${$colorMode}`}>
+<div class={`container ${$settings.colorMode}-mode`}>
 	{#if !userLoggedIn}
 		<Auth />
 	{:else}

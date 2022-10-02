@@ -1,61 +1,106 @@
 <script lang="ts">
-    import Icon from './Icon.svelte';
+	import Tooltip from "./Tooltip.svelte";
+	import Icon from "./Icon.svelte";
+  import { replace } from "lodash-es";
+  import {fade} from 'svelte/transition';
+  import Select from "./Select.svelte";
 
-    export let placeholder: string = 'placeholder not set';
+	export let placeholder: string = "";
 	export let type: string;
-    export let inputIcon: Icons | null = null;
-    export let labelText: string = null;
-    export let labelIcon: Icons = null;
-    export let value: string;
+	export let inputIcon: Icons | null = null;
+	export let labelText: string = null;
+	export let labelIcon: Icons = null;
+	export let value: string;
+	export let option: NotionProp = null;
+	export let webDataSelect: boolean = false;
 
-    let focused: boolean = false;
+	const inputType =
+		type === "text" || type === "title"
+			? "text"
+			: type === "phone_number"
+			? "tel"
+			: type === "email"
+			? "email"
+			: type === "url" || type === "files"
+			? "url"
+			: type === "number"
+			? "number"
+			: type === "password"
+			? "password"
+			: "text";
+
+	let focused: boolean = false;
+	let invalid: boolean = false;
+
+	function typeAction(node) {
+		node.type = inputType;
+	}
+
+	function validCheck(el) {
+		invalid = el.target.validity.typeMismatch;
+	}
 </script>
 
-<div class="main">
-    {#if labelText}
-        <div class="input-label">
-            {#if labelIcon}
-                <Icon name={labelIcon} size="med" position="left" color="grey" light={true} link={false} />
-            {/if}
-            <div class="label-text">
+<div class="main" in:fade={{duration: 400, delay: 200}}>
+	{#if labelText}
+		<div class="input-label">
+			{#if labelIcon}
+				<Icon
+					name={labelIcon}
+					size="med"
+					position="left"
+					color="grey"
+					light={true}
+					link={false}
+				/>
+			{/if}
+			<label for={option.id} class="label-text">
 				<h3>{labelText}</h3>
-			</div>
-        </div>
-    {/if}
-    <div class={`input-container ${focused ? ' focused' : ''}`}>
-        {#if inputIcon}
-            <Icon
-                name={inputIcon}
-                color={'grey'}
-                position="left"
-            />
-        {/if}
-        <input
-            class="text-input"
-            type="text"
-            bind:value
+			</label>
+		</div>
+	{/if}
+	<div class={`input-container${focused ? " focused" : ""}${invalid && focused ? ' invalid' : ''}`}>
+		{#if webDataSelect}
+		<Select  
+		{#if inputIcon}
+			<Icon name={inputIcon} color={"grey"} position="left" />
+		{/if}
+		<input
+			name={option.id}
+			class="text-input"
+			use:typeAction
+			bind:value
 			wrap="soft"
-            {placeholder}
-            on:focus={() => (focused = true)}
-            on:blur={() => (focused = false)}
-        />
-    </div>
+			{placeholder}
+			on:focus={() => (focused = true)}
+			on:blur={() => (focused = false)}
+			on:input={(e) => validCheck(e)}
+		/>
+	</div>
+	{#if invalid && focused}
+		<Tooltip
+			value={inputType === "url" ? "May not be a valid URL" : `May not be a valid ${option.type.replace(/_/g, " ")}.`}
+			position="bottom-right"
+			show={invalid}
+		/>
+	{/if}
 </div>
 
 <style lang="scss">
-    @use '../../style/global' as *;
+	@use "../../style/global" as *;
 
-    .main {
+	.main {
 		@include flex(column, flex-start, flex-start);
 		@include inputLabel();
 		width: 100%;
-        .input-container {
-            @include flex(row, flex-start, center);
-            min-height: 2.25rem;
-            border: 1px solid var(--border-color);
-			box-shadow: 0 0 0 0px var(--blue-200);
-            border-radius: 4px;
-            box-sizing: border-box;
+		position: relative;
+		.input-container {
+			@include flex(row, flex-start, center);
+			min-height: 2.25rem;
+			border: 1px solid var(--border-color);
+			@include input-shadow();
+			border-radius: 4px;
+			box-sizing: border-box;
 			padding: 0 0.5rem;
 			background: var(--white);
 			transition: 200ms;
@@ -64,23 +109,28 @@
 				box-shadow: 0 0 0 3px var(--blue-light);
 				border: 1px solid var(--blue);
 			}
-            .text-input {
-                width: 100%;
-                outline: none;
-                border: none;
-                background: transparent;
-                font-family: var(--font-family);
-                font-weight: 400;
+			&.invalid {
+				box-shadow: 0 0 0 3px var(--yellow-light);
+				border: 1px solid var(--yellow);
+			}
+			.text-input {
+				width: 100%;
+				outline: none;
+				border: none;
+				background: transparent;
+				font-family: var(--font-family);
+				font-weight: 400;
 				font-size: 0.875rem;
 				min-height: 36px;
-                &.colored {
-                    color: var(--blue-dark);
-                }
-                &::placeholder {
-                    color: var(--blue-800);
-                    opacity: 0.75;
-                }
-            }
-        }
-    }
+
+				&.colored {
+					color: var(--blue-dark);
+				}
+				&::placeholder {
+					color: var(--blue-800);
+					opacity: 0.75;
+				}
+			}
+		}
+	}
 </style>

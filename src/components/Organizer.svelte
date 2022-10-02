@@ -1,13 +1,13 @@
 <script context="module" lang="ts">
 </script>
+
 <!-- SECT: SCRIPT -->
 <script lang="ts">
 	// IMPT: Packages
-	import { dndzone, SOURCES, TRIGGERS } from "svelte-dnd-action";
+	import { dndzone } from "svelte-dnd-action";
 	import { fly, fade } from "svelte/transition";
 	import { flip } from "svelte/animate";
 	import { nanoid } from "nanoid";
-	import { filter, groupBy, includes } from "lodash-es";
 
 	// IMPT: Components
 	import Button from "./ui/Button.svelte";
@@ -23,14 +23,18 @@
 		findFlowById,
 		getSettings,
 	} from "../scripts/chrome-storage";
-
+	import {
+		handleDndConsider,
+		handleDndFinalize,
+		startDrag,
+		handleKeyDown,
+	} from "../scripts/ui-utils";
+	import { includes } from "lodash-es";
 	// VARS: Local
 	let activeFlow = null;
 	let items;
 	let itemsSearch;
 	let userSettings: UserSettings;
-	let dragDisabled = true;
-	const flipDurationMs = 200;
 	let flowId = "first!";
 	let searchQuery: string | null = null;
 	const newFlow: FlowData = {
@@ -39,7 +43,13 @@
 		defaultDatabase: null,
 		tags: null,
 		favorite: false,
+		captureCount: 0,
 	};
+	let flipDurationMs = 300;
+
+	function handleSort(e) {
+		flows.set(e.detail.items);
+	}
 
 	$: ((items) => {
 		newFlow.id = nanoid(16);
@@ -51,6 +61,7 @@
 	const loadFlows = async () =>
 		await getFlows().then((res) => {
 			flows.set(res);
+			console.log("Flows loaded: ", res);
 			return res;
 		});
 
@@ -64,9 +75,9 @@
 	const createFlow = async () => await newFlows(newFlow).then(loadFlows);
 
 	// FUNC: Set Selected Flow
-	const setSelectedFlow = async (id) => {
+	const setSelectedFlow = async (flow) => {
 		loadFlows();
-		selectedFlow.set(await findFlowById(id));
+		selectedFlow.set(flow);
 	};
 
 	//! FUNCS
@@ -76,17 +87,15 @@
 	loadSettings();
 
 	selectedFlow.subscribe((flow) => (activeFlow = flow));
+	flows.subscribe((flows) => (items = flows));
 
-	$: itemsSearch = $flows.filter(flow => {
+	$: itemsSearch = $flows.filter((flow) => {
 		if (searchQuery)
 			return flow.name.toLowerCase().includes(searchQuery.toLowerCase());
-			else return true;
+		else return true;
 	});
 
 	// $: items = groupBy(itemsSearch, "tags");
-	$: items = $flows;
-	$: itemTags = Object.keys(groupBy(items, "tags"));
-
 	settings.subscribe((settings) => {
 		userSettings = settings;
 	});
@@ -95,49 +104,12 @@
 		for (let key in changes) {
 			if (key === "flows") {
 				loadFlows();
+				console.log("Flows changed in browser storage");
 			}
 		}
 	});
-
-	// FUNCS: Event Handlers
-
-	function handleDndConsider(e) {
-		const {
-			items: newItems,
-			info: { source, trigger },
-		} = e.detail;
-		items = newItems;
-		if (source === SOURCES.KEYBOARD && trigger === TRIGGERS.DRAG_STOPPED) {
-			dragDisabled = true;
-		}
-	}
-
-	function handleDndFinalize(e) {
-		const {
-			items: newItems,
-			info: { source, trigger },
-		} = e.detail;
-		items = newItems;
-		if (source === SOURCES.POINTER) {
-			dragDisabled = true;
-		}
-		browser.storage.local.set({ flows: items });
-	}
-
-	function startDrag(e) {
-		e.preventDefault();
-		dragDisabled = false;
-	}
-
-	function handleKeyDown(e) {
-		if ((e.key === "Enter" || e.key === " ") && dragDisabled)
-			dragDisabled = false;
-	}
-
-	//! FUNCS
-
-
 </script>
+
 <!-- !SECT -->
 
 <!-- SECT: MARKUP -->
@@ -157,46 +129,72 @@
 				placeholder="Search"
 				bind:value={searchQuery}
 				inputIcon="search"
+				type="text"
+				option={{ name: "Search", id: "uniSearch" }}
 			/>
 		</div>
 		{#if items.length !== 0}
-				<section
-					use:dndzone={{ items, dragDisabled, flipDurationMs }}
-					on:consider={(e) => handleDndConsider(e)}
-					on:finalize={(e) => handleDndFinalize(e)}
-					class="flow-list"
-				>
-					{#each items as flow (flow.id)}
-					
-							<div
-								class="flow-item"
-								animate:flip={{ duration: flipDurationMs }}
-								in:fade={{ duration: 200 }}
-								on:click={() => setSelectedFlow(flow.id)}
-							>
-								<div
-									tabindex={dragDisabled ? 0 : -1}
-									aria-label="drag-handle"
-									class="handle"
-									style={dragDisabled ? "cursor: grab" : "cursor: grabbing"}
-									on:mousedown={startDrag}
-									on:touchstart={startDrag}
-									on:keydown={handleKeyDown}
-								>
-									<Icon
-										name="grab_handle"
-										color="grey"
-										size="med"
-										link={false}
-										light={true}
-									/>
-								</div>
+			<div class="flow-list">
+				{#each items as flow (flow.id)}
+					{#if $flows.includes(flow)}
+						<div
+							class="flow-item"
+							in:fade={{ duration: 200 }}
+							on:click={() => setSelectedFlow(flow)}
+						>
+							<div class="handle">
+								<Icon
+									name="grab_handle"
+									color="grey"
+									size="med"
+									link={false}
+									light={true}
+								/>
+							</div>
+							<div class="flow-info">
 								<div class="flow-name">
 									{flow.name}
 								</div>
+								<div class="flow-defaultdb">
+									{#if flow.defaultDatabase}
+										<div class="flow-defaultdb-icon">
+											{#if flow.defaultDatabase.icon}
+												<img
+													src={flow.defaultDatabase.icon.toString()}
+													alt="icon"
+												/>
+											{:else}
+												<Icon
+													name="doc"
+													size="small"
+													color="grey"
+													light={true}
+													position="left"
+												/>
+											{/if}
+										</div>
+										<p class="flow-defaultdb-name">
+											{flow.defaultDatabase.name}
+										</p>
+									{:else}
+										<p class="flow-defaultdb-name">No Default Database</p>
+									{/if}
+								</div>
 							</div>
-					{/each}
-				</section>
+							<div class="chevron">
+								<Icon
+									name="chevronRight"
+									color="grey"
+									size="med"
+									link={false}
+									light={true}
+									position="left"
+								/>
+							</div>
+						</div>
+					{/if}
+				{/each}
+			</div>
 		{:else}
 			<div class="no-flows">No flows found.</div>
 		{/if}
@@ -215,7 +213,7 @@
 				icon="zap"
 				iconPosition="left"
 				size="med"
-				style={userSettings.defaultFlow === null ? "disabled" : "primary"}
+				style={userSettings.defaultPopupFlow === null ? "disabled" : "primary"}
 				color="blue"
 			/>
 			<Button size="med" icon="sliders" style="secondary" color="blue" />
@@ -237,6 +235,8 @@
 		{/key}
 	{/if}
 </div>
+<!-- !SECT -->
+
 <!-- !SECT -->
 
 <!-- SECT: STYLE -->
@@ -268,13 +268,13 @@
 		position: relative;
 		overflow: hidden;
 		transition: 0.2s ease-in-out;
-		background: var(--bg);
+		background: var(--bg-darkish);
 	}
 	.header {
 		@include flex(column, flex-start, center);
 		padding: 0.75rem 1.25rem 0.75rem 1.25rem;
 		row-gap: 0.75rem;
-		background: var(--bg-dark);
+		background: var(--bg-darker);
 		width: 100%;
 		box-sizing: border-box;
 		flex-shrink: 1;
@@ -293,27 +293,57 @@
 		}
 	}
 	.flow-list {
+		@include scrollbar();
 		flex-grow: 1;
 		width: 100%;
 		overflow-y: auto;
 		height: auto;
-		transition: height 200ms ease-in-out;
-		.flow-item {
-			@include flex();
-			height: 2rem;
-			padding: 0px 8px;
-			cursor: pointer;
-			outline: none;
-			&:hover {
-				background-color: var(--bg-dark);
-			}
+		transition: 200ms ease;
+	}
+	.flow-item {
+		@include flex();
+		padding: 0.5rem 0.5rem;
+		cursor: pointer;
+		outline: none;
+		transition: 200ms ease;
+		.flow-info {
+			@include flex(column, flex-start, flex-start);
+			margin-left: 0.75rem;
+			flex-grow: 1;
+			row-gap: 0.25rem;
+
 			.flow-name {
-				@include ui-text-default($weight: 600);
-				margin-left: 0.8rem;
-				margin-top: 1.5px;
+				@include ui-text(var(--text-dark) !important, 0.875rem, 600);
+			}
+			.flow-defaultdb {
+				@include flex(row, center, center);
+				.flow-defaultdb-icon {
+					@include flex(row, center, center);
+					img {
+						width: 0.75rem;
+						height: 0.75rem;
+						border-radius: 0.2rem;
+						opacity: 0.7;
+					}
+				}
+				.flow-defaultdb-name {
+					@include ui-text(var(--text-light), 0.75rem, 400);
+				}
 			}
 		}
-		@include scrollbar();
+		.chevron {
+			opacity: 0;
+			margin-right: 0.5rem;
+			transition: 100ms ease;
+		}
+		&:hover {
+			background-color: var(--bg);
+			box-shadow: 0 0 2rem 0 rgba(0, 0, 0, 0.04);
+
+			.chevron {
+				opacity: 0.8;
+			}
+		}
 	}
 
 	.flow {
@@ -344,4 +374,3 @@
 		@include flex(row, center, center);
 	}
 </style>
-<!-- !SECT -->

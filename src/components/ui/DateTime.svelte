@@ -1,14 +1,17 @@
 <script lang="ts">
 	import SveltyPicker from "svelty-picker";
 	import Icon from "../ui/Icon.svelte";
+	import {fade} from 'svelte/transition';
 
 	export let type: "date" | "datetime" | "time" = "date";
 	export let includeEnd: boolean = false;
 	export let labelText: string = null;
 	export let labelIcon: Icons = null;
+
+	let includeEndLocal: boolean = false;
 </script>
 
-<div class="main">
+<div class="main" in:fade={{duration: 400, delay: 200}}>
 	{#if labelText}
 		<div class="input-label">
 			{#if labelIcon}
@@ -130,6 +133,8 @@
 			@include flex(row, flex-start, center);
 			min-height: 2.5rem;
 			padding: 0 0.5rem;
-		}
+			@include input-shadow();
+
+			}
 	}
 </style>

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Icon from "./Icon.svelte";
 	import Svelecte, { addFormatter } from "svelecte";
+	import {fade} from 'svelte/transition';
 	import { webData } from "../../scripts/stores";
 	import {
 		WithIcon,
@@ -9,11 +10,13 @@
 		NMultiSelect,
 	} from "../../scripts/svelecte-renderers";
 
-	export let options: SvelecteOption | (() => SvelecteOption);
-	export let type: SvelecteRenderer;
+	export let options: NotionSelectOption[] | NotionStatusOption[];
+	export let type: NotionPropTypes | string;
 	export let labelText: string = null;
 	export let labelIcon: Icons = null;
 	export let clearable: boolean = false;
+
+	console.log("Prop Options: ", options, type);
 
 	addFormatter("with_icon", WithIcon);
 	addFormatter("select", SimpleSelect);
@@ -22,7 +25,7 @@
 
 </script>
 
-<div class="main">
+<div class="main" in:fade={{duration: 400, delay: 200}}>
 	{#if labelText}
 		<div class="input-label">
 			{#if labelIcon}
@@ -50,8 +53,10 @@
 			renderer={type}
 			multiple={type === "multi" || type === "multi_select" ? true : false}
 			{clearable}
+			valueField="id"
+			labelField="name"
 			groupLabelField="groupHeader"
-			groupItemsField="items"
+			groupItemsField="options"
 		/>
 	</div>
 </div>

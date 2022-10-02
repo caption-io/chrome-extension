@@ -64,10 +64,9 @@ export function webDataRenderer(items, isSelected) {
         `;
 }
 
-export function WithIcon(items: SvelecteOption) {
+export function WithIcon(items: NotionDatabase) {
 	const setIcon = (icon) => {
 		if (Object.values(icons).includes(icon)) {
-	console.log("Svelect Icon Renderer | Local Icon: ",items.icon);
 
 			return icons[icon];
 		} else if (icon) {
@@ -87,40 +86,40 @@ export function WithIcon(items: SvelecteOption) {
 			${icon}
 		</div>
 		<div class="sv-item-text">
-			${items.text}
+			${items.name}
 		</div>
 		</div>
 		`;
 }
 
 
-export function SimpleSelect(item: SvelecteOption, isSelected: boolean) {
+export function SimpleSelect(item: NotionSelectOption, isSelected: boolean) {
 	console.log("Incoming data: ",item);
 	if (isSelected) {
- 		return `<div class="n-select ${item.extras.color}">${item.text}</div>`;
+ 		return `<div class="n-select ${item.color}">${item.name}</div>`;
 	} else {
-		return `<div class="n-select ${item.extras.color}">${item.text}</div>`;
+		return `<div class="n-select ${item.color}">${item.name}</div>`;
 	}
 }
 
-export function NMultiSelect(item: SvelecteOption, isSelected: boolean) {
+export function NMultiSelect(item: NotionSelectOption, isSelected: boolean) {
 	if (isSelected) {
 		return `
-		<div class="n-multi-select n-select ${item.extras.color}">${item.text}</div>`
+		<div class="n-multi-select n-select ${item.color}">${item.name}</div>`
 	} else {
 		return `
-		<div class="n-multi-select n-select ${item.extras.color}">${item.text}</div>`
+		<div class="n-multi-select n-select ${item.color}">${item.name}</div>`
 	}
 
 }
 
-export function NStatus(item, isSelected) {
+export function NStatus(item: NotionSelectOption, isSelected) {
 	if (isSelected) {
 		return `
-		<div class="n-select n-status ${item.extras.color}"><div class="status-dot ${item.extras.color}"></div>${item.text}</div>`
+		<div class="n-select n-status ${item.color}"><div class="status-dot ${item.color}"></div>${item.name}</div>`
 	} else {
 		return `
-		<div class="n-select n-status ${item.extras.color}"><div class="status-dot"></div>${item.text}</div>`
+		<div class="n-select n-status ${item.color}"><div class="status-dot"></div>${item.name}</div>`
 	}
 
 

@@ -1,4 +1,4 @@
-import { writable } from "svelte/store";
+import { writable, type Writable } from "svelte/store";
 
 function createFlows() {
     const { subscribe, set, update } = writable([]);
@@ -14,15 +14,13 @@ function createFlows() {
     }
 }
 
-export const colorMode = writable("light-mode");
 export const isLoading = writable(true);
 export const webData = writable(null);
 export const selectedFlow = writable(null);
-export const tooltip = writable({show: false, text: ""});
-
-export const flows = writable([]);
-export const settings = writable({
-	defaultFlow: null,
+export const flows: Writable<FlowData[]> = writable([]);
+export const settings: Writable<UserSettings> = writable({
+	defaultPopupFlow: null,
+	defaultHighlightFlow: null,
 	colorMode: 'light',
 	notionToken: null
 });

@@ -1,27 +1,31 @@
+const defaultSettings: UserBrowserStorage = {
+	flows: [],
+	settings: {
+		defaultPopupFlow: null,
+		defaultHighlightFlow: null,
+		colorMode: 'light',
+		notionToken: "secret_P1YEBheytEkSTQnT126JOpZdo8WbsF2SxfsjnzcXFGr",
+	}
+}
+
 browser.runtime.onInstalled.addListener(() => {
-	browser.storage.local.set({
-		flows: [],
-		settings: {
-			defaultFlow: null,
-			colorMode: 'light',
-			notionToken: null,
-			tags: {
-				app: [],
-				user: [],
-			}
-		}
-	})
+	browser.storage.local.set(defaultSettings)
 })
 
 browser.action.onClicked.addListener((tab) => {
-	browser.storage.local.get("settings")
-		.then((result) => {
-			if (result.settings.notionToken !== null) {
-				browser.action.setPopup({ popup: "src/pages/popup/index.html" });
-			} else {
-				browser.runtime.openOptionsPage();
-			}
-		})
+	//run content script index.ts
+// send message popupmodal to content script
+
+		browser.tabs.sendMessage(tab.id, { type: 'popupModal' });
+
+	// browser.storage.local.get("settings")
+	// 	.then((result) => {
+	// 		if (result.settings.notionToken !== null) {
+	// 			browser.action.setPopup({ popup: "src/pages/popup/index.html" });
+	// 		} else {
+	// 			browser.runtime.openOptionsPage();
+	// 		}
+	// 	})
 });
 
 browser.contextMenus.create({
