@@ -38,6 +38,7 @@
 		"@notionhq/client": "^2.1.0",
 		"nanoid": "^4.0.0",
 		"svelecte": "^3.9.2",
-		"uuid": "^9.0.0"
+		"uuid": "^9.0.0",
+		"webextension-polyfill-ts": "^0.26.0"
 	}
 }

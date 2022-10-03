@@ -20,6 +20,13 @@ export default defineConfig({
 			compilerOptions: {
 				dev: true
 			},
+			onwarn: (warning, handler) => {
+				const { code, frame } = warning
+				if (code === "css-unused-selector")
+					return
+
+				handler(warning)
+			},
 		}),
 		AutoImport({
 			imports: [

@@ -1,0 +1,116 @@
+Date : 2022-10-01 23:17:55
+Directory : /Users/eliwimmer/Web Development/notion-capture/chrome-extension
+Total : 67 files,  11156 codes, 116 comments, 471 blanks, all 11743 lines
+
+Languages
++--------------------+------------+------------+------------+------------+------------+
+| language           | files      | code       | comment    | blank      | total      |
++--------------------+------------+------------+------------+------------+------------+
+| JSON               |          6 |      6,878 |          3 |          5 |      6,886 |
+| Svelte             |         30 |      2,359 |         27 |        222 |      2,608 |
+| TypeScript         |         19 |      1,332 |         50 |        125 |      1,507 |
+| SCSS               |          1 |        392 |         26 |         73 |        491 |
+| HTML               |          4 |         81 |          0 |         13 |         94 |
+| CSS                |          3 |         71 |          0 |         25 |         96 |
+| JSON with Comments |          1 |         19 |          6 |          1 |         26 |
+| YAML               |          1 |         18 |          2 |          3 |         23 |
+| JavaScript         |          1 |          4 |          2 |          2 |          8 |
+| Markdown           |          1 |          2 |          0 |          2 |          4 |
++--------------------+------------+------------+------------+------------+------------+
+
+Directories
++-----------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                                  | files      | code       | comment    | blank      | total      |
++-----------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                                     |         67 |     11,156 |        116 |        471 |     11,743 |
+| .github                                                                                                               |          1 |         18 |          2 |          3 |         23 |
+| .github/workflows                                                                                                     |          1 |         18 |          2 |          3 |         23 |
+| public                                                                                                                |          1 |         61 |          2 |          1 |         64 |
+| src                                                                                                                   |         53 |      4,186 |        100 |        452 |      4,738 |
+| src/components                                                                                                        |         30 |      2,359 |         27 |        222 |      2,608 |
+| src/components/context-menu                                                                                           |          2 |        143 |         21 |         19 |        183 |
+| src/components/props                                                                                                  |         15 |        270 |          0 |         36 |        306 |
+| src/components/ui                                                                                                     |          7 |        740 |          0 |         61 |        801 |
+| src/pages                                                                                                             |          7 |        232 |         21 |         52 |        305 |
+| src/pages/background                                                                                                  |          1 |         57 |         10 |         11 |         78 |
+| src/pages/content                                                                                                     |          2 |         38 |          8 |          6 |         52 |
+| src/pages/options                                                                                                     |          2 |         45 |          0 |          9 |         54 |
+| src/pages/popup                                                                                                       |          2 |         92 |          3 |         26 |        121 |
+| src/scripts                                                                                                           |          7 |        365 |         18 |         57 |        440 |
+| src/style                                                                                                             |          4 |        463 |         26 |         98 |        587 |
+| vscode                                                                                                                |          1 |         11 |          0 |          1 |         12 |
++-----------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++-----------------------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| filename                                                                                                              | language           | code       | comment    | blank      | total      |
++-----------------------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/.github/workflows/test.yml                           | YAML               |         18 |          2 |          3 |         23 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/.prettierrc                                          | JSON               |          9 |          0 |          0 |          9 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/README.md                                            | Markdown           |          2 |          0 |          2 |          4 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/auto-imports.d.ts                                    | TypeScript         |          4 |          2 |          2 |          8 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/package-lock.json                                    | JSON               |      6,746 |          0 |          1 |      6,747 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/package.json                                         | JSON               |         43 |          0 |          1 |         44 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/privacypolicy.html                                   | HTML               |          1 |          0 |          0 |          1 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/public/manifest.json                                 | JSON               |         61 |          2 |          1 |         64 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/auto-imports.d.ts                                | TypeScript         |          4 |          1 |          1 |          6 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/components/Auth.svelte                           | Svelte             |         48 |          0 |          6 |         54 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/components/DatabaseProps.svelte                  | Svelte             |        125 |          0 |         18 |        143 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/components/Flow.svelte                           | Svelte             |        478 |          0 |         29 |        507 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/components/Organizer.svelte                      | Svelte             |        343 |          6 |         28 |        377 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/components/Popup.svelte                          | Svelte             |         73 |          0 |         10 |         83 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/components/Props.svelte                          | Svelte             |        139 |          0 |         15 |        154 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/components/context-menu/ContextMenu.svelte       | Svelte             |         87 |         21 |          9 |        117 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/components/context-menu/ContextMenuOption.svelte | Svelte             |         56 |          0 |         10 |         66 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/components/props/PropsCheckbox.svelte            | Svelte             |         19 |          0 |          3 |         22 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/components/props/PropsDate.svelte                | Svelte             |         10 |          0 |          1 |         11 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/components/props/PropsEmail.svelte               | Svelte             |         10 |          0 |          1 |         11 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/components/props/PropsFiles.svelte               | Svelte             |         10 |          0 |          1 |         11 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/components/props/PropsFormula.svelte             | Svelte             |         10 |          0 |          1 |         11 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/components/props/PropsMultiSelect.svelte         | Svelte             |         50 |          0 |          6 |         56 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/components/props/PropsNumber.svelte              | Svelte             |         10 |          0 |          1 |         11 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/components/props/PropsPeople.svelte              | Svelte             |         15 |          0 |          1 |         16 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/components/props/PropsPhoneNumber.svelte         | Svelte             |         10 |          0 |          1 |         11 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/components/props/PropsRelation.svelte            | Svelte             |          0 |          0 |          1 |          1 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/components/props/PropsRichText.svelte            | Svelte             |         10 |          0 |          1 |         11 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/components/props/PropsSelect.svelte              | Svelte             |         53 |          0 |          6 |         59 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/components/props/PropsStatus.svelte              | Svelte             |         13 |          0 |          4 |         17 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/components/props/PropsTitle.svelte               | Svelte             |         40 |          0 |          7 |         47 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/components/props/PropsUrl.svelte                 | Svelte             |         10 |          0 |          1 |         11 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/components/ui/Button.svelte                      | Svelte             |        183 |          0 |         13 |        196 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/components/ui/DateTime.svelte                    | Svelte             |        133 |          0 |          8 |        141 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/components/ui/HorRule.svelte                     | Svelte             |         17 |          0 |          6 |         23 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/components/ui/Icon.svelte                        | Svelte             |         84 |          0 |          7 |         91 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/components/ui/Select.svelte                      | Svelte             |         66 |          0 |          9 |         75 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/components/ui/TextInput.svelte                   | Svelte             |        127 |          0 |         10 |        137 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/components/ui/Tooltip.svelte                     | Svelte             |        130 |          0 |          8 |        138 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/global.d.ts                                      | TypeScript         |         93 |          5 |         19 |        117 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/icons.ts                                         | TypeScript         |         37 |          0 |          2 |         39 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/notionicon.ts                                    | TypeScript         |        633 |          0 |          0 |        633 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/pages/background/index.ts                        | TypeScript         |         57 |         10 |         11 |         78 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/pages/content/index.ts                           | TypeScript         |         35 |          8 |          6 |         49 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/pages/content/main.ts                            | TypeScript         |          3 |          0 |          0 |          3 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/pages/options/index.html                         | HTML               |         38 |          0 |          6 |         44 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/pages/options/index.ts                           | TypeScript         |          7 |          0 |          3 |         10 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/pages/popup/index.html                           | HTML               |         41 |          0 |          7 |         48 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/pages/popup/index.ts                             | TypeScript         |         51 |          3 |         19 |         73 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/scripts/api-endpoints.ts                         | TypeScript         |        113 |          2 |         11 |        126 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/scripts/chrome-storage.ts                        | TypeScript         |         51 |         15 |         10 |         76 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/scripts/flow-scripts.ts                          | TypeScript         |          2 |          0 |          3 |          5 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/scripts/stores.ts                                | TypeScript         |         24 |          0 |          5 |         29 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/scripts/svelecte-renderers.ts                    | TypeScript         |        112 |          0 |         17 |        129 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/scripts/ui-utils.ts                              | TypeScript         |         59 |          1 |         11 |         71 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/scripts/utils.ts                                 | TypeScript         |          4 |          0 |          0 |          4 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/style/global.min.css                             | CSS                |          1 |          0 |          1 |          2 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/style/global.scss                                | SCSS               |        392 |         26 |         73 |        491 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/style/variables.css                              | CSS                |         69 |          0 |         23 |         92 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/style/variables.min.css                          | CSS                |          1 |          0 |          1 |          2 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/vite-env.d.ts                                    | TypeScript         |          0 |          2 |          1 |          3 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/svelte.config.js                                     | JavaScript         |          4 |          2 |          2 |          8 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/termsofuse.html                                      | HTML               |          1 |          0 |          0 |          1 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/tsconfig.json                                        | JSON with Comments |         19 |          6 |          1 |         26 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/tsconfig.node.json                                   | JSON               |          8 |          1 |          1 |         10 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/vite.config.ts                                       | TypeScript         |         43 |          1 |          4 |         48 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/vscode/.favorites.json                               | JSON               |         11 |          0 |          1 |         12 |
+| Total                                                                                                                 |                    |     11,156 |        116 |        471 |     11,743 |
++-----------------------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+

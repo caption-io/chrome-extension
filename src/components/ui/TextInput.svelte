@@ -41,7 +41,7 @@
 	}
 </script>
 
-<div class="main" in:fade={{duration: 400, delay: 200}}>
+<div class="main">
 	{#if labelText}
 		<div class="input-label">
 			{#if labelIcon}
@@ -54,19 +54,20 @@
 					link={false}
 				/>
 			{/if}
-			<label for={option.id} class="label-text">
+			<label for={option ? option.id : "null"} class="label-text">
 				<h3>{labelText}</h3>
 			</label>
 		</div>
 	{/if}
 	<div class={`input-container${focused ? " focused" : ""}${invalid && focused ? ' invalid' : ''}`}>
 		{#if webDataSelect}
-		<Select  
+		<div />
+		{/if}
 		{#if inputIcon}
 			<Icon name={inputIcon} color={"grey"} position="left" />
 		{/if}
 		<input
-			name={option.id}
+			name={option ? option.id : "null"}
 			class="text-input"
 			use:typeAction
 			bind:value
@@ -127,7 +128,7 @@
 					color: var(--blue-dark);
 				}
 				&::placeholder {
-					color: var(--blue-800);
+					color: var(--text-light);
 					opacity: 0.75;
 				}
 			}

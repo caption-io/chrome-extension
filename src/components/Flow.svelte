@@ -70,19 +70,6 @@
 
 	// VARS: Shorthands
 
-	// FUNC: Start
-
-	// (async () => {
-	// 	if (flowData.defaultDatabase) {
-	// 		for  (database of await databases) {
-	// 			if (database.id === flowData.defaultDatabase.id) {
-	// 				selectedDatabase = database;
-	// 			}
-	// 		}
-	// 	}
-
-	// })();
-
 	// FUNC: Listeners
 
 	// watch for user changes to Flow vs the stored Flow

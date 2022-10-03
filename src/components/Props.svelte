@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Icon from "./ui/Icon.svelte";
+	import WebIcon from "./ui/WebIcon.svelte";
 	import { add, includes, valuesIn } from "lodash-es";
 	import TextInput from "./ui/TextInput.svelte";
 	import Select from "./ui/Select.svelte";
@@ -111,6 +112,8 @@
 						</div>
 						{:else if option.type === "date"}
 						<DateTime type="datetime" labelIcon={option.type} labelText={option.name} includeEnd={true} />
+						{:else if option.type === "pageIcon"}
+						<WebIcon labelText={option.name} labelIcon={option.type} />
 					{:else}
 						<div class="prop-type" in:fade={{duration: 400, delay: 200}}>{option.type}</div>
 					{/if}

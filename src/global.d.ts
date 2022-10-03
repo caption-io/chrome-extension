@@ -95,9 +95,11 @@ declare type FlowTags = {
 }
 declare type AppTags = 'highlightDefault' | 'captureDefault' | 'favorite' | 'uncategorized' | null
 
+// TODO: type web data
 declare type UserBrowserStorage = {
 	flows: FlowData[],
 	settings: UserSettings,
+	pageData: any;
 }
 
 declare type FlowData = {

@@ -102,14 +102,14 @@ export async function GetAllDatabases() {
 			name: "Page Icon",
 			id: "pageIcon",
 			storedValue: '',
-			type: "coverImage",
+			type: "pageIcon",
 			visible: true
 		})
 		database.props.push({
 			name: "Cover Image",
 			id: "coverImage",
 			storedValue: '',
-			type: "pageIcon",
+			type: "coverImage",
 			visible: false
 		})
 	})

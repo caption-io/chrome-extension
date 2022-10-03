@@ -116,13 +116,6 @@
 <div class="container">
 	<div
 		class="main"
-		in:fly={{ x: -4400, duration: 200, delay: 200 }}
-		out:fly={{ x: -400, duration: 200 }}
-		style={`filter: ${
-			$selectedFlow === null
-				? "blur(0px) brightness(1)"
-				: "blur(2px) brightness(0.75)"
-		};`}
 	>
 		<div class="header">
 			<TextInput

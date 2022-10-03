@@ -69,3 +69,17 @@ export function handleKeyDown(e) {
 	if ((e.key === "Enter" || e.key === " ") && dragDisabled)
 		dragDisabled = false
 }
+
+// custom svelte transition scale from top
+export function scaleFromTop(node, { delay = 0, duration = 200 }) {
+	const o = +getComputedStyle(node).opacity
+	const h = parseFloat(getComputedStyle(node).height)
+	return {
+		delay,
+		duration,
+		css: (t) =>
+			`opacity: ${t * o}; transform: scale(${t}, ${t}) translateY(${
+				1 - t
+			} * ${h}px);`,
+	}
+}

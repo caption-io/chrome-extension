@@ -41,10 +41,7 @@
 		};
 		webData.set(tabInfo);
 	})();
-
-	// browser.tabs.executeScript({
-	// 	file: "src/content/index.js",
-	// });
+	console.log("PageData: ", browser.storage.local.get("pageData"));
 </script>
 
 <div class={`container ${$settings.colorMode}-mode`}>
@@ -75,7 +72,6 @@
 		height: auto;
 		pointer-events: all;
 		overflow: hidden;
-		animation: widen 600ms ease-in-out forwards;
 		transform-origin: top center;
 		transition: 200ms ease-in-out;
 	}
