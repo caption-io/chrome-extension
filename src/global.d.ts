@@ -1,11 +1,5 @@
 
-declare type DndEvent = import("svelte-dnd-action").DndEvent
-declare namespace svelte.JSX {
-	interface HTMLAttributes<T> {
-		onconsider?: (event: CustomEvent<DndEvent> & { target: EventTarget & T }) => void
-		onfinalize?: (event: CustomEvent<DndEvent> & { target: EventTarget & T }) => void
-	}
-}
+
 
 
 
@@ -14,7 +8,23 @@ declare namespace svelte.JSX {
 // GRP: Global
 declare type AppColors = 'grey' | 'blue' | 'red' | 'green' | 'invert'
 declare type Icons = import('./icons').AppIcons
-
+declare type WebData = WebDataGroup[]
+declare type WebDataGroup = {
+	groupHeader: string,
+	items:WebDataItem[],
+	type: string;
+	priority: number;
+	icon?: Icons;
+}
+declare type WebDataItem = {
+	text: string,
+	source: string[],
+	type?: string[],
+	size?: number,
+	$isGroupItem?: boolean
+	$isGroupHeader?: boolean
+	label?: string
+}
 // GRP: Components
 declare type ButtonStyles = "primary" | "secondary" | "outline" | "simple" | "disabled"
 

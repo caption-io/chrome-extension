@@ -1,195 +1,180 @@
-<script context="module" lang="ts">
-	// import icons list
-	import Icon from "./Icon.svelte";
-
-	// prop types
-	export type Value = string | null;
-	export type Size = "small" | "med" | "big";
-	export type IconPosition = "left" | "right";
-	export type Disabled = boolean;
-</script>
-
 <script lang="ts">
+	import { each, missing_component } from "svelte/internal";
+	import Icon from "./Icon.svelte";
 	// exported props
-	export let value: Value = null;
-	export let size: Size = "med";
-	export let style: ButtonStyles = "primary";
-	export let color: AppColors = "blue";
-	export let icon: Icons | null = null;
-	export let iconPosition: IconPosition = "left";
-	export let disabled: Disabled = false;
+	export let text: string = null;
+	export let icon: Icons = null;
+	export let iconPosition: "left" | "right" = "left";
+	export let size: "sm" | "md" | "lg" = "md";
+	export let style:
+		| "primary"
+		| "secondary"
+		| "outline"
+		| "outline-fill"
+		| "minimal" = "primary";
+	export let color: string = "blue";
+	export let fill: boolean = false;
+	export let disabled: boolean = false;
 
-	// local variables
-	let pressed = false;
-	let cssClass;
+	let pressed: boolean = false;
 
-	function clickAnim() {
-		pressed = true;
+	function mouseUp(e) {
+		e.classList.add("mouse-up");
 		setTimeout(() => {
+			e.classList.remove("mouse-up");
 			pressed = false;
-		}, 200);
+		}, 300);
 	}
-
-	// css class definitions
-	$: cssClass = `button
-		${" " + size}
-		${" " + style}
-		${" " + color}
-		${pressed ? " click" : ""}
-		${disabled ? "disabled" : ""}
-		`;
 </script>
 
 <div
-	class={`button-container${!value ? ` icon-only` : ""}${
-		size === "small" ? " small" : ""
-	}`}
+	class="button-container {style} {size}"
+	class:disabled
+	class:fill
+	style="
+	--btn-color-50: var(--{color}-50);
+	--btn-color-100: var(--{color}-100);
+	--btn-color-200: var(--{color}-200);
+	--btn-color-300: var(--{color}-300);
+	--btn-color-400: var(--{color}-400);
+	--btn-color-500: var(--{color}-500);
+	--btn-color-600: var(--{color}-600);
+	--btn-color-700: var(--{color}-700);
+	--btn-color-800: var(--{color}-800);
+	--btn-color-900: var(--{color}-900);
+	"
+	on:click
 >
-	<button class={cssClass} on:click on:mousedown={clickAnim}>
-		{#if value && icon && iconPosition === "left"}
-			<Icon
-				name={icon}
-				size={size}
-				color={style === "primary" ? "invert" : color}
-				position={iconPosition}
-				{disabled}
-			/>
-			{value}
+	<div
+		class="button {size} {style}"
+		class:fill
+		class:disabled
+		class:icon
+		class:pressed
+		on:mousedown={() => (pressed = true)}
+		on:mouseup={() => (pressed = false)}
+	>
+		{#if text}
+			<div class="button-text">{text}</div>
 		{/if}
-		{#if !value && icon}
-			<Icon name={icon} {size} {color} position={"center"} {disabled} />
+		{#if icon}
+			<div
+				class="button-icon"
+				style="order: {iconPosition === 'left' ? '0' : '2'}"
+			>
+				<Icon
+					name={icon}
+					color="inherit"
+					size={size === "sm" ? 16 : size === "md" ? 16 : 20}
+					position="m"
+				/>
+			</div>
 		{/if}
-		{#if value && !icon}
-			{value}
-		{/if}
-		{#if value && icon && iconPosition === "right"}
-			{value}
-			<Icon name={icon} {size} color={style === "primary" ? "invert" : color} position={iconPosition} {disabled} />
-		{/if}
-	</button>
+	</div>
 </div>
 
 <style lang="scss">
 	@use "../../style/global" as *;
 
-	$button-styles: ("primary", "secondary", "outline", "simple", "disabled");
-	$button-colors: ("grey", "blue", "red", "green", "bluegrey");
-
-	$btn-sizes: (
-		"small": (
-			0.75rem,
-			auto,
-			0.5rem 0.5rem,
-		),
-		"med": (
-			2rem,
-			100%,
-			0 1rem,
-		),
-		"big": (
-			2.5rem,
-			100%,
-			inherit,
-		),
-	);
-
-	@mixin btn-colors($col, $sty) {
-		@if $sty == primary {
-			background-color: var(--#{$col});
-			color: var(--white);
-			transition: filter 200ms, box-shadow 200ms;
-			&:hover {
-				box-shadow: 0 0 0 2px var(--#{$col}-mid);
-				filter: brightness(1.05);
+	@mixin mouseUp($shadcolor) {
+		@keyframes mouseUp {
+			0% {
+				box-shadow: 0 0 0 1px $shadcolor;
 			}
-			&.click {
-				@include click(var(--#{$col}-mid), #{$col}-#{$sty});
+			70% {
+				box-shadow: 0 0 0 4px $shadcolor;
 			}
-		}
-		@if $sty == secondary {
-			background-color: var(--#{$col}-light);
-			color: var(--#{$col});
-			font-weight: 500;
-			&:hover {
-				box-shadow: 0 0 0 2px var(--#{$col}-mid);
-				filter: brightness(0.95);
-			}
-			&.click {
-				@include click(var(--#{$col}-mid), #{$col}-#{$sty});
-			}
-		}
-		@if $sty == outline {
-			background-color: var(--trans);
-			border: 1px solid var(--#{$col});
-			color: var(--#{$col});
-			&:hover {
-				background-color: var(--trans);
-				box-shadow: 0 0 0 2px var(--#{$col}-light);
-			}
-			&.click {
-				@include click(var(--#{$col}-light), #{$col}-#{$sty});
-			}
-		}
-		@if $sty == simple {
-			background-color: var(--#{$col}-trans);
-			color: var(--#{$col}-dark);
-			font-weight: 600;
-			transition: background 200ms, box-shadow 400ms;
-			&:hover {
-				background-color: var(--#{$col}-light);
-				filter: brightness(0.95);
-				box-shadow: 0 0 0 2px var(--#{$col}-mid);
-			}
-			&.click {
-				@include click(var(--#{$col}), #{$col}-#{$sty});
-			}
-		}
-		@if $sty == disabled {
-			background-color: var(--#{$col}-light);
-			color: var(--#{$col}-mid);
-			filter: saturate(0.6);
-			&:hover {
-				cursor: not-allowed;
+			100% {
+				box-shadow: 0 0 0 3px $shadcolor;
 			}
 		}
 	}
 
 	.button-container {
 		@include flex(row, center, center);
-		margin: 0;
-		width: 100%;
-		&.small {
-			width: auto;
-		}
+		border-radius: var(--border-radius);
 		.button {
 			@include flex(row, center, center);
-			border: none;
-			border-radius: 4px;
-			background: none;
-			transition: 150ms;
+			border-radius: $p3;
+			column-gap: 0.25rem;
 			cursor: pointer;
-			white-space: nowrap;
-			@each $size, $props in $btn-sizes {
-				&.#{$size} {
-					height: nth($props, 1);
-					width: nth($props, 2);
-					padding: nth($props, 3);
-					box-sizing: border-box;
+			border: 1px solid transparent;
+			box-sizing: border-box;
+			transition: 200ms ease;
+			font-weight: 500;
+			.button-text {
+				order: 1;
+			}
+			&.sm {
+				padding: 0 $p2;
+				height: 1.5rem;
+				font-size: 0.875rem;
+			}
+			&.md {
+				padding: 0rem 0.5rem;
+				height: 2rem;
+				font-size: 0.875rem;
+			}
+			&.lg {
+				padding: 0rem 0.75rem;
+				height: 2.5rem;
+				font-size: 1rem;
+			}
+			&.primary {
+				background-color: var(--btn-color-400);
+				color: var(--white-alpha-900);
+				box-shadow: 0 0 1px 0 var(--btn-color-100);
+				&:hover {
+					background-color: var(--btn-color-300);
+					box-shadow: 0 0 0 3px var(--btn-color-100);
+				}
+				&.pressed {
+					background-color: var(--btn-color-500);
+					box-shadow: 0 0 0 1px var(--btn-color-200);
 				}
 			}
+			&.secondary {
+				background-color: var(--btn-color-100);
+				color: var(--btn-color-800);
+				fill: var(--btn-color-800);
+				&:hover {
+					background-color: var(--btn-color-50);
+				}
+			}
+			&.outline {
+				background-color: transparent;
+				color: var(--btn-color-200);
+				fill: var(--btn-color-200);
+				border: 1px solid var(--btn-color-200);
+				&:hover {
+					background-color: var(--btn-color-600);
+				}
+			}
+			&.outline-fill {
+				background-color: var(--btn-color-400);
+				color: var(--btn-color-200);
+				fill: var(--btn-color-200);
+				border: 1px solid var(--btn-color-200);
+				box-shadow: 0 0 1px 0 var(--btn-color-500);
+				&:hover {
+					background-color: var(--btn-color-400);
+					box-shadow: 0 0 0 3px var(--btn-color-500);
+				}
+			}
+			&.minimal {
+				background-color: transparent;
+				color: var(--gray-500);
+				fill: var(--gray-500);
+				&:hover {
+					color: var(--btn-color-500);
+					fill: var(--btn-color-500);
+					background-color: var(--btn-color-50);
+				}
+			}
+		}
+	}
 
-			@each $button-style in $button-styles {
-				&.#{$button-style} {
-					@each $button-color in $button-colors {
-						&.#{$button-color} {
-							@include btn-colors($button-color, $button-style);
-						}
-					}
-				}
-			}
-		}
-		&.icon-only {
-			width: 2.25rem;
-		}
+	.fill {
+		width: 100%;
 	}
 </style>

@@ -1,76 +1,68 @@
-
 // GRP: General
 $app-colors: "grey", "blue", "red", "green", "invert";
 $notion-colors: (
-	"default""gray""brown""orange""yellow""green""blue""purple""pink""red"
+	"default" "gray" "brown" "orange" "yellow" "green" "blue" "purple" "pink" "red"
 );
+$p2: 0.175rem;
+$p3: 0.188rem;
+$p6: 0.375rem;
+$p8: 0.5rem;
+$p10: 0.625rem;
+$p12: 0.75rem;
+$p14: 0.875rem;
+$p16: 1rem;
+$p18: 1.125rem;
+$p20: 1.25rem;
+$p24: 1.5rem;
+$p26: 1.625rem;
+$p28: 1.75rem;
+$p30: 1.875rem;
+$p32: 2rem;
+$p36: 2.25rem;
+$p40: 2.5rem;
+$p44: 2.75rem;
+$p48: 3rem;
+$border-radius: $p8;
+$border-radius-small: $p3;
+$border-dark: 1px solid var(--border-color);
+$border-light: 1px solid var(--border-color-secondary);
+$border-color: 1px solid;
+$transition: 0.2s ease-in-out;
+$input-shadow: 0 0 8px 0 rgba(26, 54, 93, 0.06), 0 0 4px 0 rgba(26, 54, 93, 0.06) inset;
 
 // SECT: Box, Border, & Shadow
-
 @mixin flex($dir: row, $justify: flex-start, $align: center) {
 	display: flex;
 	flex-direction: $dir;
 	justify-content: $justify;
 	align-items: $align;
 }
-
 @mixin scrollbar() {
 	&::-webkit-scrollbar {
 		width: 0.5rem;
-		opacity: 0;
-		transition: 200ms ease-in-out;
+		transition: $transition;
+		background: transparent;
 	}
-
 	&::-webkit-scrollbar-button {
 		height: 0px;
 	}
-
 	&::-webkit-scrollbar-thumb {
-		background: var(--bg-darker);
+		background: var(--gray-300);
 		border-radius: 3px;
 		height: 3rem;
 	}
 
-	&:hover {
-		&::-webkit-scrollbar {
-			opacity: 1;
-		}
+}
+@mixin input-shadow($extrarule: none) {
+	@if $extrarule ==none {
+		box-shadow: 0 0 8px 0 rgba(26, 54, 93, 0.06), 0 0 4px 0 rgba(26, 54, 93, 0.06) inset;
+	}
+	@else {
+		box-shadow: 0 0 8px 0 rgba(26, 54, 93, 0.06), 0 0 4px 0 rgba(26, 54, 93, 0.06) inset, $extrarule;
 	}
 }
-
-@mixin input-shadow() {
-	box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.02),  0 0 4px 0 rgba(0, 0, 0, 0.02) inset;;
-}
-
 // !SECT
-
 // SECT: TEXT
-
-@mixin h1($color: var(--text-colored)) {
-	font-size: 1rem;
-	font-weight: 700;
-	color: $color;
-	padding: 0;
-	margin: 0;
-	text-transform: uppercase;
-}
-
-@mixin h2($color: var(--text-dark)) {
-	font-size: 0.875rem;
-	font-weight: 700;
-	color: $color;
-	padding: 0;
-	margin: 0;
-	text-transform: uppercase;
-}
-
-@mixin h3($color: var(--text-dark)) {
-	font-size: 0.875rem;
-	font-weight: 600;
-	color: $color;
-	padding: 0;
-	margin: 0;
-}
 
 @mixin ui-text($color: var(--text-dark), $size: 0.875, $weight: 400) {
 	font-size: $size;
@@ -78,288 +70,79 @@ $notion-colors: (
 	color: $color;
 	font-family: var(--font-family);
 }
-
-// TODO: Transfer below to universal ui-text() mixin
-
-@mixin ui-text-default($color: var(--text-dark), $weight: 400) {
-	font-size: 0.875rem;
-	font-weight: $weight;
-	color: $color;
-	font-family: var(--font-family);
-}
-
-@mixin ui-text-small($color: var(--text-light), $weight: 400) {
-	font-size: 0.75rem;
-	font-weight: $weight;
-	color: $color;
-	font-family: var(--font-family);
-}
-
 // !SECT
-
 // SECT: Animation
 @mixin hover-effect($color: var(--bg-dark)) {
 	transition: 0.2s ease-in-out;
-
 	&:hover {
 		filter: brightness(1.05);
 	}
 }
-
 @mixin click($color, $id) {
 	@keyframes click-#{$id} {
 		0% {
 			box-shadow: 0 0 0 2px $color;
-
 		}
-
 		50% {
 			box-shadow: 0 0 0 4px $color;
 		}
-
 		100% {
 			box-shadow: 0 0 0 2px $color;
 		}
 	}
-
 	animation: click-#{$id} 0.2s ease-in-out;
 }
-
 @mixin pulse() {
 	@keyframes pulse {
 		0% {
 			transform: scale(1);
 			opacity: .7;
 		}
-
 		50% {
 			transform: scale(1.05);
 			opacity: 0.4;
 		}
-
 		100% {
 			transform: scale(1);
 			opacity: .7;
 		}
 	}
-
 	animation: pulse 2s ease-in-out infinite;
 }
-
 // TODO: Delete below if still unused
 @keyframes on-initial {
 	0% {
 		opacity: 0;
-		transform: scale(0%);
+		transform: translateY(300px);
 	}
-
 	100% {
 		opacity: 1;
-		transform: scale(100%);
+		transform: translateY(0);
 	}
 }
 // !SECT
-
-
 @mixin inputLabel() {
 	.input-label {
 		@include flex(row, flex-start, center);
 		margin: 0 0 0.5rem 0.175rem;
-
 		.label-text {
 			> h3 {
-				@include h3();
+				@include ui-text(var(--text), $p14 ,500 );
 				flex-grow: 1;
 			}
 		}
 	}
 }
-
 .icon-item {
 	height: 32px;
 	width: 32px;
-
 	img {
 		height: 100%;
 		width: 100%;
 	}
 }
-
-
-
 // SECT: Svelecte
-
-.svelecte {
-	width: 100%;
-
-	// GRP: Item
-	.sv-item {
-		@include ui-text-default(var(--text-dark), 500);
-		min-height: 1.5rem !important;
-		padding: 0 !important;
-		cursor: pointer !important;
-		height: 1.75rem !important;
-		border-radius: var(--border-radius);
-		overflow: hidden;
-		margin: 0 !important;
-		width: 100%;
-		background-color: transparent !important;
-
-		.sv-item-content {
-			@include ui-text-default(var(--text-dark) !important, 500 !important);
-			box-sizing: border-box;
-			padding: 0 !important;
-			height: 100%;
-			width: fit-content;
-			& > :first-child {
-				padding: 0 0.5rem !important;
-				&.n-status {
-					padding: 0 0.75rem !important;
-				}
-			}
-
-
-		}
-
-		@each $color in $notion-colors {
-			&:has(.n-select.#{$color}) {
-				.n-select.#{$color} {
-					background-color: var(--notion-#{$color}) !important;
-					color: var(--notion-text-#{$color}) !important;
-				}
-
-				.status-dot {
-					background-color: var(--notion-#{$color}) !important;
-					filter: brightness(0.6) saturate(2);
-				}
-
-				& > .sv-item-btn {
-					background-color: var(--notion-#{$color}) !important;
-					filter: brightness(1.05);
-
-					& > svg {
-						fill: var(--notion-text-#{$color}) !important;
-					}
-
-					&:hover {
-						filter: brightness(1.08);
-					}
-				}
-			}
-		}
-
-		.n-select {
-			@include flex(row, flex-start, center);
-			height: 100%;
-			.sv-item-icon {
-				padding: 1px 0 0 0 !important;
-				img,
-				svg {
-					padding: 0 0.25rem 0 0 !important;
-				}
-			}
-	
-			.sv-item-text {
-				padding: 0 !important;
-			}
-			&.n-status {
-				border-radius: 1rem !important;
-				.status-dot {
-					border-radius: 1rem;
-					height: 0.5rem !important;
-					width: 0.5rem !important;
-					margin: auto 0.5rem auto 0;
-					padding: 0;
-				}
-			}
-		}
-
-		.sv-item-btn {
-			border-radius: 0 !important;
-			background-color: var(--bg-dark) !important;
-			margin-left: -3px;
-
-			&:hover {
-				filter: brightness(1.03);
-			}
-		}
-
-	}
-
-	// GRP: Input
-	.sv-control {
-		border: 1px solid var(--border-color) !important;
-		height: auto !important;
-		box-sizing: border-box;
-		width: 100%;
-		@include input-shadow();
-
-		.sv-content {
-			padding: 0.25rem !important;
-			gap: 0.25rem;
-
-			.inputBox {
-				margin: 0 0 0 0.35rem !important;
-				&::placeholder {
-				@include ui-text(var(--text-light), 0.875rem, 500);
-
-				}
-			}
-
-
-		}
-	}
-
-	// GRP: Dropdown
-	.sv-dropdown {
-		margin-top: 0.25rem !important;
-		bottom: unset !important;
-		box-shadow: 0 0 2rem 0 rgba(0, 0, 0, 0.07) !important;
-
-
-
-		.sv-dropdown-scroll {
-			@include scrollbar();
-			padding: 0.5rem 0 !important;
-			overflow-y: auto !important;
-			max-height: 350px !important;
-			.sv-dropdown-content {
-				display: flex;
-				flex-direction: column;
-				row-gap: 0.5rem;
-
-				.sv-item-content {
-					:first-child:not(.n-status) {
-						border-top-left-radius: 0.25rem !important;
-						border-bottom-left-radius: 0.25rem !important;
-					}
-
-					:last-child:not(.n-status) {
-						border-top-right-radius: 0.25rem !important;
-						border-bottom-right-radius: 0.25rem !important;
-					}
-				}
-
-				.empty-list-row {
-					@include flex(row, center, center);
-					@include ui-text-default(var(--text-light), 600);
-					height: 3rem;
-				}
-				.optgroup-header {
-					@include ui-text(var(--text-light), 0.75rem, 500);
-				}
-				.sv-item {
-					margin-left: 0.5rem !important;
-				}
-				.sv-dd-item-active {
-					background-color: var(--bg-dark) !important;
-				}
-			}
-		}
-	}
-}
 // !SECT
-
 // SECT: Svelty Picker
 .form-control {
 	@include ui-text(var(--text-dark), 0.875rem, 500);
@@ -371,20 +154,18 @@ $notion-colors: (
 	display: flex;
 	align-items: center;
 	justify-content: flex-start;
-
 	&::placeholder {
 		@include ui-text(var(--text-light), 0.875, 500);
 	}
 }
-
 .sdt-calendar-colors {
 	--sdt-primary: #0180ff !important;
 	--sdt-btn-bg-hover: hsl(200, 35%, 97%) !important;
 	--sdt-color: hsl(217, 24%, 20%) !important;
 }
-.sdt-background  {
+.sdt-background {
 	content: "";
-	background: rgba(0,0,0,.5);
+	background: rgba(0, 0, 0, .5);
 	height: 600px;
 	width: 400px;
 	position: fixed;
@@ -398,11 +179,12 @@ $notion-colors: (
 	top: 147px !important;
 	left: 55px !important;
 	font-family: var(--font-family) !important;
-	box-shadow: 0 0 2rem 0 rgba(0, 0, 0, 0.07), 0 0 0 400px rgba(0,0,0,0.2)  !important;
-	border: 1px solid rgba(0,0,0,0.1) !important;
+	box-shadow: 0 0 2rem 0 rgba(0, 0, 0, 0.07), 0 0 0 400px rgba(0, 0, 0, 0.2) !important;
+	border: 1px solid rgba(0, 0, 0, 0.1) !important;
 	border-radius: 0.25rem !important;
 	height: fit-content;
-	box-sizing: border-box;;
+	box-sizing: border-box;
+	;
 	.sdt-timer {
 		width: 280px !important;
 		.sdt-hand-circle {
@@ -415,7 +197,6 @@ $notion-colors: (
 			&:hover {
 				background: hsl(200, 35%, 97%) !important;
 			}
-
 		}
 		.sdt-time-head {
 			.sdt-time-figure {
@@ -424,7 +205,6 @@ $notion-colors: (
 					color: #666666 !important;
 				}
 			}
-
 		}
 	}
 	.sdt-calendar {
@@ -477,7 +257,6 @@ $notion-colors: (
 		}
 	}
 }
-
 // @each $color in $notion-colors {
 // 	.sv-dd-item:has(.sv-item > .sv-item-content > .n-multiselect.#{$color}) {
 // 		.sv-item-content {

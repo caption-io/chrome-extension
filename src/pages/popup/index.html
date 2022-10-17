@@ -31,9 +31,11 @@
 		margin: 0;
 		font-smooth: always;
 		position: relative;
-		overflow: hidden;
-		height: auto;
+		height: fit-content;
+		width: fit-content;
 		transition: 200ms ease-in-out;
+
+		overflow: hidden;
 	}
 
 	body * {
@@ -42,6 +44,14 @@
 
 	p {
 		margin: 0;
+	}
+
+	#app {
+		backdrop-filter: blur(8px);
+		background: rgba(255, 255, 255, 0.5);
+		border-radius: 8px;
+
+		
 	}
 </style>
 

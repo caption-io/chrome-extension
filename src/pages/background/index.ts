@@ -1,16 +1,20 @@
+
 // VARS: Local
+
+import { browser } from 'webextension-polyfill-ts';
 const defaultSettings: UserBrowserStorage = {
 	flows: [],
 	settings: {
 		defaultPopupFlow: null,
 		defaultHighlightFlow: null,
 		colorMode: 'light',
+		// notionToken: null,
 		notionToken: "secret_P1YEBheytEkSTQnT126JOpZdo8WbsF2SxfsjnzcXFGr",
 	},
 	pageData: null,
 }
-
 // FUNCS: On Installed
+
 browser.runtime.onInstalled.addListener(() => {
 	browser.storage.local.set(defaultSettings)
 })
@@ -18,13 +22,15 @@ browser.runtime.onInstalled.addListener(() => {
 browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 	if (changeInfo.status === 'complete') {
 		browser.tabs.sendMessage(tabId, { type: 'pageLoaded' })
+
 	}
-});
-	
-// })
 
+})
 
-
+// on action click send message "togglePopup" to content script
+browser.action.onClicked.addListener((tabs) => {
+	browser.tabs.sendMessage(tabs.id, 'togglePopup')
+})
 
 // browser.contextMenus.create({
 // 	id: "ncPopup",

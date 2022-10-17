@@ -23,6 +23,7 @@
 		"eslint-config-prettier": "^8.5.0",
 		"eslint-plugin-import": "^2.26.0",
 		"lodash-es": "^4.17.21",
+		"svelecte": "^3.10.2",
 		"svelte": "^3.44.0",
 		"svelte-check": "^2.8.0",
 		"svelte-dnd-action": "^0.9.19",
@@ -36,9 +37,11 @@
 	},
 	"dependencies": {
 		"@notionhq/client": "^2.1.0",
+		"article-parser": "^7.2.4",
+		"axios": "^1.1.2",
 		"nanoid": "^4.0.0",
-		"svelecte": "^3.9.2",
 		"uuid": "^9.0.0",
-		"webextension-polyfill-ts": "^0.26.0"
+		"webextension-polyfill-ts": "^0.26.0",
+		"youtube-captions-scraper": "^2.0.0"
 	}
 }

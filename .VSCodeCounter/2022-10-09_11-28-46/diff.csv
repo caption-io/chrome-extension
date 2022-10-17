@@ -1,0 +1,36 @@
+"filename", "language", "HTML", "TypeScript", "Svelte", "SCSS", "CSS", "JSON with Comments", "JSON", "YAML", "JavaScript", "Markdown", "comment", "blank", "total"
+"/Users/eliwimmer/Web Development/notion-capture/chrome-extension/.github/workflows/test.yml", "YAML", 0, 0, 0, 0, 0, 0, 0, 18, 0, 0, 2, 3, 23
+"/Users/eliwimmer/Web Development/notion-capture/chrome-extension/.prettierrc", "JSON", 0, 0, 0, 0, 0, 0, 9, 0, 0, 0, 0, 0, 9
+"/Users/eliwimmer/Web Development/notion-capture/chrome-extension/README.md", "Markdown", 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 2, 4
+"/Users/eliwimmer/Web Development/notion-capture/chrome-extension/auto-imports.d.ts", "TypeScript", 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 8
+"/Users/eliwimmer/Web Development/notion-capture/chrome-extension/package-lock.json", "JSON", 0, 0, 0, 0, 0, 0, 7389, 0, 0, 0, 0, 1, 7390
+"/Users/eliwimmer/Web Development/notion-capture/chrome-extension/package.json", "JSON", 0, 0, 0, 0, 0, 0, 46, 0, 0, 0, 0, 1, 47
+"/Users/eliwimmer/Web Development/notion-capture/chrome-extension/privacypolicy.html", "HTML", 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1
+"/Users/eliwimmer/Web Development/notion-capture/chrome-extension/public/manifest.json", "JSON", 0, 0, 0, 0, 0, 0, 62, 0, 0, 0, 2, 1, 65
+"/Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/components/Header.svelte", "Svelte", 0, 0, 51, 0, 0, 0, 0, 0, 0, 0, 0, 5, 56
+"/Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/components/Organizer.svelte", "Svelte", 0, 0, 24, 0, 0, 0, 0, 0, 0, 0, 0, 1, 25
+"/Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/components/Popup.svelte", "Svelte", 0, 0, -68, 0, 0, 0, 0, 0, 0, 0, 0, -4, -72
+"/Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/components/Props.svelte", "Svelte", 0, 0, -5, 0, 0, 0, 0, 0, 0, 0, 0, 4, -1
+"/Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/components/context-menu/ContextMenu.svelte", "Svelte", 0, 0, -87, 0, 0, 0, 0, 0, 0, 0, -21, -9, -117
+"/Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/components/context-menu/ContextMenuOption.svelte", "Svelte", 0, 0, -56, 0, 0, 0, 0, 0, 0, 0, 0, -10, -66
+"/Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/components/ui/Icon.svelte", "Svelte", 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1
+"/Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/components/ui/TextInput.svelte", "Svelte", 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, -2, 3
+"/Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/components/ui/WebDataDropdownItem.svelte", "Svelte", 0, 0, 124, 0, 0, 0, 0, 0, 0, 0, 0, 12, 136
+"/Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/components/ui/WebDataSelect.svelte", "Svelte", 0, 0, 158, 0, 0, 0, 0, 0, 0, 0, 0, 25, 183
+"/Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/components/ui/context-menu/ContextMenu.svelte", "Svelte", 0, 0, 87, 0, 0, 0, 0, 0, 0, 0, 21, 9, 117
+"/Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/global.d.ts", "TypeScript", 0, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 16
+"/Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/icons.ts", "TypeScript", 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2
+"/Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/pages/background/index.ts", "TypeScript", 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 5
+"/Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/pages/content/index.ts", "TypeScript", 0, 36, 0, 0, 0, 0, 0, 0, 0, 0, -81, -2, -47
+"/Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/pages/popup/index.html", "HTML", 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3
+"/Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/scripts/svelecte-renderers.ts", "TypeScript", 0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 14
+"/Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/scripts/webdata.ts", "TypeScript", 0, 172, 0, 0, 0, 0, 0, 0, 0, 0, 24, 32, 228
+"/Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/style/global.scss", "SCSS", 0, 0, 0, -248, 0, 0, 0, 0, 0, 0, -4, -59, -311
+"/Users/eliwimmer/Web Development/notion-capture/chrome-extension/src/style/variables.css", "CSS", 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1
+"/Users/eliwimmer/Web Development/notion-capture/chrome-extension/svelte.config.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 2, 2, 8
+"/Users/eliwimmer/Web Development/notion-capture/chrome-extension/termsofuse.html", "HTML", 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1
+"/Users/eliwimmer/Web Development/notion-capture/chrome-extension/tsconfig.json", "JSON with Comments", 0, 0, 0, 0, 0, 19, 0, 0, 0, 0, 6, 1, 26
+"/Users/eliwimmer/Web Development/notion-capture/chrome-extension/tsconfig.node.json", "JSON", 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 1, 1, 10
+"/Users/eliwimmer/Web Development/notion-capture/chrome-extension/vite.config.ts", "TypeScript", 0, 49, 0, 0, 0, 0, 0, 0, 0, 0, 1, 5, 55
+"/Users/eliwimmer/Web Development/notion-capture/chrome-extension/vscode/.favorites.json", "JSON", 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 1, 12
+"Total", "-", 4, 298, 234, -248, 1, 19, 7525, 18, 4, 2, -44, 22, 7835

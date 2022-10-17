@@ -1,6 +1,7 @@
 import { dndzone, SOURCES, TRIGGERS } from "svelte-dnd-action";
+import { createEventDispatcher } from "svelte";
 
-
+const dispatch = createEventDispatcher()
 export function clickAnimation(e: Event, color: string) {
 	const target = e.target as HTMLElement
 	target.style.animation = `click 0.35s ease-out`
@@ -10,6 +11,21 @@ export function clickAnimation(e: Event, color: string) {
 	}, 200)
 }
 
+export function clickOutside(node: Node) {
+	const handleClick = (event) => {
+		if (!node.contains(event.target) && node !== event.target) {
+			node.dispatchEvent(new CustomEvent("outclick"));
+		}
+	};
+
+	document.addEventListener("click", handleClick, true);
+
+	return {
+		destroy() {
+			document.removeEventListener("click", handleClick, true);
+		}
+	};
+}
 
 export let dragDisabled = true
 const flipDurationMs = 200

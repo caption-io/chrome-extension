@@ -1,7 +1,7 @@
 <script lang="ts">
-import {setSetting} from "../scripts/chrome-storage";
-import {settings} from "../scripts/stores";
-import Button from "./ui/Button.svelte";
+	import { setSetting } from "src/scripts/platform/chrome-storage";
+	import { settings } from "src/scripts/platform/stores";
+	import Button from "./ui/Button.svelte";
 
 	async function userLogin() {
 		chrome.identity.launchWebAuthFlow(
@@ -25,7 +25,7 @@ import Button from "./ui/Button.svelte";
 				})
 					.then((response) => response.json())
 					.then((data) => {
-						browser.storage.local.get('settings').then((res) => {
+						browser.storage.local.get("settings").then((res) => {
 							let s = res;
 							s.settings.notionToken = data.access_token;
 							browser.storage.local.set(s);
@@ -36,12 +36,19 @@ import Button from "./ui/Button.svelte";
 	}
 
 	console.log($settings);
+
 </script>
 
 <div class="main">
 	<h3 class="title">Caption</h3>
 	<h2 class="login-prompt">Please Login</h2>
-	<Button on:click={userLogin} value="Login with Notion" size="big" color="blue" style="primary" />
+	<Button
+		on:click={userLogin}
+		value="Login with Notion"
+		size="big"
+		color="blue"
+		style="primary"
+	/>
 </div>
 
 <style lang="scss">

@@ -1,13 +1,13 @@
 import { svelte } from '@sveltejs/vite-plugin-svelte'
 import sveltePreprocess from 'svelte-preprocess'
 import { resolve } from 'path'
-import { defineConfig } from 'vite'
+import { defineConfig, optimizeDeps } from 'vite'
 import AutoImport from 'unplugin-auto-import/vite'
-
 const srcDir = resolve(__dirname, 'src')
 const pagesDir = resolve(srcDir, 'pages')
 
 // https://vitejs.dev/config/
+
 export default defineConfig({
 	resolve: {
 		alias: {
@@ -17,9 +17,6 @@ export default defineConfig({
 	plugins: [
 		svelte({
 			preprocess: sveltePreprocess(),
-			compilerOptions: {
-				dev: true
-			},
 			onwarn: (warning, handler) => {
 				const { code, frame } = warning
 				if (code === "css-unused-selector")
@@ -28,14 +25,7 @@ export default defineConfig({
 				handler(warning)
 			},
 		}),
-		AutoImport({
-			imports: [
-				{
-					'webextension-polyfill': [['*', 'browser']],
-				},
-			],
-			dts: resolve('src/auto-imports.d.ts'),
-		}),
+
 	],
 
 	build: {

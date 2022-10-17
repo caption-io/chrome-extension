@@ -1,136 +1,149 @@
 <script lang="ts">
-	import Tooltip from "./Tooltip.svelte";
 	import Icon from "./Icon.svelte";
-  import { replace } from "lodash-es";
-  import {fade} from 'svelte/transition';
-  import Select from "./Select.svelte";
+	import Button from "./Button.svelte";
 
+	import { clickOutside } from "src/scripts/ui-utils";
+
+	import { createEventDispatcher } from "svelte";
+
+	export let value: string = null;
 	export let placeholder: string = "";
-	export let type: string;
-	export let inputIcon: Icons | null = null;
-	export let labelText: string = null;
-	export let labelIcon: Icons = null;
-	export let value: string;
+	export let icon: Icons | null = null;
 	export let option: NotionProp = null;
-	export let webDataSelect: boolean = false;
+	export let type: string;
+	export let clearable: boolean = true;
 
-	const inputType =
-		type === "text" || type === "title"
-			? "text"
-			: type === "phone_number"
-			? "tel"
-			: type === "email"
-			? "email"
-			: type === "url" || type === "files"
-			? "url"
-			: type === "number"
-			? "number"
-			: type === "password"
-			? "password"
-			: "text";
+	const dispatch = createEventDispatcher();
 
 	let focused: boolean = false;
 	let invalid: boolean = false;
 
-	function typeAction(node) {
-		node.type = inputType;
+	function handleFocus(value) {
+		focused = value;
+		if (focused) {
+			dispatch("focus");
+		} else {
+			dispatch("blur");
+		}
 	}
 
-	function validCheck(el) {
-		invalid = el.target.validity.typeMismatch;
-	}
 </script>
 
-<div class="main">
-	{#if labelText}
-		<div class="input-label">
-			{#if labelIcon}
-				<Icon
-					name={labelIcon}
-					size="med"
-					position="left"
-					color="grey"
-					light={true}
-					link={false}
-				/>
-			{/if}
-			<label for={option ? option.id : "null"} class="label-text">
-				<h3>{labelText}</h3>
-			</label>
+<div
+	class="text-input"
+	class:invalid
+	class:focused
+	class:clearable
+	use:clickOutside
+	on:click={() => handleFocus(true)}
+	on:outclick={() => handleFocus(false)}
+>
+	{#if icon}
+		<div class="input-icon">
+			<Icon
+				name={icon}
+				color="gray-500"
+				size={20}
+			/>
 		</div>
 	{/if}
-	<div class={`input-container${focused ? " focused" : ""}${invalid && focused ? ' invalid' : ''}`}>
-		{#if webDataSelect}
-		<div />
-		{/if}
-		{#if inputIcon}
-			<Icon name={inputIcon} color={"grey"} position="left" />
-		{/if}
-		<input
-			name={option ? option.id : "null"}
-			class="text-input"
-			use:typeAction
-			bind:value
-			wrap="soft"
-			{placeholder}
-			on:focus={() => (focused = true)}
-			on:blur={() => (focused = false)}
-			on:input={(e) => validCheck(e)}
-		/>
-	</div>
-	{#if invalid && focused}
-		<Tooltip
-			value={inputType === "url" ? "May not be a valid URL" : `May not be a valid ${option.type.replace(/_/g, " ")}.`}
-			position="bottom-right"
-			show={invalid}
-		/>
+	<div
+		name={option ? option.id : "null"}
+		class="input-box"
+		wrap="soft"
+		{placeholder}
+		on:focus={() => handleFocus(true)}
+		contenteditable
+		bind:textContent={value}
+	/>
+	{#if value && clearable}
+		<div class="clear-button">
+			<Button
+				icon="close"
+				size="sm"
+				color="red"
+				style="minimal"
+				on:click={() => (value = null)}
+			/>
+		</div>
+	{/if}
+	{#if !value && !focused}
+		<span
+			class="placeholder"
+			class:icon>{placeholder}</span
+		>
 	{/if}
 </div>
 
 <style lang="scss">
 	@use "../../style/global" as *;
 
-	.main {
-		@include flex(column, flex-start, flex-start);
-		@include inputLabel();
+	.text-input {
+		@include flex(row, flex-start, center);
+		box-sizing: border-box;
 		width: 100%;
-		position: relative;
-		.input-container {
-			@include flex(row, flex-start, center);
-			min-height: 2.25rem;
-			border: 1px solid var(--border-color);
-			@include input-shadow();
-			border-radius: 4px;
-			box-sizing: border-box;
-			padding: 0 0.5rem;
-			background: var(--white);
-			transition: 200ms;
-			width: 100%;
-			&.focused {
-				box-shadow: 0 0 0 3px var(--blue-light);
-				border: 1px solid var(--blue);
-			}
-			&.invalid {
-				box-shadow: 0 0 0 3px var(--yellow-light);
-				border: 1px solid var(--yellow);
-			}
-			.text-input {
-				width: 100%;
-				outline: none;
-				border: none;
-				background: transparent;
-				font-family: var(--font-family);
-				font-weight: 400;
-				font-size: 0.875rem;
-				min-height: 36px;
+		background: var(--bg-tertiary);
+		border: $border-color transparent;
+		border-radius: $border-radius;
+		transition: $transition;
+		overflow: hidden;
+		padding: $p8;
 
-				&.colored {
-					color: var(--blue-dark);
-				}
-				&::placeholder {
-					color: var(--text-light);
-					opacity: 0.75;
-				}
+		.input-icon {
+			@include flex(row, center, center);
+			margin-right: $p8;
+		}
+		.clear-button {
+			opacity: 0;
+			transition: $transition;
+		}
+
+		&.invalid {
+			box-shadow: 0 0 0 3px var(--yellow-light);
+			border: $border-color var(--yellow);
+		}
+
+		.input-box {
+			@include flex(row, flex-start, flex-start);
+			@include ui-text(var(--text), $p14, 400);
+			outline: none;
+			border: none;
+			background: transparent;
+			min-height: $p24;
+			line-height: 1.5;
+			line-break: auto;
+			word-break: break-word;
+			overflow: hidden;
+			padding: 1px 0 0 0;
+			box-sizing: border-box;
+			width: 100%;
+		}
+		.placeholder {
+			@include flex(row, flex-start, center);
+			@include ui-text(var(--gray-500), $p14, 400);
+			height: $p28;
+			padding: 0 $p8 0 $p8;
+			box-sizing: border-box;
+			position: absolute;
+			pointer-events: none;
+			&.icon {
+				padding: 0 $p24;
+			}
+		}
+		&:hover {
+			background-color: var(--bg);
+			box-shadow: 0 0 0 $p3 var(--blue-100);
+			border: $border-color var(--blue-300);
+			.clear-button {
+				opacity: 1;
+			}
+		}
+		&.focused {
+			background-color: var(--bg);
+			box-shadow: 0 0 0 $p3 var(--blue-100);
+			border: $border-color var(--blue-300);
+			.clear-button {
+				opacity: 1;
 			}
 		}
 	}
