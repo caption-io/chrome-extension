@@ -1,49 +1,101 @@
 <script lang="ts">
 	import Icon from "../ui/Icon.svelte";
-	import { appExpanded } from "src/scripts/platform/stores";
+	import {
+		appExpanded,
+		activePage,
+		selectedFlow,
+		minimized,
+	} from "src/scripts/platform/stores";
 	import Button from "src/components/ui/Button.svelte";
+	import { createEventDispatcher } from "svelte";
+
+	const dispatch = createEventDispatcher();
 
 	function close() {
-		browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
-			browser.tabs.sendMessage(tabs[0].id, "togglePopup");
+		chrome.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
+			chrome.tabs.sendMessage(tabs[0].id, "togglePopup");
 		});
+		minimized.set(false);
 	}
 </script>
 
-<div class="main">
+<div class="titlebar-container">
 	<div class="window-bar">
+		<div
+			class="goBack"
+			on:click={() => dispatch("close")}
+		>
+			{#if $selectedFlow !== null || $activePage !== "flows"}
+				{#if $minimized === false}
+					<Button
+						text="Back "
+						icon="back"
+						color="blue"
+						size="md"
+						style="minimal"
+						on:click={() => {
+							if ($selectedFlow) {
+								selectedFlow.set(null);
+							} else {
+								activePage.set("flows");
+							}
+						}}
+					/>
+				{/if}
+			{/if}
+		</div>
 		<div class="window-title">
-			<div class="logo-icon">
-				<Icon
-					name="quoteOpen"
-					size={22}
-					color="blue-400"
-					position="m"
-				/>
-			</div>
+			<div class="logo-icon" />
 			Caption
 		</div>
 		<div class="window-controls">
+			{#if $minimized === false}
+				<div class="window-control hidden">
+					<Button
+						icon="popout"
+						size="sm"
+						style="minimal"
+						color="blue"
+					/>
+				</div>
+				<div class="window-control hidden">
+					<Button
+						icon={$appExpanded ? "collapse" : "expand"}
+						size="sm"
+						style="minimal"
+						color="blue"
+						on:click={() => ($appExpanded = !$appExpanded)}
+					/>
+				</div>
+				<div class="window-control">
+					<Button
+						icon="minimize"
+						size="sm"
+						style="minimal"
+						color="blue"
+						on:click={() => minimized.set(true)}
+					/>
+				</div>
+			{:else if $minimized === true}
+				<div class="window-control">
+					<Button
+						icon="maximize"
+						size="sm"
+						style="minimal"
+						color="blue"
+						on:click={() => minimized.set(false)}
+					/>
+				</div>
+			{/if}
+			<div class="window-control">
 				<Button
-					icon="popout"
+					icon="close"
 					size="sm"
 					style="minimal"
-					color="blue"
+					color="red"
+					on:click={close}
 				/>
-				<Button
-					icon="{$appExpanded ? "collapse" : "expand"}"
-					size="sm"
-					style="minimal"
-					color="blue"
-					on:click={() => ($appExpanded = !$appExpanded)}
-				/>
-			<Button
-				icon="close"
-				size="sm"
-				style="minimal"
-				color="red"
-				on:click={close}
-			/>
+			</div>
 		</div>
 	</div>
 	<!-- <div class="tab-container">
@@ -69,67 +121,64 @@
 <style lang="scss">
 	@use "src/style/global" as *;
 
-	.main {
-		background-color: var(--gray-50);
+	.titlebar-container {
+		background-color: var(--bg-secondary);
 		width: 100%;
 		box-sizing: border-box;
+		z-index: 10;
 		.window-bar {
-			@include flex(row, space-between, center);
-			@include ui-text(var(--text-light), 0.875rem, 500);
-			width: 100%;
+			@include flex(row, center, center);
 			height: $p48;
-			padding: 0 0.75rem;
+			padding: 0 $p12 0 $p6;
 			box-sizing: border-box;
 			border-bottom: $border-light;
+			.goBack {
+				width: 70px;
+				margin-right: $p24;
+			}
 			.window-title {
-				@include flex(row, flex-start, center);
+				@include flex(row, center, center);
 				@include ui-text(var(--blue-400), $p12, 700);
+				flex-grow: 1;
 				text-transform: uppercase;
-				width: 100%;
 				.logo-icon {
 					margin-top: 0.2px;
 				}
 			}
 			.window-controls {
 				@include flex(row, flex-end, center);
-				@include ui-text(var(--text-300), 0.875rem, 500);
-				width: 100%;
+				width: 80px;
 				box-sizing: border-box;
 				column-gap: 0.25rem;
-				.hidden {
-					@include flex(row, flex-end, center);
-					column-gap: 0.25rem;
-					opacity: 0.25;
-					transition: 200ms ease;
-					transform: translateY(-2.25rem);
+				.window-control.hidden {
+					transition: $transition;
+					opacity: 0;
 				}
-			}
-			&:hover .hidden {
-				opacity: 1;
-				transform: translateY(0);
-			}
-		}
-		.tab-container {
-			@include flex(row, flex-start, center);
-			column-gap: 0.5rem;
-			height: 64px;
-
-			.tab {
-				@include flex(column, center, center);
-				padding: 0.5rem;
-				box-sizing: border-box;
-				cursor: pointer;
-				flex-grow: 1;
-				border-radius: 0.5rem;
-				transition: 300ms ease;
+				& > .window-control.hidden:first-child {
+					transform: translateX(56px);
+				}
+				& > .window-control.hidden:nth-child(2) {
+					transform: translateX(28px);
+				}
 				&:hover {
-					filter: brightness(1.05);
+					.window-control.hidden {
+						opacity: 1;
+					}
+					& > .window-control.hidden:first-child {
+						transform: translateX(0px);
+					}
+					& > .window-control.hidden:nth-child(2) {
+						transform: translateX(0px);
+					}
 				}
-				.tab-label {
-					@include ui-text(var(--text-dark), 0.875rem, 500);
-					padding-top: 0.25rem;
-					transition: 300ms ease;
-				}
+				// &:hover {
+				// 	.window-control {
+				// 		opacity: 1;
+				// 	}
+				// 	& > :not(:last-child) {
+				// 		transform: translateX(0);
+				// 	}
+				// }
 			}
 		}
 	}

@@ -1,66 +1,64 @@
 {
-    "name": "Notion Capture - Chrome Extension",
-    "description": "Capture Anything, Instantly",
-    "version": "0.0.1",
-    "manifest_version": 3,
+	"name": "Notion Capture - Chrome Extension",
+	"description": "Capture Anything, Instantly",
+	"version": "0.0.1",
+	"manifest_version": 3,
 	"key":"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAhbgE8ETdRceeSHyLhTH3Ze9wk4vbZAnbG/raK10koPZspTWcSJXra9xdlZkNmGTjlA2/uOdImL18GnAop/KNvIF/52SyNpjlVbzc3zC1RqwK/ypiSkAJC2N/4EvQwYuquqlE7vE/9Yds/ABqMgRRNXpDsFPQBCwaOnNzf0NYco74v5Zr1LFBsrN1tTX9ZKxwSM8EKHtW57VicjAaREQgRz0EWWf5yqzkB3gAB5/u22rAzt1ftt30oE2kpad8UfQeSTspwFhjnAf5ZkJuurUw8fue8ApCGtK/sr65P3noEZ7Gu8LQ1pshcRkrNzCyz7meicoCu4tFtmXavI4SI6EafQIDAQAB",
-	 "icons": {
-        "16": "/icons/get_started16.png",
-        "32": "/icons/get_started32.png",
-        "48": "/icons/get_started48.png",
-        "128": "/icons/get_started128.png"
-    },
-    "content_scripts": [
-        {
-            "matches": [
-				"https://*/*"
-            ],
-            "js": [
+	"icons": {
+		"16": "/icons/get_started16.png",
+		"32": "/icons/get_started32.png",
+		"48": "/icons/get_started48.png",
+		"128": "/icons/get_started128.png"
+	},
+	"content_scripts": [
+		{
+			"matches": [
+				"https://*/*",
+				"http://*/*"
+			],
+			"js": [
 				"src/pages/content/index.js"
-            ],
-            "run_at": "document_start"
-        }
-    ],
-    "background": {
-        "service_worker": "src/pages/background/index.js",
-        "type": "module"
-    },
-    "options_page": "src/pages/options/index.html",
-    "action": {
-        "default_icon": {
-            "16": "/icons/get_started16.png",
-            "32": "/icons/get_started32.png",
-            "48": "/icons/get_started48.png",
-            "128": "/icons/get_started128.png"
-        }
-    },
-    "permissions": [
-        "storage",
-        "tabs",
-        "scripting",
-        "contextMenus",
-		"identity",
-		"system.display"
-    ],
-    "web_accessible_resources": [
-        {
-            "resources": [
-                "src/pages/popup/index.html",
-                "src/pages/content/index.js",
-                "src/pages/popup/index.js",
-				"assets/*"
-            ],
-            "matches": [
-                "<all_urls>"
-            ]
-        }
-    ],
-    "content_security_policy":  {
-        "script-src": "'self' 'sha256-GwwZSoQXYK90k1NirGsDXK5cKOVFDVjmJ1sZPKvWaaA='",
-        "object-src": "'self'"
-
-    },
-    "host_permissions": [
-        "*://*/*"
-    ]
+			],
+			"run_at": "document_start"
+		}
+	],
+	"background": {
+		"service_worker": "src/pages/background/index.js",
+		"type": "module"
+	},
+	"options_page": "src/pages/options/index.html",
+	"action": {
+		"default_icon": {
+			"16": "/icons/get_started16.png",
+			"32": "/icons/get_started32.png",
+			"48": "/icons/get_started48.png",
+			"128": "/icons/get_started128.png"
+		}
+	},
+	"permissions": [
+		"storage",
+		"tabs",
+		"scripting",
+		"contextMenus",
+		"identity"
+	],
+	"web_accessible_resources": [
+		{
+			"resources": [
+				"src/pages/popup/index.html",
+				"src/pages/content/index.js",
+				"src/pages/options/index.js"
+			],
+			"matches": [
+				"<all_urls>"
+			]
+		}
+	],
+	"content_security_policy": {
+		"script-src": "'self' 'sha256-GwwZSoQXYK90k1NirGsDXK5cKOVFDVjmJ1sZPKvWaaA=",
+		"object-src": "'self'"
+	},
+	"host_permissions": [
+		"*://*/*"
+	]
 }

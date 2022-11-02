@@ -12,7 +12,7 @@
 		| "outline"
 		| "outline-fill"
 		| "minimal" = "primary";
-	export let color: string = "blue";
+	export let color: CaptionColors = "blue";
 	export let fill: boolean = false;
 	export let disabled: boolean = false;
 
@@ -32,16 +32,8 @@
 	class:disabled
 	class:fill
 	style="
-	--btn-color-50: var(--{color}-50);
-	--btn-color-100: var(--{color}-100);
-	--btn-color-200: var(--{color}-200);
-	--btn-color-300: var(--{color}-300);
-	--btn-color-400: var(--{color}-400);
-	--btn-color-500: var(--{color}-500);
-	--btn-color-600: var(--{color}-600);
-	--btn-color-700: var(--{color}-700);
-	--btn-color-800: var(--{color}-800);
-	--btn-color-900: var(--{color}-900);
+	--btn-color: var(--{color});
+	--btn-color-light: var(--{color}-light);
 	"
 	on:click
 >
@@ -63,10 +55,9 @@
 				style="order: {iconPosition === 'left' ? '0' : '2'}"
 			>
 				<Icon
-					name={icon}
+					{icon}
 					color="inherit"
-					size={size === "sm" ? 16 : size === "md" ? 16 : 20}
-					position="m"
+					size={size === "sm" ? 16 : size === "md" ? 16 : 16}
 				/>
 			</div>
 		{/if}
@@ -92,10 +83,10 @@
 
 	.button-container {
 		@include flex(row, center, center);
-		border-radius: var(--border-radius);
+		border-radius: $border-radius;
 		.button {
 			@include flex(row, center, center);
-			border-radius: $p3;
+			border-radius: var(--border-radius);
 			column-gap: 0.25rem;
 			cursor: pointer;
 			border: 1px solid transparent;
@@ -107,69 +98,85 @@
 			}
 			&.sm {
 				padding: 0 $p2;
-				height: 1.5rem;
+				height: $p24;
 				font-size: 0.875rem;
+				border-radius: $p3;
 			}
 			&.md {
 				padding: 0rem 0.5rem;
-				height: 2rem;
+				height: $p32;
 				font-size: 0.875rem;
 			}
 			&.lg {
-				padding: 0rem 0.75rem;
-				height: 2.5rem;
-				font-size: 1rem;
+				padding: $p12 $p20;
+				font-size: 0.875rem;
+				box-sizing: border-box;
+				.button-icon {
+					margin-right: $p3;
+				}
 			}
 			&.primary {
-				background-color: var(--btn-color-400);
+				background-color: var(--btn-color);
 				color: var(--white-alpha-900);
-				box-shadow: 0 0 1px 0 var(--btn-color-100);
+				box-shadow: 0 0 1px 0 var(--btn-color-light);
 				&:hover {
-					background-color: var(--btn-color-300);
-					box-shadow: 0 0 0 3px var(--btn-color-100);
+					filter: brightness(1.07);
+					box-shadow: 0 0 0 3px var(--btn-color-light);
 				}
 				&.pressed {
-					background-color: var(--btn-color-500);
-					box-shadow: 0 0 0 1px var(--btn-color-200);
+					filter: brightness(0.96);
+					box-shadow: 0 0 0 1px var(--btn-color-light);
 				}
 			}
 			&.secondary {
-				background-color: var(--btn-color-100);
-				color: var(--btn-color-800);
-				fill: var(--btn-color-800);
+				background-color: var(--btn-color-light);
+				color: var(--text-alpha);
 				&:hover {
-					background-color: var(--btn-color-50);
+					filter: brightness(1.04);
 				}
 			}
 			&.outline {
 				background-color: transparent;
-				color: var(--btn-color-200);
-				fill: var(--btn-color-200);
-				border: 1px solid var(--btn-color-200);
+				color: var(--btn-color);
+				border: 1px solid var(--btn-color);
 				&:hover {
-					background-color: var(--btn-color-600);
+					background-color: var(--btn-color-light);
 				}
 			}
 			&.outline-fill {
-				background-color: var(--btn-color-400);
-				color: var(--btn-color-200);
-				fill: var(--btn-color-200);
-				border: 1px solid var(--btn-color-200);
-				box-shadow: 0 0 1px 0 var(--btn-color-500);
+				background-color: var(--btn-color-light);
+				color: var(--btn-color);
+				border: 1px solid var(--btn-color);
 				&:hover {
-					background-color: var(--btn-color-400);
-					box-shadow: 0 0 0 3px var(--btn-color-500);
+					background-color: var(--btn-color);
+					color: var(--white-alpha-900);
+					border: $border-color var(--btn-color);
+					box-shadow: 0 0 0 3px var(--btn-color-light);
 				}
 			}
 			&.minimal {
 				background-color: transparent;
-				color: var(--gray-500);
-				fill: var(--gray-500);
+				color: var(--text-secondary);
 				&:hover {
-					color: var(--btn-color-500);
-					fill: var(--btn-color-500);
-					background-color: var(--btn-color-50);
+					color: var(--btn-color);
+					background-color: var(--btn-color-light);
 				}
+			}
+			&.disabled {
+				opacity: 0.5;
+				cursor: not-allowed;
+				pointer-events: none;
+				&:hover {
+					box-shadow: none;
+				}
+			}
+		}
+		&.disabled {
+			opacity: 0.5;
+			cursor: not-allowed;
+			pointer-events: none;
+			&:hover {
+				box-shadow: none;
 			}
 		}
 	}

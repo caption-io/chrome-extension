@@ -1,24 +1,30 @@
-// on message togglePopup reate modal if not exist and show it
-
-
-browser.runtime.onMessage.addListener((message, sender) => {
+let userBrowser = navigator.userAgent.toLowerCase() // Get the user agent string
+chrome.runtime.onMessage.addListener((message, sender) => {
 	if (message === 'togglePopup') {
 		showModal()
 	} else if (message.message === 'height') {
-		setModalHeight(message.height, message.width)
+		setModalHeight(message.height, "height")
+	} else if (message.message === 'width') {
+		setModalHeight(message.width, "width")
+	} else if (message.message === 'colorMode') {
+		colorMode(message.mode)
 	}
 })
+let currentUrl = window.location.href
+let popupAllowed = (!currentUrl.startsWith('https://www.notion.so/install-integration') || !currentUrl.startsWith('https://api.notion.com/'))
 
 let popup
-document.addEventListener('DOMContentLoaded', () => {
 
-	let modal = document.createElement('iframe')
-	modal.setAttribute('id', 'caption-popup')
-	modal.src = chrome.runtime.getURL('src/pages/popup/index.html')
+if (popupAllowed) {
+	document.addEventListener('DOMContentLoaded', () => {
+
+		let modal = document.createElement('iframe')
+		modal.setAttribute('id', 'caption-popup')
+		modal.src = chrome.runtime.getURL('src/pages/popup/index.html')
 
 
-	modal.setAttribute('style',
-		`
+		modal.setAttribute('style',
+			`
 	top:24px;
 	right:24px;
 	position: fixed; 
@@ -31,28 +37,37 @@ document.addEventListener('DOMContentLoaded', () => {
 	border: 1px solid transparent;
 	outline: none;
 	overflow: hidden;
-	pointerEvents = 'none'
-
+	pointer-events: none;
 	`
-	)
+		)
 
-	document.body.appendChild(modal)
-	popup = modal
-})
+		document.body.appendChild(modal)
+		popup = modal
+	})
+}
 
-let popupWidth = 400
+function colorMode(mode) {
+	if (mode === 'dark') {
+		popup.style.backgroundColor = '#1e1e1e'
+		popup.style.border = '1px solid #4a5568'
+	} else {
+		popup.style.backgroundColor = '#fff'
+		popup.style.border = '1px solid #e2e8f0'
+	}
+}
 
-function setModalHeight(height, width) {
-	popup.style.width = width + 'px'
-	popup.style.height = height + 'px'
+function setModalHeight(size, dimension) {
+
+	if (dimension === 'width') {
+		popup.style.width = size + 'px'
+	} else {
+		popup.style.height = size + 'px'
+	}
 }
 function showModal() {
-	// modal = iframe as node
 	let modal = document.getElementById('caption-popup')
 	let body = document.getElementsByTagName('html')[0]
 
-	console.log("iFrame content window: ", modal)
-	// modal.style.height = modalSize + 'px'
 	if (modal.style.opacity === '0') {
 		modal.style.opacity = '1'
 		modal.style.pointerEvents = 'all'

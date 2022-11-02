@@ -1,52 +1,46 @@
 <script lang="ts">
-	import Svelecte, { addFormatter } from "svelecte";
-	import { webData } from "src/scripts/platform/stores";
-	import { forEach } from "lodash-es";
-	import { icons } from "../../icons";
+	import Svelecte from "svelecte";
+	import { webData, dropdownExtraHeight } from "src/scripts/platform/stores";
+	import { clickOutside } from "src/scripts/ui-utils";
 	import Icon from "./Icon.svelte";
 	import WebDataDropdownItem from "./WebDataDropdownItem.svelte";
 
 	export let type: string;
 	export let value;
-	export let change;
-	export let selected;
-	let filteredOptions = {
-		urls: [],
-		text: [],
-		selection: [],
-	};
+	
 
 	const urls = ["url", "twitter", "icon", "image"];
 	const text = ["title", "site_name", "description", "selection"];
 	let focused: boolean = false;
+	console.log($webData);
+	// let filtered;
+	// $: filtered.exact = $webData.length >= 1 ? $webData.filter((data) => {
+	// 	const typeTranslate = type === "url" || type === "title" || type === "text" || type === "file" ? "text" : type;
+	// 	const typeTranslateData = data.type === "url" || data.type === "title" || data.type === "text" || data.type === "file" ? "text" : data.type;
+	// 	console.log("Filtered: ",data, "Type: ", typeTranslate);
 
-	forEach($webData, (value, key) => {
-		if (urls.includes(key) && value) {
-			filteredOptions.urls.push({
-				text: value,
-				value: value,
-				type: key,
-				icon: icons[key],
-			});
-		} else if (text.includes(key) && value) {
-			filteredOptions.text.push({
-				text: value,
-				value: value,
-				type: key,
-				icon: icons[key],
-			});
+	// 	if (typeTranslateData === typeTranslate) {
+	// 		return data;
+	// 	};
+	// }) : [];
+	let svEl;
+	function selectClicked() {
+		if (svEl.firstChild.childNodes.item(2).firstChild) {
+			dropdownExtraHeight.set(svEl.firstChild.childNodes.item(2).firstChild.parentElement);
+			console.log($dropdownExtraHeight)
 		}
-	});
-
-	// reverse order of filteredOptions.text
-	filteredOptions.text = filteredOptions.text.reverse();
-	filteredOptions.urls = filteredOptions.urls.reverse();
+	}
 
 	console.log("Web Data: ", $webData);
-	console.log("Filtered: ", filteredOptions);
 </script>
 
-<div class="main">
+{#if $webData}
+<div 
+	class="main"
+	bind:this={svEl}
+	on:click={selectClicked}
+	on:outclick={selectClicked}
+	>
 	<Svelecte
 		options={$webData}
 		dropdownItem={WebDataDropdownItem}
@@ -54,34 +48,31 @@
 		class="svlecte-control webdata"
 		placeholder=""
 		bind:value
-		bind:readSelection={selected}
 		searchable={false}
-		on:change={change}
 		groupLabelField="groupHeader"
 		groupItemsField="items"
-		valueField="text"
+		valueAsObject={true}
 	>
 		<div slot="icon">
 			{#if !value}
 				<div class="placeholder-icon">
 					<Icon
-						name="web"
-						color={"gray-400"}
-						position="m"
+						icon="web"
+						color="gray"
+						size={16}
 					/>
-					Web Data
 				</div>
 			{/if}
 		</div>
 	</Svelecte>
 </div>
+{/if}
 
 <style lang="scss">
 	@use "../../style/global" as *;
 	.main {
 		align-self: flex-start;
 		height: 100%;
-		width: 100%;
 	}
 	:global {
 		.webdata {
@@ -90,11 +81,12 @@
 			justify-content: center;
 			flex: unset !important;
 			display: flex;
-			position: unset !important;
 			background-color: var(--bg-tertiary) !important;
 			transition: $transition;
+			position: unset !important;
+			border-radius: $border-radius;
 			&:hover {
-				background-color: var(--bg-secondary);
+				background-color: var(--bg-secondary) !important;
 			}
 			&:has(.is-active) {
 				background-color: var(--bg-secondary) !important;
@@ -105,33 +97,35 @@
 				height: 100% !important;
 				width: fit-content !important;
 				background-color: var(--bg-tertiary) !important;
-				border-radius: 0 !important;
+				border-radius: $border-radius !important;
+				overflow: hidden;
 				border: none !important;
 				cursor: pointer;
 				box-sizing: border-box;
 				outline: none;
 				box-shadow: none !important;
-				position: unset !important;
 
-				&.is-active {
+				&.is-active, &:hover {
 					background-color: var(--bg-secondary) !important;
 				}
 
 				.sv-content {
 					padding: 0 !important;
+					position: unset !important;
 				}
 
 				.icon-slot {
 					box-sizing: border-box;
 				}
 				.placeholder-icon {
-					padding: 0.5rem 0 0.5rem 0.5rem !important;
+					padding: 0.375rem 0 0.375rem 0.5rem !important;
 					@include ui-text(var(--gray-500), $p14, 400);
 					box-sizing: border-box;
 					display: flex;
 					align-items: center;
 					justify-content: center;
 					column-gap: $p3;
+					margin-left: 0 !important;
 				}
 
 				.indicator-container {
@@ -146,7 +140,8 @@
 				.inputBox {
 					width: 0 !important;
 					margin: 0 !important;
-					position: absolute !important;
+					position: relative !important;
+					padding: 0 !important;
 				}
 
 				.sv-item {
@@ -181,11 +176,12 @@
 
 			.sv-dropdown {
 				background-color: var(--bg) !important;
-				width: 368px !important;
-				left: 12px !important;
-				margin-top: 0.75rem !important;
+				width: calc(100% - $p24) !important;
+				left: 0 !important;
+				margin: $p8 $p12 $p6 $p12 !important;
 				z-index: 3 !important;
 				top: 100% !important;
+				box-sizing: content-box;
 				.sv-dropdown-scroll {
 					padding: 0 !important;
 				}

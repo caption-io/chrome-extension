@@ -1,13 +1,23 @@
 import { Client, isFullDatabase, isFullPage } from '@notionhq/client'
 import type { DatabaseObjectResponse } from '@notionhq/client/build/src/api-endpoints'
+import { activeAccount, accountStore } from '../../platform/stores'
+import { get } from 'svelte/store'
 
-let notion: Client;
 
-(async function setToken() {
-	const s = await browser.storage.local.get('settings').then((result) => notion = new Client({ auth: result.settings.notionToken }))
-})()
+const readOnlyProps: PropTypes[] = ["rollup", "created_time", "last_edited_time", "created_by", "last_edited_by", "formula"]
+
+function setToken() {
+	let accts = get(accountStore)
+	let acct = accts.find(acct => acct.id === get(activeAccount))
+
+	return new Client({
+		auth: acct.token
+	})
+
+}
 
 export async function queryDatabase(databaseId: string, filterInput?, sortInput?) {
+	let notion = setToken()
 	const response = await notion.databases.query({
 		database_id: databaseId,
 		filter: filterInput,
@@ -22,9 +32,9 @@ export async function queryDatabase(databaseId: string, filterInput?, sortInput?
 
 const propFormatter = (result: DatabaseObjectResponse, prop: string) => {
 	const propOptions = result.properties[prop][result.properties[prop].type]
-	let props: NotionSelectOption[] | NotionStatusOption[];
+	let props: NotionSelectOption[] | NotionStatusOption[]
 	if (result.properties[prop].type === "select") {
-		props = propOptions.options.map((option) :NotionSelectOption => {
+		props = propOptions.options.map((option): NotionSelectOption => {
 			return {
 				name: option.name,
 				id: option.id,
@@ -58,7 +68,9 @@ const propFormatter = (result: DatabaseObjectResponse, prop: string) => {
 }
 
 
-export async function GetAllDatabases() {
+
+export async function GetAllDatabases(token: ProviderAccount['token']): Promise<OutputDestination[]> {
+	let notion = setToken()
 	const response = await notion.search({
 		filter: {
 			property: 'object',
@@ -70,10 +82,11 @@ export async function GetAllDatabases() {
 			return true
 		})
 	})
-	const formattedResponse: NotionDatabase[] = response.map((result: DatabaseObjectResponse): NotionDatabase => {
+	const formattedResponse: OutputDestination[] = response.map((result: DatabaseObjectResponse): OutputDestination => {
 		return {
 			name: result.title.length > 0 ? result.title[0].plain_text : "Untitled",
 			id: result.id,
+			provider: "Notion",
 			icon: !result.icon ? null
 				: result.icon.type === "emoji"
 					? result.icon.emoji
@@ -86,10 +99,13 @@ export async function GetAllDatabases() {
 				return {
 					name: prop,
 					id: result.properties[prop].id,
-					storedValue: '',
 					type: result.properties[prop].type,
 					options: propFormatter(result, prop),
-					visible: false
+					readOnly: readOnlyProps.includes(result.properties[prop].type),
+					visible: true,
+					showAllCompatible: false,
+					savedValue: null,
+					savedInput: null
 				}
 			}),
 			raw: result
@@ -101,16 +117,22 @@ export async function GetAllDatabases() {
 		database.props.push({
 			name: "Page Icon",
 			id: "pageIcon",
-			storedValue: '',
 			type: "pageIcon",
-			visible: true
+			readOnly: false,
+			visible: true,
+			showAllCompatible: false,
+			savedValue: null,
+			savedInput: null
 		})
 		database.props.push({
 			name: "Cover Image",
 			id: "coverImage",
-			storedValue: '',
 			type: "coverImage",
-			visible: false
+			readOnly: false,
+			visible: true,
+			showAllCompatible: false,
+			savedValue: null,
+			savedInput: null
 		})
 	})
 
@@ -119,7 +141,12 @@ export async function GetAllDatabases() {
 	return formattedResponse
 }
 
-export async function CreatePage(pageInfo) {
-	const response = await notion.pages.create(pageInfo)
-	return response
-}
+// export async function CreatePage(pageInfo) {
+// 	const response = await notion.pages.create(pageInfo)
+// 	return response
+// }
+
+// FUNCTIONS 
+
+// FUNC: Get all Destinations
+//! FUNCTIONS 

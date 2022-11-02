@@ -34,7 +34,7 @@ const tabs: {name: string, icon: Icons}[] = [
 		@include flex(row, space-between, center);
 		width: 100%;
 		padding: 1rem;
-		background-color: var(--gray-100);
+		background-color: var(--bg-secondary);
 		box-sizing: border-box;
 		.tab {
 			@include flex(column, center, center);

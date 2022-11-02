@@ -1,30 +1,68 @@
-import { writable, type Writable } from "svelte/store";
+import { writable, type Writable } from "svelte/store"
+export const flowStore: Writable<Flow[]> = flowStoreFunc()
+function flowStoreFunc() {
+	const { subscribe, set, update } = writable([])
 
-function createFlows() {
-    const { subscribe, set, update } = writable([]);
-
-    return {
-        subscribe,
-        setFlows: flows => {
-            set(flows);
-        },
-        newFlow: (flow) => update(flows => [...flows, flow]),
-        removeFlow: (flow) => update(flows => flows.filter(f => f !== flow)),
-        updateFlow: (flow) => update(flows => flows.map(f => f.id === flow.id ? flow : f))
-    }
+	return {
+		subscribe,
+		set: flows => {
+			set(flows)
+		},
+		new: (flow) => update(flows => [...flows, flow]),
+		remove: (flow) => update(flows => flows.filter(f => f !== flow)),
+		update: (flow) => update(flows => flows.map(f => f.id === flow.id ? flow : f))
+	}
 }
 
-export const isLoading = writable(true);
-export const webData = writable(null);
-export const selectedFlow = writable(null);
-export const flows: Writable<FlowData[]> = writable([]);
-export const settings: Writable<UserSettings> = writable({
-	defaultPopupFlow: null,
-	defaultHighlightFlow: null,
-	colorMode: 'light',
-	notionToken: null
-});
+export const outputProvidersStore: Writable<OutputProvider[]> = outputProvidersStoreFunc()
 
-export const tags = writable([]);
-export const appExpanded = writable(false);
-export const maxSize = writable({ width: 0, height: 0 });
+function outputProvidersStoreFunc() {
+	const { subscribe, set, update } = writable([])
+	return {
+		subscribe,
+		set: providers => {
+			set(providers)
+		},
+		new: (provider) => update(providers => [...providers, provider]),
+		remove: (provider) => update(providers => providers.filter(p => p !== provider)),
+		update: (provider) => update(providers => providers.map(p => p.id === provider.id ? provider : p))
+	}
+}
+
+export const settingStore: Writable<CaptionSettings> = writable()
+export const accountStore: Writable<ProviderAccount[]> = writable([])
+
+
+// VARS: Receives from Input Providers
+export const webData: Writable<InputProviderData> = writable(null)
+
+// VARS: Receives from Output Providers
+export const newAccount: Writable<ProviderAccount> = writable(null)
+export const noAccounts: Writable<boolean> = writable(true)
+
+// VARS: UI Variables
+export const appExpanded: Writable<boolean> = writable(false)
+export const maxSize: Writable<{ width: number, height: number }> = writable({ width: 0, height: 0 })
+export const selectedFlow: Writable<Flow> = writable(null)
+export const tooltipInfo: Writable<{
+	text: string, position: | "top-left"
+		| "top-center"
+		| "top-right"
+		| "right"
+		| "bottom-right"
+		| "bottom-center"
+		| "bottom-left"
+		| "left",
+		location: { x: number, y: number },
+		locationOffset?: { x: number, y: number }
+		delay?: number
+}> = writable(null)
+export const activeAccount: Writable<ProviderAccount['id']> = writable(null)
+export const activePage: Writable<string> = writable("flowList")
+export const dropdownExtraHeight: Writable<number> = writable(0)
+
+
+export const isLoading = writable(true)
+export const tags = writable([])
+
+export const minimized = writable(false)

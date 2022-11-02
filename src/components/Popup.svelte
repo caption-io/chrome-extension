@@ -1,210 +1,201 @@
 <script lang="ts">
+	// IMPORTS
+
+	// IMPT: Components
 	import Main from "src/components/main/Main.svelte";
-	import Auth from "src/components/Auth.svelte";
 	import TitleBar from "src/components/main/TitleBar.svelte";
-	import { webData, settings, maxSize, appExpanded } from "src/scripts/platform/stores";
-	import { getSettings } from "src/scripts/platform/chrome-storage";
-	import { uniqueIcons } from "src/scripts/input_providers/webdata";
-	// import {getSubtitles} from 'youtube-captions-scraper';
+	import Tooltip from "./ui/Tooltip.svelte";
 
-	let userLoggedIn: boolean = false;
-	let popupSize;
+	// IMPT: Stores
+	import {
+		settingStore,
+		accountStore,
+		webData,
+		maxSize,
+		appExpanded,
+		tooltipInfo,
+		dropdownExtraHeight,
+	} from "src/scripts/platform/stores";
 
-	console.log("Window: ", window);
+	// IMPT: Local Scripts
+	import {
+		_settings,
+		_outputProviders,
+		_flows,
+	} from "src/scripts/platform/flows-scripts";
+	import { getWebData } from "src/scripts/input_providers/webData/webdata";
+
+	//! IMPORTS
+
+	// FUNCTIONS: On Mount
+	_settings.loadAll();
+	_outputProviders.loadAccounts();
+	_flows.load();
+
+	_settings.load("defaultAccount").then((account) => {
+		if (!account) {
+			if ($accountStore.length > 0) {
+				_settings.save("defaultAccount", $accountStore[0].id);
+			} else {
+				_outputProviders.addAccount();
+			}
+		}
+	});
 
 	maxSize.set({
-		height: (window.outerHeight) - 48,
-		width: (window.outerWidth) - 48,
+		height: window.outerHeight - 172,
+		width: window.outerWidth - 48,
 	});
 
-	maxSize.subscribe((value) => {
-		popupSize = value;
+	//! FUNCTIONS
+
+	// VARIABLES
+
+	// VARS: Local
+
+	let body = document.body;
+	let currentTab = chrome.tabs.getCurrent();
+
+	// VARS: Local Dyanmic
+	let colorMode = "light";
+	$: if ($settingStore && $settingStore.find((s) => s.name === "colorMode") && $settingStore.find((s) => s.name === "colorMode").value) {
+		colorMode = $settingStore.find((s) => s.name === "colorMode").value;
+	}
+	let theme = "light";
+	let sysPrefColor = window.matchMedia("(prefers-color-scheme: dark)");
+	let sysColorMode = sysPrefColor.matches ? "dark" : "light";
+	sysPrefColor.addEventListener("change", (e) => {
+		sysColorMode = e.matches ? "dark" : "light";
 	});
 
-	// FUNC: Load Settings
-	(async function loadSetting() {
-		await getSettings().then((res) => {
-			settings.set({
-				...res,
-			});
-			if ($settings.notionToken !== null) {
-				userLoggedIn = true;
-				console.log("User logged in with token: ", $settings.notionToken);
-			} else {
-				userLoggedIn = false;
-				console.log("User not logged in, token: ", $settings.notionToken);
-				//open options page
-			}
+	//! VARIABLES
+
+	// TODO: Make onload function dynamic for inputProviders
+	(async () => {
+		currentTab.then((tab) => {
+			chrome.scripting
+				.executeScript({
+					target: { tabId: tab.id },
+					func: getWebData,
+				})
+				.then((res) => {
+					webData.set(res[0].result);
+				});
 		});
 	})();
 
-	// execute parsePageData()
-	(async () => {
-		let queryOptions = { active: true, lastFocusedWindow: true };
-		let [tab] = await browser.tabs.query(queryOptions);
-		let tabid = tab.id;
-		browser.scripting
-			.executeScript({
-				target: { tabId: tabid },
-				func: uniqueIcons,
-			})
-			.then((res) => {
-				console.log("WebData: ", res[0].result);
-				webData.set(res[0].result);
-			});
-	})();
+	// FUNCTIONS: Listeners
 
-	// watch for changes to active tab
-	browser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
+	chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 		if (changeInfo.status === "complete") {
-			let queryOptions = { active: true, lastFocusedWindow: true };
-			let [tab] = await browser.tabs.query(queryOptions);
-			let tabid = tab.id;
-			browser.scripting
+			chrome.scripting
 				.executeScript({
-					target: { tabId: tabid },
-					func: uniqueIcons,
+					target: { tabId: tabId },
+					func: getWebData,
 				})
 				.then((res) => {
-					console.log("WebData: ", res[0].result);
 					webData.set(res[0].result);
 				});
 		}
 	});
+	//! FUNCTIONS
 
-	browser.storage.onChanged.addListener((changes, areaName) => {
-		console.log(changes);
-		if (changes.pageData) {
-			webData.set(changes.pageData.newValue);
-		}
-	});
-	let body = window.document.body;
+	// chrome.storage.onChanged.addListener((changes, areaName) => {
+	// 	if (changes.settings.newValue) {
+	// 		if (
+	// 			changes.settings.oldValue.find((x) => x.id == "extensionStorage") !==
+	// 			changes.settings.newValue.find((x) => x.id == "extensionStorage")
+	// 		) {
+	// 			webData.set(changes.pageData.newValue);
+	// 		}
+	// 	}
+	// });
 
 	// resize obbserver to watch for changes to body height
 	const resizeObserver = new ResizeObserver((entries) => {
 		for (let entry of entries) {
 			const cr = entry.contentRect;
-			browser.runtime.sendMessage({
-				type: "resize",
-				height: cr.height,
-			});
-			sendHeight(cr.height, cr.width);
+			sendHeight(cr.height, 0);
 		}
 	});
 
 	$: if (body) {
 		resizeObserver.observe(body);
 	}
-
-	const maxHeight = window.outerHeight - 120;
-	const maxWidth = window.outerWidth - 64;
+	$: if ($appExpanded) {
+		sendHeight(0, 900);
+	} else {
+		sendHeight(0, 400);
+	}
 
 	// watch for changes to body height
 	function sendHeight(height, width) {
-		// send message to content script
-		browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
-			browser.tabs.sendMessage(tabs[0].id, {
-				message: "height",
-				height: height,
-				width: width,
-			});
-		});
-	}
-	window.addEventListener("mousemove", (e) => {
-		browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
-			browser.tabs.sendMessage(tabs[0].id, {
-				message: "mouse",
-				mousePosition: e.screenX,
-			});
-		});
-	});
-
-	function resizePopup(e, input) {
-		let state = "none";
-		if (input === "start") {
-			console.log(e.screenX);
-			browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
-				browser.tabs.sendMessage(tabs[0].id, {
-					message: "resize",
-					mousePosition: e.screenX,
+		currentTab.then((tab) => {
+			if (height !== 0) {
+				chrome.tabs.sendMessage(tab.id, {
+					message: "height",
+					height: height,
 				});
-			});
-		}
-		if (input === "mousemove" && state === "dragging") {
-			console.log(e);
-		}
-		if (input === "end") {
-			console.log(e);
-			state = "none";
-		}
-	}
-
-	let resizeing = false;
-	function dragger(state, e) {
-		console.log(state, e);
-		if (state === "start") {
-			resizeing = true;
-			browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
-				browser.tabs.sendMessage(tabs[0].id, {
-					message: "resize",
-					value: true,
-				});
-			});
-		} else if (state === "end") {
-			resizeing = false;
-			browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
-				browser.tabs.sendMessage(tabs[0].id, {
-					message: "resize",
-					value: false,
-				});
-			});
-		}
-	}
-
-	// $: sendHeight(bodyHeight);
-	let testy;
-	let minWidth = 400;
-
-	const idsFromNotion = ["123", "456", "789"];
-	const youtubeApiResults = [{ id: "123" }, { id: "456" }, { id: "788" }];
-
-	const videosFound = idsFromNotion.map((id) => {
-		return youtubeApiResults.find((result) => {
-			result.id === id;
-			return id;
-		});
-	});
-
-	function youtuber(expanded) {
-		browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
-			if (tabs[0].url.includes("youtube.com/watch") && expanded) {
-				browser.tabs.sendMessage(tabs[0].id, {
-					message: "youtube",
-					expanded: expanded,
+			}
+			if (width !== 0) {
+				chrome.tabs.sendMessage(tab.id, {
+					message: "width",
+					width: width,
 				});
 			}
 		});
 	}
 
-	$: youtuber($appExpanded);
+	// GRP: Color Mode Handler
 
-	console.log(Object.entries(videosFound));
+	$: if (colorMode === "system" && sysColorMode) {
+		colorHandler(sysColorMode);
+	} else {
+		colorHandler(colorMode);
+	}
+
+	function colorHandler(mode) {
+		body.style.setProperty(
+			"background-color",
+			`${mode === "light" ? "#fff" : "#14161f"}`
+		);
+		chrome.tabs.getCurrent().then((tab) => {
+			chrome.tabs.sendMessage(tab.id, {
+				message: "colorMode",
+				mode: mode,
+			});
+		});
+		theme = mode;
+	}
 </script>
 
 <div
 	id="height"
-	class={`container ${$settings.colorMode}-mode`}
-	style="{$appExpanded
-		? "height: " + (window.outerHeight - 96) + "px; width: " + $maxSize.width + "px;" 
-		: "height: fit-content; width: 400px;"}"
-	style:maxHeight="{$maxSize.height}px"
-	style:maxWidth="{$maxSize.width}px"
+	class={`container ${theme}-mode`}
+	class:expanded={$appExpanded}
+	style={`width: ${$appExpanded ? "900px" : "400px"}; height: ${
+		$appExpanded ? $maxSize.height + "px" : $dropdownExtraHeight ? $dropdownExtraHeight + "px" : "auto"
+	}; max-height: ${$maxSize.height}px; max-width: ${
+		$maxSize.width
+	}px;`}
 >
 	<TitleBar />
-	{#if !userLoggedIn}
-		<Auth />
-	{:else}
-		<Main />
+	<!-- {#if !userLoggedIn}
+		Not Logged In -->
+	<!-- {:else} -->
+	<Main />
+	<!-- {/if} -->
+	{#if $tooltipInfo}
+		<Tooltip
+			show={true}
+			value={$tooltipInfo.text}
+			position={$tooltipInfo.position}
+			location={{
+				x: $tooltipInfo.location.x,
+				y: $tooltipInfo.location.y,
+			}}
+			delay={$tooltipInfo.delay}
+		/>
 	{/if}
 </div>
 
@@ -214,46 +205,17 @@
 >
 	@use "../style/global" as *;
 
-	@keyframes widen {
-		0% {
-			opacity: 0;
-		}
-
-		100% {
-			opacity: 1;
-		}
-	}
-
 	.container {
 		display: flex;
 		flex-direction: column;
 		pointer-events: all;
 		overflow: hidden;
-		height: 100%;
-		transform-origin: top right;
-		background-color: rgba(255, 255, 255, 0.75);
+		transform-origin: 0% 100%;
+		background-color: var(--bg);
 		offset-anchor: top right;
-
 		box-sizing: border-box;
-
-		.resize-handle {
-			position: absolute;
-			bottom: -20px;
-			left: -20px;
-			width: 32px;
-			height: 32px;
-			transform: rotate(45deg);
-			cursor: ns-resize;
-			z-index: 100;
-			background: rgba(0, 0, 0, 0.1);
-
-			&:hover {
-				background: rgba(0, 0, 0, 0.1);
-			}
-		}
-
-		#height {
-
+		transition: $transition;
+		&.expanded {
 		}
 	}
 </style>

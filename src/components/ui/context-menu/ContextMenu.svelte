@@ -70,7 +70,7 @@
 		on:delete
 	/> -->
 <style lang="scss">
-	@use "../../../style/global" as *;
+	@use "src/style/global" as *;
 	.main {
 		@include flex(column, flex-start, center);
 		border: 1px solid var(--border-color);
@@ -97,7 +97,7 @@
 		box-sizing: border-box;
 		transition: 0.2s ease-in-out;
 		.menu-option-text {
-			@include ui-text-default($weight: 500);
+			@include ui-text(var(--text-secondary), $p14, 500);
 			margin: 0 0 0 0;
 		}
 		&:hover {

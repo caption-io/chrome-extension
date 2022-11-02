@@ -1,9 +1,10 @@
-import Popup from 'src/components/Popup.svelte'
+import Auth from 'src/components/Auth.svelte'
 
 function loadPopup() {
-	const app = new Popup({
+	const app = new Auth({
 		target: document.body,
 	})
 }
 
 document.addEventListener('DOMContentLoaded', loadPopup)
+

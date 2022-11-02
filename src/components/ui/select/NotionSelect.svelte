@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { itemActions, CloseButton } from "svelecte/item";
 	import Icon from "src/components/ui/Icon.svelte";
-	import { xlink_attr } from "svelte/internal";
 
 	export let inputValue;
 	export let index = -1;
@@ -37,13 +36,8 @@
 	): option is NotionSelectOption {
 		return (option as NotionSelectOption).color !== undefined;
 	}
-	function isDatabase(
-		option: NotionSelectOption | NotionDatabase
-	): option is NotionDatabase {
-		return (option as NotionDatabase).icon !== undefined;
-	}
 
-	console.log("isSelectOption", isSelectOption(item));
+	console.log("isSelectOption", isSelectOption(item), item);
 </script>
 
 {#if item.name}
@@ -56,29 +50,12 @@
 		on:deselect
 		on:hover
 		style={isSelectOption(item)
-			? `--ns-text-color: var(--${item.color}-800); 
-		--ns-bg-color: var(--${item.color}-100);
-		--ns-close-color: var(--${item.color}-50);`
-			: "--ns-text-color: var(--gray-700); --ns-bg-color: none; --ns-close-color: var(--gray-50);"}
+			? `--ns-text-color: var(--text-alpha); 
+		--ns-bg-color: var(--${item.color}-alpha-200);
+		--ns-close-color: var(--${item.color}-10);`
+			: "--ns-text-color: var(--gray-800); --ns-bg-color: none; --ns-close-color: var(--gray-50);"}
 	>
-		<div class="sv-item-content sv-ns-item" >
-			{#if isDatabase(item)}
-				{#if !item.icon}
-					<Icon
-						name="doc"
-						color="gray-600"
-						position="l"
-						size={16}
-					/>
-				{:else}
-					<Icon
-						url={item.icon}
-						color="gray-600"
-						position="l"
-						size={16}
-					/>
-				{/if}
-			{/if}
+		<div class="sv-item-content sv-ns-item">
 			{@html higlighted}
 			{#if isSelected && isMultiple && isSelectOption(item)}
 				<div
@@ -86,9 +63,8 @@
 					data-action="deselect"
 				>
 					<Icon
-						name="close"
-						color="{item.color}-800"
-						position="m"
+						icon="close"
+						color="{item.color}"
 						size={16}
 					/>
 				</div>
@@ -99,42 +75,52 @@
 
 <style lang="scss">
 	@use "src/style/global" as *;
+	@mixin svNsItem() {
+		@include flex(row, flex-start, center);
+		height: $p24;
+		padding: 0 $p6 !important;
+		@include ui-text(var(--ns-text-color), $p14, 400);
+		background-color: var(--ns-bg-color);
+		border-radius: $border-radius-small !important;
+		width: fit-content;
+		box-sizing: border-box;
+		.close-button {
+			border-radius: $border-radius-small;
+			cursor: pointer;
+			margin-left: $p3;
+			&:hover {
+				background-color: var(--ns-close-color);
+			}
+		}
+		.highlight {
+			background-color: var(--blue-200);
+			border-radius: $border-radius-small;
+			font-weight: 600;
+		}
+	}
 
 	:global {
-		.sv-notion-select {
+		#dnd-action-dragged-el {
+			outline: none;
+			border: none;
 			.sv-ns-item {
-				@include flex(row, flex-start, center);
-				height: $p24;
-				padding: 0 $p6;
-				@include ui-text(var(--ns-text-color), $p14, 400);
-				background-color: var(--ns-bg-color);
-				border-radius: $border-radius-small !important;
-				width: fit-content;
-				box-sizing: border-box;
-				.close-button {
-					border-radius: $border-radius-small;
-					cursor: pointer;
-					&:hover {
-						background-color: var(--ns-close-color);
-					}
-				}
-				.highlight {
-					background-color: var(--blue-200);
-					border-radius: $border-radius-small;
-					font-weight: 600;
-				}
+				@include svNsItem();
+			}
+		}
+		.sv-ns {
+			.sv-ns-item {
+				@include svNsItem();
 			}
 			.sv-control {
 				border: $border-dark;
 				.sv-content {
 					gap: $p6;
-					padding: $p8 $p6 $p6 $p6 !important;
+					padding: $p6 !important;
 				}
 			}
 			.sv-dropdown {
 				background-color: var(--bg) !important;
 				.sv-dropdown-scroll {
-					padding: $p6 0 !important;
 					.sv-dropdown-content {
 						@include flex(column, flex-start, flex-start);
 						.sv-dd-item {

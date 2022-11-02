@@ -5,7 +5,7 @@
 	<meta charset="UTF-8" />
 	<link rel="stylesheet" href="../../style/variables.css">
 	<link rel="stylesheet" href="../../style/global.min.css">
-	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link
 		href="https://fonts.googleapis.com/css2?family=Albert+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
@@ -15,7 +15,7 @@
 
 <body style>
 	<div id="app"></div>
-	<script type="module" src="./index.ts"></script>
+	<script type="module" src="./index.ts" crossorigin unsafe-inline></script>
 </body>
 
 <style type="text/css">
@@ -26,7 +26,6 @@
 	}
 
 	body {
-		background-color: transparent;
 		font-family: var(--font-family);
 		margin: 0;
 		font-smooth: always;
@@ -34,7 +33,6 @@
 		height: fit-content;
 		width: fit-content;
 		transition: 200ms ease-in-out;
-
 		overflow: hidden;
 	}
 
@@ -48,7 +46,6 @@
 
 	#app {
 		backdrop-filter: blur(8px);
-		background: rgba(255, 255, 255, 0.5);
 		border-radius: 8px;
 
 		

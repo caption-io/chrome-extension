@@ -1,15 +1,20 @@
 <script lang="ts">
-	import WebIcon from "src/components/ui/WebIcon.svelte";
-	import TextInput from "src/components/ui/TextInput.svelte";
-	import Select from "src/components/ui/select/Select.svelte";
-	import DateTime from "src/components/ui/DateTime.svelte";
-	import { fade } from "svelte/transition";
+	import Prop from "src/components/flows/Prop.svelte";
+	import Icon from "src/components/ui/Icon.svelte";
+	import { crossfade } from "svelte/transition";
 	import { flip } from "svelte/animate";
+	import { quintOut } from "svelte/easing";
 
-	import { maxSize } from "src/scripts/platform/stores";
-	export let options: NotionProp[];
-	export let values: NotionProp[] = options;
+	export let options: Prop[];
+	export let values: Prop[] = options;
 	export let value = null;
+
+	let showMore = false;
+
+	const [send, receive] = crossfade({
+		duration: 400,
+		easing: quintOut,
+	});
 
 	let selects = ["select", "multi_select", "status"];
 	let textInputs = [
@@ -62,62 +67,59 @@
 	options.sort((a, b) => {
 		return propDefaultSort.indexOf(a.type) - propDefaultSort.indexOf(b.type);
 	});
-
-	const isIcon = (p: NotionPropTypes | Icons): p is Icons => {
-		return (p as Icons) !== undefined;
-	};
+	$: options.filter((p) => {
+		return p.visible;
+	});
 </script>
 
-<div
-	class="main props-main"
-	style:maxHeight={$maxSize.height - 36 + "px"}
->
-	{#each options as option, i (option.id)}
-		{#if !readOnly.includes(option.type)}
-			<div
-				class="prop-container"
-				in:fade={{ duration: 400, delay: 200 }}
-			>
-				<!-- <InputLabel text={option.name} icon={option.type} /> -->
-				<div class="prop-input">
-					{#if selects.includes(option.type)}
-						<Select
-							options={option.options}
-							type={option.type}
-							clearable={true}
-							value={null}
-							label={option.name}
-						/>
-					{:else if textInputs.includes(option.type)}
-						<TextInput
-							type={option.type}
-							{option}
-							bind:value={values[
-								values.findIndex((o) => o.name === option.name)
-							].storedValue}
-						/>
-					{:else if option.type === "checkbox"}
-						<div class="checkbox">
-							<input type="checkbox" />
-							<label>{option.name}</label>
-						</div>
-					{:else if option.type === "date"}
-						<DateTime
-							type="datetime"
-							includeEnd={true}
-						/>
-					{:else if option.type === "relation"}
-						<div
-							class="prop-type"
-							in:fade={{ duration: 400, delay: 200 }}
-						>
-							{option.type}
-						</div>
-					{/if}
-				</div>
-			</div>
-		{/if}
+<div class="main props-main">
+	{#each options.filter((o) => o.visible) as prop, i (prop.id)}
+		<div
+			class="prop"
+			in:receive={{ key: prop.id }}
+			out:send={{ key: prop.id }}
+			animate:flip={{ duration: 400 }}
+		>
+			<Prop
+				bind:prop
+				flip={{ duration: 200 }}
+				bind:visible={prop.visible}
+			/>
+		</div>
 	{/each}
+	<div class="show-more">
+		<div
+			class="show-more-button"
+			on:click={() => (showMore = !showMore)}
+		>
+			Show More
+			<div
+				class="icon"
+				class:showMore
+			>
+				<Icon
+					icon="chevronRight"
+					color="gray"
+					size={16}
+				/>
+			</div>
+		</div>
+		<div
+			class="show-more-content"
+			style:height={showMore ? "auto" : "0px"}
+		>
+			{#each options.filter((o) => !o.visible) as prop, i (prop.id)}
+				<div
+					class="prop"
+					in:receive={{ key: prop.id }}
+					out:send={{ key: prop.id }}
+					animate:flip={{ duration: 400 }}
+				>
+					<Prop bind:prop />
+				</div>
+			{/each}
+		</div>
+	</div>
 </div>
 
 <style lang="scss">
@@ -130,14 +132,49 @@
 		overflow-x: hidden;
 		flex-grow: 1;
 		background-color: var(--bg);
-		row-gap: $p24;
+		row-gap: $p12;
 		width: 100%;
 		border-top: $border-light;
-		& > :first-child {
-			padding-top: $p24;
+		padding: $p16 $p12;
+		box-sizing: border-box;
+		margin-top: $p12;
+		box-shadow: 0 $p12 $p12 0 var(--shadow-color-light) inset;
+		height: 100%;
+	}
+
+	.prop {
+		width: 100%;
+	}
+
+	.show-more {
+		@include flex(column, flex-start, flex-start);
+		width: 100%;
+		.show-more-button {
+			@include flex(row, center, center);
+			@include ui-text(var(--text-secondary), $p14, 500);
+			padding: $p6 0;
+			width: 100%;
+			cursor: pointer;
+			transition: $transition;
+			&:hover {
+				background-color: var(--bg);
+			}
+			.icon {
+				transform: rotate(90deg);
+				transition: $transition;
+				&.showMore {
+					transform: rotate(-90deg);
+				}
+			}
 		}
-		& > :last-child {
-			padding-bottom: $p16;
+		.show-more-content {
+			@include flex(column, flex-start, flex-start);
+			overflow: hidden;
+			transition: height 0.2s ease-in-out;
+			row-gap: $p6;
+			width: 100%;
+			margin: $p12 0;
+			box-sizing: border-box;
 		}
 	}
 
@@ -148,13 +185,16 @@
 	}
 
 	.prop-container {
-		padding: 0 $p12;
+		padding: $p12 $p12;
 		box-sizing: border-box;
 		width: 100%;
+		position: relative;
+		border-radius: var(--border-radius);
+		background-color: var(--bg);
 	}
 
 	.prop-label {
-		@include flex("row", "flex-start", "center");
+		@include flex(row, flex-start, center);
 		margin: 0 0 0.25rem 0.175rem;
 		> h3 {
 			flex-grow: 1;
@@ -162,7 +202,8 @@
 	}
 
 	.prop-input {
-		@include flex("row", "flex-start", "center");
+		@include flex(row, flex-start, center);
+		column-gap: $p6;
 		> div {
 			flex-grow: 1;
 		}

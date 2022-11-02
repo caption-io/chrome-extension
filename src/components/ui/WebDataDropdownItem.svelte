@@ -4,7 +4,7 @@
 
 	export let inputValue;
 	export let index = -1;
-	export let item: WebDataItem = null;
+	export let item: InputItem;
 	export let isSelected = false;
 	export let isDisabled = false;
 	export let isMultiple = false;
@@ -45,9 +45,8 @@
 		{:else if item.$isGroupHeader}
 			<div class="sv-wd-groupheader">
 				<Icon
-					name={icon}
-					color="gray-600"
-					position="m"
+					icon={item.icon}
+					color="gray"
 					size={16}
 				/>
 				<div class="sv-wd-groupheader-text">
@@ -58,12 +57,12 @@
 	</div>
 {:else if isSelected}
 	<div class="sv-wd-selected">
-		<Icon
-			name={item.type[0]}
-			color="gray-600"
+		<!-- <Icon
+			icon={item.type[0]}
+			color="gray"
 			position="m"
 			size={16}
-		/>
+		/> -->
 	</div>
 {/if}
 
@@ -77,22 +76,25 @@
 			box-sizing: border-box;
 			cursor: pointer;
 			border-radius: $border-radius;
+			background-color: var(--bg-secondary);
+			margin-bottom: $p8;
 			&.sv-wd-item-header {
 				cursor: default;
-				background-color: var(--bg-tertiary) !important;
+				background-color: var(--bg) !important;
 				margin: 0 !important;
 				width: calc(100% + 1rem) !important;
 				border-radius: 0;
+				box-shadow: 0 -1px 0 0 var(--border-color-secondary);
+
 			}
 
 			.sv-wd-groupheader {
 				@include flex(row, flex-start, center);
 				@include ui-text(var(--text-secondary), 0.875rem, 500);
-				padding: $p6;
+				padding: $p6 $p6 $p6 $p8;
 				width: 100%;
 				box-sizing: border-box;
 				column-gap: $p6;
-
 			}
 			
 
@@ -132,11 +134,11 @@
 	}
 	:global(.sv-dd-item-active) {
 		.sv-wd-item {
-			background-color: var(--bg-tertiary) !important;
+			background-color: var(--bg-colored) !important;
 		}
 	}
 	:global(.sv-wd-selected) {
-				padding: 0.5rem 0 0.5rem 0.5rem !important;
+				padding: 0.375rem 0 0.375rem 0.5rem !important;
 
 			}
 </style>

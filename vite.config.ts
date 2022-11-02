@@ -1,19 +1,23 @@
 import { svelte } from '@sveltejs/vite-plugin-svelte'
 import sveltePreprocess from 'svelte-preprocess'
 import { resolve } from 'path'
-import { defineConfig, optimizeDeps } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import AutoImport from 'unplugin-auto-import/vite'
+import dynamicImport from 'vite-plugin-dynamic-import'
+
 const srcDir = resolve(__dirname, 'src')
 const pagesDir = resolve(srcDir, 'pages')
 
 // https://vitejs.dev/config/
-
-export default defineConfig({
+export default defineConfig(({command, mode})  => {
+	return {
 	resolve: {
 		alias: {
 			src: srcDir,
+			'@': srcDir,
 		},
 	},
+	envDir: 'src',
 	plugins: [
 		svelte({
 			preprocess: sveltePreprocess(),
@@ -25,8 +29,11 @@ export default defineConfig({
 				handler(warning)
 			},
 		}),
+		dynamicImport({
+		}),
 
 	],
+
 
 	build: {
 		rollupOptions: {
@@ -39,6 +46,8 @@ export default defineConfig({
 			output: {
 				entryFileNames: chunk => `src/pages/${chunk.name}/index.js`,
 			},
+
 		},
 	},
+}
 })

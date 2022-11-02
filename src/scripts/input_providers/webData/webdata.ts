@@ -1,4 +1,4 @@
-// author []
+declare type PreparsedData = { items: { text: string, source: string[] }[], type: string[] }
 
 // twitter handle
 const twitter = {
@@ -12,10 +12,9 @@ export function parseRecipe() {
 	return recipe
 }
 
+export function getWebData(): InputProviderData {
 
-export function uniqueIcons(): WebData {
-
-	function stringParser(p: { items: { text: string, source: string[] }[], type: string[] }): WebDataItem[] {
+	function stringParser(p: PreparsedData): InputItem[] {
 		const pFiltered = p.items.filter((title) => {
 			return title.text !== null && title.text !== undefined && title.text !== ""
 		})
@@ -42,7 +41,7 @@ export function uniqueIcons(): WebData {
 
 	// GRP: Title
 
-	const parseTitle: { items: { text: string, source: string[] }[], type: string[] } =
+	const parseTitle: PreparsedData =
 	{
 		items: [
 			{ text: document.querySelector('meta[property="og:title"]')?.getAttribute('content'), source: ["OpenGraph"] },
@@ -56,7 +55,7 @@ export function uniqueIcons(): WebData {
 		type: ["title", "text"]
 	}
 
-	const parseYoutube: { items: { text: string, source: string[] }[], type: string[] } =
+	const parseYoutube: PreparsedData =
 	{
 		items: [
 			{ text: document.querySelector('#info h1[class*="title"]')?.textContent, source: ["YouTube Title"] },
@@ -75,13 +74,13 @@ export function uniqueIcons(): WebData {
 	
 
 	// GRP: URL
-	const parseUrl: { items: { text: string, source: string[] }[], type: string[] } =
+	const parseUrl: PreparsedData =
 	{
 		items: [
 			{ text: document.querySelector('meta[property="og:url"]')?.getAttribute('content'), source: ["OpenGraph"] },
 			{ text: document.querySelector('meta[property="al:web:url"]')?.getAttribute('content'), source: ["Facebook"] },
 			{ text: document.querySelector('meta[name="parsely-link"]')?.getAttribute('content'), source: ["Parsely"] },
-			{ text: window.location.href, source: ["Browser Data"] },
+			{ text: window.location.href, source: ["Document"] },
 		],
 		type: ["url", "string"]
 	}
@@ -90,9 +89,9 @@ export function uniqueIcons(): WebData {
 	const urls = stringParser(parseUrl)
 
 	// get domain from url
-	const domains = urls.map((url) => {
+	const domains = urls.map((url): InputItem => {
 		const domain = new URL(url.text).hostname
-		return { text: "https://" + domain, source: url.source, type: ["domain", "string"] }
+		return { text: "https://" + domain, source: url.source, type: ["domain", "text"] }
 	})
 	
 
@@ -100,7 +99,7 @@ export function uniqueIcons(): WebData {
 
 	// GRP: Icons
 
-	const parseIcons: { items: { text: string, source: string[] }[], type: string[] } =
+	const parseIcons: PreparsedData =
 	{
 		items: [
 			{ text: iconUrlChecker(document.querySelector('link[rel="icon"]')?.getAttribute('href')), source: ["Link Icon"] },
@@ -108,7 +107,7 @@ export function uniqueIcons(): WebData {
 			{ text: iconUrlChecker(document.querySelector('link[rel="apple-touch-icon"]')?.getAttribute('href')), source: ["Apple Touch Icon"] },
 			{ text: iconUrlChecker(document.querySelector('link[rel="mask-icon"]')?.getAttribute('href')), source: ["Mask Icon"] }
 		],
-		type: ["recipe", "text"]
+		type: ["icon", "text"]
 	}
 
 	function iconUrlChecker(icon) {
@@ -123,7 +122,7 @@ export function uniqueIcons(): WebData {
 	
 
 	// GRP: Recipe
-	const parseRecipe: { items: { text: string, source: string[] }[], type: string[] } =
+	const parseRecipe: PreparsedData =
 	{
 		items: [
 			{ text: document.querySelector('script[type="application/ld+json"]')?.innerHTML ? JSON.parse(document.querySelector('script[type="application/ld+json"]')?.innerHTML) : null, source: ["JSON-LD"] },
@@ -145,7 +144,7 @@ export function uniqueIcons(): WebData {
 
 
 	// GRP: Description
-	const parseDescription: { items: { text: string, source: string[] }[], type: string[] } = {
+	const parseDescription: PreparsedData = {
 		items: [
 			{ text: document.querySelector('meta[property="og:description"]')?.getAttribute('content'), source: ["OpenGraph"] },
 			{ text: document.querySelector('meta[property="al:web:description"]')?.getAttribute('content'), source: ["Facebook"] },
@@ -161,7 +160,7 @@ export function uniqueIcons(): WebData {
 	
 
 	// GRP: Thumbnail
-	const parseThumbnail: { items: { text: string, source: string[] }[], type: string[] } =
+	const parseThumbnail: PreparsedData =
 	{
 		items: [
 			{ text: document.querySelector('meta[property="og:image"]')?.getAttribute('content'), source: ["OpenGraph"] },
@@ -179,7 +178,7 @@ export function uniqueIcons(): WebData {
 	
 
 	// GRP: Site Name
-	const parseSiteName: { items: { text: string, source: string[] }[], type: string[] } =
+	const parseSiteName: PreparsedData =
 	{
 		items: [
 			{ text: document.querySelector('meta[property="og:site_name"]')?.getAttribute('content'), source: ["OpenGraph"] },
@@ -197,7 +196,7 @@ export function uniqueIcons(): WebData {
 	
 
 	// GRP: Author
-	const parseAuthor: { items: { text: string, source: string[] }[], type: string[] } = {
+	const parseAuthor: PreparsedData = {
 		items: [
 			{ text: document.querySelector('meta[property="article:author"]')?.getAttribute('content'), source: ["Meta Tag"] },
 			{ text: document.querySelector('meta[property="al:web:author"]')?.getAttribute('content'), source: ["Facebook"] },
@@ -212,7 +211,7 @@ export function uniqueIcons(): WebData {
 	
 
 	// GRP: Published Date
-	const parsePubDate: { items: { text: string, source: string[] }[], type: string[] } =
+	const parsePubDate: PreparsedData =
 	{
 		items: [
 			{ text: document.querySelector('meta[property="article:published_time"]')?.getAttribute('content'), source: ["Meta Article Published Time"] },
@@ -227,7 +226,7 @@ export function uniqueIcons(): WebData {
 	
 
 	// GRP: Modified Date
-	const parseModDate: { items: { text: string, source: string[] }[], type: string[] } =
+	const parseModDate: PreparsedData =
 	{
 		items: [
 			{ text: document.querySelector('meta[property="article:modified_time"]')?.getAttribute('content'), source: ["Meta Article Modified Time"] },
@@ -242,7 +241,7 @@ export function uniqueIcons(): WebData {
 	
 
 	// GRP: Type
-	const parseType: { items: { text: string, source: string[] }[], type: string[] } =
+	const parseType: PreparsedData =
 	{
 		items: [
 			{ text: document.querySelector('meta[property="og:type"]')?.getAttribute('content'), source: ["OpenGraph"] },
@@ -256,7 +255,7 @@ export function uniqueIcons(): WebData {
 	
 
 	// GRP: Twitter Handle
-	const parseTwitterHandle: { items: { text: string, source: string[] }[], type: string[] } =
+	const parseTwitterHandle: PreparsedData =
 	{
 		items: [
 			{ text: document.querySelector('meta[property="twitter:site"]')?.getAttribute('content'), source: ["Twitter Site"] },
@@ -268,14 +267,14 @@ export function uniqueIcons(): WebData {
 	}
 
 	const twitterHandles = stringParser(parseTwitterHandle)
-	const twitterLinks = twitterHandles.map((handle) => {
-		return { text: `https://twitter.com/${handle.text.replace('@', '')}`, source: handle.source, type: ["twitter", "url", "text"] }
+	const twitterLinks = twitterHandles.map((handle): InputItem => {
+		return { text: `https://twitter.com/${handle.text.replace('@', '')}`, source: handle.source, type: ["url", "text"] }
 	})
 
 	
 
 	// GRP: Videos
-	const parseVideos: { items: { text: string, source: string[] }[], type: string[] } = {
+	const parseVideos: PreparsedData = {
 		items: [
 			{ text: document.querySelector('iframe[src^="https://www.youtube"]')?.getAttribute('src').replace("embed/", "watch?v="), source: ["Embedded YouTube Source"] }
 		], type: ["video", "url", "text"]
@@ -286,7 +285,7 @@ export function uniqueIcons(): WebData {
 
 
 
-	let groups = [{
+	let groups: InputProviderData = [{
 		groupHeader: "Title",
 		items: titles,
 		type: "text",
