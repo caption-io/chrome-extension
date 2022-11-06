@@ -9,11 +9,13 @@
 	import { newAccount, noAccounts } from "src/scripts/platform/stores";
 
 	// IMPT: Local Scripts
-	import { outputManifest } from "src/providers-manifest";
+	import { outputManifest } from "src/scripts/provider_manifest";
 
 	// IMPT: Packages
 	import { crossfade } from "svelte/transition";
 	import { quintOut } from "svelte/easing";
+	import ContextMenu from "./ui/context-menu/ContextMenu.svelte";
+	import DateTime from "./ui/DateTime.svelte";
 
 	//! IMPORTS
 
@@ -83,80 +85,72 @@
 </script>
 
 <div class="main light-mode">
-	<div class="login-card">
-		<div class="title-header">
-			<div class="title">
-				<!-- <div class="logo-icon">
-					<Icon
-						name="quoteOpen"
-						size={24}
-						color="blue-400"
-						position="m"
-					/>
-				</div> -->
-				Caption
-			</div>
-			<div class="subtitle">Capture Anything.</div>
-		</div>
-		<div class="login-container">
-			{#if !completed}
-				<div
-					class="login"
-					in:receive={{ key: "login" }}
-					out:send={{ key: "login" }}
-				>
-					<div class="login-prompt">Add Account</div>
-					{#each outputManifest as provider}
-						{#if !loggingIn}
-							<Button
-								on:click={() => userAuth(provider)}
-								text="Login with {provider.name}"
-								size="lg"
-								color={provider.color}
-								style="primary"
-								icon={provider.icon}
-							/>
-						{:else if loggingIn}
-							<Button
-								text="Waiting for Notion"
-								size="lg"
-								color="blue"
-								style="primary"
-								icon={provider.icon}
-								disabled={true}
-							/>
-						{/if}
-					{/each}
-				</div>
-			{:else if !loggingIn && completed}
-				<div
-					class="login"
-					in:receive={{ key: "login" }}
-					out:send={{ key: "login" }}
-				>
-					<div class="success">
-						<Icon
-							icon="success"
-							alt="Success Icon"
-							size={20}
-							color="default"
+	<div class="login-container">
+		<img
+			src="/media/logomark.svg"
+			alt="logo"
+			class="logo"
+		/>
+		{#if !completed}
+			<div
+				class="login"
+				in:receive={{ key: "login" }}
+				out:send={{ key: "login" }}
+			>
+				<div class="login-prompt">Add Account</div>
+				{#each outputManifest as provider}
+					{#if !loggingIn}
+						<Button
+							on:click={() => userAuth(provider)}
+							text="Login with {provider.name}"
+							size="lg"
+							color={provider.color}
+							style="primary"
+							icon={provider.icon}
+							fill={true}
 						/>
-						<div class="success-text">Success!</div>
-						<div class="close-text">
-							You can now <span
-								class="close"
-								on:click={closeTab}>close</span
-							>
-							this window, or
-							<span
-								class="close"
-								on:click={closeTab}>add another Workspace</span
-							>.
-						</div>
+					{:else if loggingIn}
+						<Button
+							text="Waiting for Notion"
+							size="lg"
+							color="blue"
+							style="primary"
+							icon={provider.icon}
+							disabled={true}
+						/>
+					{/if}
+				{/each}
+			</div>
+		{:else if !loggingIn && completed}
+			<div
+				class="login"
+				in:receive={{ key: "login" }}
+				out:send={{ key: "login" }}
+			>
+				<div class="success">
+					<Icon
+						icon="success"
+						alt="Success Icon"
+						size={20}
+						color="default"
+					/>
+					<div class="success-text">Success!</div>
+					<div class="close-text">
+						You can now <span
+							class="close"
+							on:click={closeTab}>close</span
+						>
+						this tab, or
+						<span
+							class="close"
+							on:click={closeTab}>add another Workspace</span
+						>.
 					</div>
 				</div>
-			{/if}
-		</div>
+			</div>
+		{/if}
+		<div class="divider" />
+
 		<div class="login-info">
 			<a
 				href=""
@@ -168,6 +162,13 @@
 				target="_blank">Terms of Service</a
 			>
 		</div>
+	</div>
+	<div class="title-header">
+		<img
+			src="/media/screen.png"
+			alt="screenshot"
+			class="screenshot"
+		/>
 	</div>
 </div>
 
@@ -193,64 +194,64 @@
 	}
 
 	.main {
-		@include flex(column, center, center);
+		@include flex(row, center, center);
 		height: 100vh;
 		width: 100vw;
-		background-color: var(--bg-tertiary);
 		overflow: hidden;
-		box-shadow: 0 0 $p24 0 var(--black-alpha-100) inset;
 
-		.login-card {
-			height: fit-content;
-			width: fit-content;
-			border-radius: $border-radius;
-			box-shadow: 0 0 0 0 var(--blue-100);
-			border: 1px solid rgba(67, 153, 225, 1);
-			box-sizing: border-box;
-			background-color: var(--bg);
-			overflow: hidden;
+		.title-header {
+			@include flex(column, center, center);
+			width: 50%;
+			height: 100%;
 			opacity: 0;
-			animation: opacity 0.4s ease-in-out forwards,
-				shadow 1.2s ease-in-out forwards;
-			.title-header {
-				@include flex(column, center, center);
-				margin-bottom: $p20;
-				width: 600px;
-				height: 200px;
-				background-color: var(--bg-colored);
-				opacity: 0;
-				animation: opacity 0.8s ease-in-out 0.2s forwards;
-				.title {
-					@include ui-text(var(--blue-400), $p16, 800);
-					@include flex(row, center, center);
-					text-transform: uppercase;
-				}
-				.logo-icon {
-					margin-right: $p2;
-				}
-				.subtitle {
-					@include ui-text(var(--blue-400), $p12, 400);
-					text-transform: none;
-					margin-top: $p8;
-				}
+			animation: opacity 0.8s ease-in-out 0.2s forwards;
+			background-color: var(--blue);
+
+			.title {
+				@include ui-text(var(--blue-400), $p16, 800);
+				@include flex(row, center, center);
+				text-transform: uppercase;
+			}
+			.logo-icon {
+				margin-right: $p2;
+			}
+			.subtitle {
+				@include ui-text(var(--blue-400), $p12, 400);
+				text-transform: none;
+				margin-top: $p8;
+			}
+			.screenshot {
+				width: 400px;
+				box-shadow: 0 -4px 16px 0 var(--black-alpha-100);
+				border-radius: 8px;
 			}
 		}
 		.login-container {
-			height: 100px;
+			@include flex(column, center, center);
 			overflow: hidden;
-			margin-bottom: $p24;
 			position: relative;
 			opacity: 0;
 			animation: opacity 1.2s ease-in-out 0.4s forwards;
+			width: 50%;
+			height: 100%;
+			box-sizing: border-box;
+			.logo {
+				height: 32px;
+				margin: $p32;
+			}
+
 			.login {
 				@include flex(column, center, center);
-				position: absolute;
-				top: 0;
-				left: 0;
-				width: 100%;
+				width: 400px;
+				padding: 3rem 3rem;
+				box-sizing: border-box;
+				background-color: var(--bg);
+				border: 1px solid var(--blue);
+				border-radius: 16px;
+				box-shadow: 0 4px 16px var(--shadow-color);
+				row-gap: $p24;
 				.login-prompt {
-					@include ui-text(var(--gray-500), $p14, 500);
-					margin-bottom: $p24;
+					@include ui-text(var(--text), $p14, 500);
 				}
 				.success {
 					@include flex(column, center, center);
@@ -277,23 +278,37 @@
 					}
 				}
 			}
-		}
-		.login-info {
-			@include flex(row, center, center);
-			margin-top: $p24;
-			@include ui-text(var(--gray-200), $p12, 400);
-			margin-bottom: $p24;
-			animation: opacity 1.6s ease-in-out 0.4s forwards;
-			opacity: 0;
-
-			a {
-				@include ui-text(var(--blue-400), $p12, 400);
-				margin: 0 $p6;
-				text-decoration: none;
-				&:hover {
-					text-decoration: underline;
-					color: var(--blue-300);
+			.divider {
+				height: 1px;
+				margin: $p16 0;
+				box-sizing: border-box;
+				width: 200px;
+				background-color: var(--border-color-light);
+			}
+			.login-info {
+				@include flex(row, center, center);
+				margin-top: $p24;
+				@include ui-text(var(--gray-200), $p12, 400);
+				margin-bottom: $p16;
+				animation: opacity 1.6s ease-in-out 0.4s forwards;
+				opacity: 0;
+				width: 100%;
+				a {
+					@include ui-text(var(--blue-400), $p12, 400);
+					margin: 0 $p6;
+					text-decoration: none;
+					&:hover {
+						text-decoration: underline;
+						color: var(--blue-300);
+					}
 				}
+			}
+		}
+		@media screen and (max-width: 900px) {
+			@include flex(column, center, center);
+			.title-header,
+			.screenshot {
+				display: none;
 			}
 		}
 	}

@@ -17,7 +17,7 @@
 	} from "src/scripts/platform/stores";
 
 	// IMPT: Local Scripts
-	import { _flows } from "src/scripts/platform/flows-scripts";
+	import { _flows } from "src/scripts/platform/platform";
 
 	//! IMPORTS
 
@@ -106,6 +106,15 @@
 									on:click={() => {
 										selectedFlow.set(flow);
 										activePage.set("flowSettings");
+									}}
+								/>
+								<Button
+									icon="trash"
+									size="sm"
+									style="minimal"
+									color="red"
+									on:click={() => {
+										
 									}}
 								/>
 							</div>

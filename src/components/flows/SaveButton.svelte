@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Icon from "../ui/Icon.svelte";
 
-	import { clickOutside } from "src/scripts/ui-utils";
+	import { clickOutside } from "src/scripts/platform/ui-utils";
 
 	import { slide } from "svelte/transition";
 
@@ -10,7 +10,7 @@
 	export let multiple = false;
 
 	let option: "never" | "input" | "value" = "never";
-	let pendingChanges = true;
+	let pendingChanges = false;
 
 	let open = false;
 

@@ -1,3 +1,20 @@
+declare type ProviderAccount = {
+	name: string,
+	id?: string,
+	icon?: Icons
+	token?: string,
+	botId?: string,
+	user?: any,
+}
+
+declare type OutputProvider = {
+	name: string
+	id: string
+	icon: Icons
+	color: CSSStyleRule['style']['backgroundColor']
+	accounts: ProviderAccount[]
+}
+
 declare type NotionDatabase = {
 	name: string
 	id: string

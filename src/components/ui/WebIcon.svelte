@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Icon from "./Icon.svelte";
 	import TextInput from "./TextInput.svelte";
-	import { scaleFromTop } from "../../scripts/ui-utils";
+	import { scaleFromTop } from "../../scripts/platform/ui-utils";
 	import { webData } from "src/scripts/platform/stores";
 	import { element } from "svelte/internal";
 	import { fly } from "svelte/transition";

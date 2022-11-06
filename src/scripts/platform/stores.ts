@@ -41,28 +41,46 @@ export const newAccount: Writable<ProviderAccount> = writable(null)
 export const noAccounts: Writable<boolean> = writable(true)
 
 // VARS: UI Variables
-export const appExpanded: Writable<boolean> = writable(false)
 export const maxSize: Writable<{ width: number, height: number }> = writable({ width: 0, height: 0 })
-export const selectedFlow: Writable<Flow> = writable(null)
 export const tooltipInfo: Writable<{
 	text: string, position: | "top-left"
-		| "top-center"
-		| "top-right"
-		| "right"
-		| "bottom-right"
-		| "bottom-center"
-		| "bottom-left"
-		| "left",
-		location: { x: number, y: number },
-		locationOffset?: { x: number, y: number }
-		delay?: number
+	| "top-center"
+	| "top-right"
+	| "right"
+	| "bottom-right"
+	| "bottom-center"
+	| "bottom-left"
+	| "left",
+	location: { x: number, y: number },
+	locationOffset?: { x: number, y: number }
+	delay?: number
+}> = writable(null)
+
+export const modalInfo: Writable<{
+	title: string,
+	subtitle: string,
+	options: [
+		{
+			label: string,
+			icon?: Icons,
+			buttonType: any
+		}
+	]
 }> = writable(null)
 export const activeAccount: Writable<ProviderAccount['id']> = writable(null)
-export const activePage: Writable<string> = writable("flowList")
-export const dropdownExtraHeight: Writable<number> = writable(0)
 
 
-export const isLoading = writable(true)
 export const tags = writable([])
 
-export const minimized = writable(false)
+export const onLoadInputData: Writable<InputProvider[]> = writable([])
+
+// UI STATE
+export const minimized: Writable<boolean> = writable(false)
+export const appExpanded: Writable<boolean> = writable(false)
+export const dropdownExtraHeight: Writable<number> = writable(0)
+export const activePage: Writable<string> = writable("flowList")
+export const selectedFlow: Writable<Flow> = writable(null)
+
+// SETTINGS STORES
+export const popupType: Writable<"dynamic" | "popup" | "window"> = writable("dynamic")
+export const appTheme: Writable<"dark" | "light"> = writable("light")

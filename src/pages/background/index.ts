@@ -1,4 +1,4 @@
-import { defaultSettings } from '../../scripts/platform/default-settings'
+import { defaultSettings } from '../../scripts/platform/default_settings'
 // FUNC: On Installed
 
 

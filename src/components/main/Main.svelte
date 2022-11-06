@@ -21,12 +21,24 @@
 	} from "src/scripts/platform/stores";
 
 	// IMPT: Local Scripts
-	import { _outputProviders, _flows } from "src/scripts/platform/flows-scripts";
+	import { _outputProviders, _flows } from "src/scripts/platform/platform";
   import FlowSettings from "../flows/FlowSettings.svelte";
 
 	//! IMPTS
 
 	// VARIABLES
+
+	let settingsButtons: {
+		name: string,
+		icon: Icons,
+		func: void,
+	}[] = [
+		{
+			name: "Settings",
+			icon: "cog",
+			func: activePage.set("settings"),
+		}
+	]
 
 	// VARS: Local State
 	let showSettings = false;

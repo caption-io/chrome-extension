@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Svelecte from "svelecte";
 	import { webData, dropdownExtraHeight } from "src/scripts/platform/stores";
-	import { clickOutside } from "src/scripts/ui-utils";
+	import { clickOutside } from "src/scripts/platform/ui-utils";
 	import Icon from "./Icon.svelte";
 	import WebDataDropdownItem from "./WebDataDropdownItem.svelte";
 

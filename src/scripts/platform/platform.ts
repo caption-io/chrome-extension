@@ -4,9 +4,10 @@
 import { selectedFlow, flowStore, outputProvidersStore, accountStore, settingStore } from "src/scripts/platform/stores"
 import { get } from "svelte/store"
 // IMPT: Local
-import { defaultFlow } from "./default-settings"
+import { defaultFlow } from "./default_settings"
 import { nanoid } from "nanoid"
-import { outputManifest } from "src/providers-manifest"
+import { outputManifest } from "src/scripts/provider_manifest"
+import type InputData from "src/components/InputData.svelte"
 
 //! IMPORTS 
 
@@ -198,3 +199,197 @@ export const _settings = SettingsFunctions()
 export const goBack = () => selectedFlow.set(null)
 
 //! FUNCTIONS
+
+export function compatibleDataTypes(input: InputData['type'], prop: Prop['type']) {
+	console.log(input, prop)
+	let types = {
+		title: {
+			exact: "title",
+			compat: {
+				whiteList: false,
+				items: ["title", "recipe", "file", "pdf", "epub", "json", "xml", "html", "markdown", "table", "array", "object", "map"]
+			}
+		},
+		select: {
+			exact: "tag",
+			compat: {
+				whiteList: false,
+				items: ["recipe", "file", "pdf", "epub", "json", "xml", "html", "markdown", "table", "array", "object", "map"]
+			}
+		},
+		multi_select: {
+			exact: ["tag"],
+			compat: {
+				whiteList: false,
+				items: ["recipe", "file", "pdf", "epub", "json", "xml", "html", "markdown", "table", "array", "object", "map"]
+			}
+		},
+		group_select: {
+			exact: ["tag"],
+			compat: {
+				whiteList: false,
+				items: ["recipe", "file", "pdf", "epub", "json", "xml", "html", "markdown", "table", "array", "object", "map"]
+			}
+		},
+		status: {
+			exact: ["tag"],
+			compat: {
+				whiteList: false,
+				items: ["recipe", "file", "pdf", "epub", "json", "xml", "html", "markdown", "table", "array", "object", "map"]
+			}
+		},
+		checkbox: {
+			exact: ["boolean"],
+			compat: {
+				whiteList: true,
+				items: ["boolean"]
+			}
+		},
+		date: {
+			exact: ["date"],
+			compat: {
+				whiteList: true,
+				items: ["dateTime"]
+			}
+		},
+		time: {
+			exact: ["time"],
+			compat: {
+				whiteList: true,
+				items: ["dateTime"]
+			}
+		},
+		rich_text: {
+			exact: ["rich_text", "text", "description"],
+			compat: {
+				whiteList: false,
+				items: ["recipe", "file", "pdf", "epub", "json", "xml", "html", "markdown", "table", "array", "object", "map"]
+			}
+		},
+		number: {
+			exact: ["number"],
+			compat: {
+				whiteList: true,
+				items: ["number", "boolean", "phone_number"]
+			}
+		},
+		people: {
+			exact: ["people"],
+			compat: {
+				whiteList: true,
+				items: "none"
+			}
+		},
+		files: {
+			exact: ["file"],
+			compat: {
+				whiteList: true,
+				items: ["pdf", "epub", "json", "markdown", "html", "xml", "table", "array", "object", "map"]
+			}
+		},
+		url: {
+			exact: ["url", "domain"],
+			compat: {
+				whiteList: true,
+				items: ["email", "video", "audio", "image", "thumbnail", "icon", "profile_url"]
+			}
+		},
+		email: {
+			exact: ["email"],
+			compat: {
+				whiteList: true,
+				items: ["none"]
+			}
+		},
+		phone_number: {
+			exact: ["phone_number"],
+			compat: {
+				whiteList: true,
+				items: ["none"]
+			}
+		},
+		formula: {
+			exact: ["read_only"],
+			compat: {
+				whiteList: true,
+				items: ["none"]
+			}
+		},
+		rollup: {
+			exact: ["read_only"],
+			compat: {
+				whiteList: true,
+				items: ["none"]
+			}
+		},
+		created_time: {
+			exact: ["read_only"],
+			compat: {
+				whiteList: true,
+				items: ["none"]
+			}
+		},
+		created_by: {
+			exact: ["read_only"],
+			compat: {
+				whiteList: true,
+				items: ["none"]
+			}
+		},
+		last_edited_time: {
+			exact: ["read_only"],
+			compat: {
+				whiteList: true,
+				items: ["none"]
+			}
+		},
+		last_edited_by: {
+			exact: ["read_only"],
+			compat: {
+				whiteList: true,
+				items: ["none"]
+			}
+		},
+		page_icon: {
+			exact: ["icon"],
+			compat: {
+				whiteList: true,
+				items: ["image", "thumbnail"]
+			}
+		},
+		cover_image: {
+			exact: ["image"],
+			compat: {
+				whiteList: true,
+				items: ["thumbnail"]
+			}
+		},
+		image: {
+			exact: ["image"],
+			compat: {
+				whiteList: true,
+				items: ["thumbnail", "image", "icon"]
+			}
+		},
+	}
+	let typeChecked = {
+		exact: false,
+		compat: false
+	}
+	if (types[prop].exact === input[0]) {
+		typeChecked.exact = true
+	}
+	if (types[prop].compat.whiteList) {
+		if (types[prop].compat.items.includes(input[0])) {
+			typeChecked.compat = true
+		}
+	} else {
+		if (!types[prop].compat.items.includes(input[0])) {
+			typeChecked.compat = true
+		}
+	}
+	if (types[prop].compat.items === "none") {
+		typeChecked.compat = false
+	}
+	return typeChecked
+}

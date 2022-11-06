@@ -14,13 +14,13 @@
 		maxSize,
 		accountStore,
 	} from "src/scripts/platform/stores";
-	import { _flows, _settings } from "src/scripts/platform/flows-scripts";
+	import { _flows, _settings } from "src/scripts/platform/platform";
 	import { fade, fly } from "svelte/transition";
 
 	// IMPT: Packages
 	import { createEventDispatcher } from "svelte";
 	import { update } from "lodash-es";
-  import SaveButton from "./SaveButton.svelte";
+	import SaveButton from "./SaveButton.svelte";
 
 	// VARS: Variable Setter Functions
 	const dispatch = createEventDispatcher();
@@ -33,6 +33,7 @@
 	let confirmDelete: boolean = false;
 	let nameInput: HTMLInputElement;
 	let unsavedFlow: Flow = flow;
+	let favorite: boolean = false;
 
 	let readSel;
 
@@ -88,6 +89,17 @@
 				on:click={() => nameInput.select()}
 			/>
 		</h2>
+		<div
+			class="favorite-button"
+			style:color={favorite ? "var(--red)" : "var(--gray)"}
+			on:click={() => (favorite = !favorite)}
+		>
+			<Icon
+				icon="favorite"
+				size={16}
+				color="inherit"
+			/>
+		</div>
 		<div class="settings-button">
 			<Button
 				icon="cog"
@@ -164,6 +176,18 @@
 			</div>
 		{/if}
 	</div>
+	<div class="capture-button">
+		<div class="capture-button-icon">
+			<Icon
+				icon="inbox"
+				size={20}
+				color="inherit"
+			/>
+		</div>
+		<div class="capture-button-label">
+			Capture
+		</div>
+	</div>
 </div>
 
 <style lang="scss">
@@ -181,6 +205,47 @@
 		height: 100%;
 		overflow: visible;
 		position: relative;
+		.capture-button {
+			position: absolute;
+			bottom: $p12;
+			right: $p12;
+			width: fit-content;
+			height: 44px;
+			background: var(--blue);
+			border-top: 1px solid var(--border);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+			transition: all 0.2s ease;
+			box-sizing: border-box;
+			border-radius: 22px;
+			color: white;
+			box-shadow: 0 2px 8px 0 var(--shadow-color);
+			.capture-button-icon {
+				padding: 0 $p12;
+			}
+			.capture-button-label {
+				font-size: 14px;
+				font-weight: 500;
+				color: var(--text);
+				width: 0px;
+				transition: $transition;
+				overflow: hidden;
+				padding-left: 8px;
+				box-sizing: border-box;
+				margin-left: -8px;
+				opacity: 0;
+			}
+			&:hover {
+				.capture-button-label {
+					@include ui-text(var(--white), $p14, 500);
+					width: 78px;
+					margin-left: -12px;
+					opacity: 1;
+				}
+			}
+		}
 		.animation-wrapper {
 			@include flex(row, flex-start, flex-start);
 			width: 100%;
@@ -193,9 +258,9 @@
 		.flow-header {
 			@include flex(row, flex-start, center);
 			width: 100%;
-			padding-left: $p48;
+			padding-left: $p12;
 			padding-right: $p12;
-			margin: $p6 0;
+			margin: $p6 0 0 0;
 			box-sizing: border-box;
 			> h2 {
 				margin: 0;
@@ -217,8 +282,8 @@
 					border: none;
 					outline: none;
 					background-color: var(--bg);
-					text-align: center;
-
+					padding-left: $p12;
+					box-sizing: border-box;
 					&:focus {
 						outline: none;
 						background-color: var(--bg-secondary);
@@ -232,6 +297,13 @@
 			.settings-button {
 				@include flex(row, flex-end, center);
 				width: $p36;
+			}
+			.favorite-button {
+				@include flex(row, center, center);
+				height: $p36;
+				width: $p36;
+				cursor: pointer;
+				transition: $transition;
 			}
 		}
 		.database-select {

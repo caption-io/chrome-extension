@@ -11,8 +11,8 @@
 		_settings,
 		_outputProviders,
 		_flows
-	} from "src/scripts/platform/flows-scripts";
-	import { handleE } from "src/scripts/ui-utils";
+	} from "src/scripts/platform/platform";
+	import { handleE } from "src/scripts/platform/ui-utils";
 	import { createEventDispatcher } from "svelte";
 
 	const dispatch = createEventDispatcher();

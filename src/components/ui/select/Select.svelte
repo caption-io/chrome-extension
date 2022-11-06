@@ -1,13 +1,15 @@
 <script lang="ts">
 	import Icon from "../Icon.svelte";
 
-	import { clickOutside } from "src/scripts/ui-utils";
+	import { clickOutside } from "src/scripts/platform/ui-utils";
 	import { dropdownExtraHeight } from "src/scripts/platform/stores";
 	import { slide } from "svelte/transition";
 	import { createEventDispatcher } from "svelte";
 	import Button from "../Button.svelte";
+	import { flip } from "svelte/animate";
 
 	export let options = [];
+	export let simpleOptions = false;
 	export let multiple: boolean = false;
 	export let disabled: boolean = false;
 	export let placeholder: string = null;
@@ -48,6 +50,9 @@
 
 	function itemSelect(itemValue) {
 		console.log("itemSelect", itemValue);
+		if (!value && multiple) {
+			value=[]
+		}
 		if (multiple) {
 			if (value.includes(itemValue)) {
 				value = value.filter((v) => v !== itemValue);
@@ -62,6 +67,11 @@
 			dropdownOpen = false;
 			dispatch("select", value);
 		}
+	}
+
+	function itemRemove(itemValue) {
+		value = value.filter((v) => v !== itemValue);
+		dispatch("select", value);
 	}
 
 	function scrollIntoView(groupIndex: number = null, itemIndex: number) {
@@ -295,6 +305,7 @@
 				<Icon
 					icon={fieldIcon}
 					size={16}
+					color="gray"
 				/>
 			</div>
 		{/if}
@@ -319,11 +330,12 @@
 				{/if}
 			</div>
 		{:else if multiple}
-			{#each value as v}
+			{#each value as v (v)}
 				{@const item = options.find((o) => valueObject(o) === v)}
 				<div
-					class="select-item control-item"
+					class="select-item control-item multiple {itemStyle}"
 					class:minimalControl
+					animate:flip={{ duration: 200 }}
 				>
 					{#if hasIcons}
 						<div class="select-item-icon">
@@ -344,10 +356,16 @@
 						{item[labelField]}
 					</div>
 
-					<div class="select-item-close">
+					<div class="select-item-close"
+						on:click={(e) => {
+						e.stopPropagation();
+						itemRemove(v)
+						}
+					}
+					>
 						<Icon
 							icon="close"
-							size={16}
+							size={12}
 						/>
 					</div>
 				</div>
@@ -500,10 +518,15 @@
 			&.active {
 				background-color: var(--bg-secondary);
 			}
-			// &.select {
-			// 	background-color: $color-primary;
-			// 	color: $color-white;
-			// }
+			&.select {
+				background-color: var(--blue);
+				color: var(--white);
+				width: fit-content;
+				padding: $p3 $p8;
+				&:not(:last-child) {
+					margin-bottom: $p6;
+				}
+			}
 			// &.status {
 			// 	background-color: $color-success;
 			// 	color: $color-white;
@@ -522,11 +545,11 @@
 		.select-control {
 			display: flex;
 			align-items: center;
-			justify-content: space-between;
+			justify-content: flex-start;
 			padding: 0 $p12;
 			border: 1px solid var(--border-color);
 			border-radius: $border-radius;
-			background-color: var(--bg-seondary);
+			background-color: var(--bg-secondary);
 			min-height: $p42;
 			width: 100%;
 			box-sizing: border-box;
@@ -536,13 +559,23 @@
 			}
 			.control-item {
 				width: 100%;
-				padding-left: 0;
+				padding-left: $p6;
+				&.multiple {
+					width: auto;
+					height: fit-content;
+					padding: $p6;
+					box-sizing: border-box;
+					background-color: var(--blue);
+				}
 				&.minimalControl {
 					margin-right: 0;
 					padding: 0;
 					.select-item-icon {
 						margin-right: 0;
 					}
+				}
+				&.select {
+					margin-bottom: 0;
 				}
 			}
 
@@ -553,6 +586,7 @@
 				@include flex(row, flex-start, center);
 				display: flex;
 				align-items: center;
+				margin-right: auto;
 				.placeholder-text {
 					@include ui-text(var(--text-secondary), $p14, 500);
 				}
@@ -564,7 +598,7 @@
 				width: 100%;
 			}
 			.clear-button {
-				margin-left: 0.5rem;
+				margin-left: auto;
 				cursor: pointer;
 				opacity: 0;
 				transition: $transition;

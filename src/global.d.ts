@@ -1,26 +1,23 @@
+// GRP: Global
+declare type ButtonSizes = "sm" | "md" | "lg"
 
-
+// GRP: Button.svelte
+declare type ButtonStyles =
+	| "primary"
+	| "secondary"
+	| "outline"
+	| "outline-fill"
+	| "minimal"
 
 
 
 // SECT: Styles
 
-// GRP: Global
 declare type AppColors = 'grey' | 'blue' | 'red' | 'green' | 'invert'
 
 // GRP: Components
-declare type ButtonStyles = "primary" | "secondary" | "outline" | "simple" | "disabled"
-
-declare type SvelecteRenderer = "simple" | "with_icon" | "multi" | "data" | "select" | "multi_select" | "status"
 
 declare type CaptionColors = "default" | "gray" | "brown" | "orange" | "yellow" | "green" | "blue" | "purple" | "pink" | "red" | "teal" | "cyan" | "inherit"
-
-
-
-
-
-
-
 
 
 

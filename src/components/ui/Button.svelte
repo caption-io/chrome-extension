@@ -6,12 +6,7 @@
 	export let icon: Icons = null;
 	export let iconPosition: "left" | "right" = "left";
 	export let size: "sm" | "md" | "lg" = "md";
-	export let style:
-		| "primary"
-		| "secondary"
-		| "outline"
-		| "outline-fill"
-		| "minimal" = "primary";
+	export let style: ButtonStyles = "primary";
 	export let color: CaptionColors = "blue";
 	export let fill: boolean = false;
 	export let disabled: boolean = false;

@@ -1,4 +1,4 @@
-import { createAuthTab, closeAuthTab, newAcc } from "../providers"
+import { createAuthTab, closeAuthTab, newAcc } from "../output_provider_helpers"
 export function auth() {
 	createAuthTab(`https://api.notion.com/v1/oauth/authorize?client_id=ab6c8812-73c4-40cd-a993-210872654c27&&response_type=code`).then((authTab) => {
 		chrome.tabs.onUpdated.addListener((

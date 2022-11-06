@@ -18,3 +18,7 @@ export function clickOutside(node: Node) {
 		}
 	}
 }
+
+export function getActiveUrl(): string {
+	return "yess"
+}

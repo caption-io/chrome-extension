@@ -15,15 +15,18 @@
 		appExpanded,
 		tooltipInfo,
 		dropdownExtraHeight,
+		onLoadInputData,
 	} from "src/scripts/platform/stores";
 
 	// IMPT: Local Scripts
+	import { inputManifest } from "src/scripts/provider_manifest";
 	import {
 		_settings,
 		_outputProviders,
 		_flows,
-	} from "src/scripts/platform/flows-scripts";
-	import { getWebData } from "src/scripts/input_providers/webData/webdata";
+	} from "src/scripts/platform/platform";
+	import { getWebData } from "src/scripts/input_providers/webData/get";
+  import Instant from "./main/Instant.svelte";
 
 	//! IMPORTS
 
@@ -37,7 +40,6 @@
 			if ($accountStore.length > 0) {
 				_settings.save("defaultAccount", $accountStore[0].id);
 			} else {
-				_outputProviders.addAccount();
 			}
 		}
 	});
@@ -55,10 +57,15 @@
 
 	let body = document.body;
 	let currentTab = chrome.tabs.getCurrent();
+	let instantCapture = false;
 
 	// VARS: Local Dyanmic
 	let colorMode = "light";
-	$: if ($settingStore && $settingStore.find((s) => s.name === "colorMode") && $settingStore.find((s) => s.name === "colorMode").value) {
+	$: if (
+		$settingStore &&
+		$settingStore.find((s) => s.name === "colorMode") &&
+		$settingStore.find((s) => s.name === "colorMode").value
+	) {
 		colorMode = $settingStore.find((s) => s.name === "colorMode").value;
 	}
 	let theme = "light";
@@ -73,31 +80,44 @@
 	// TODO: Make onload function dynamic for inputProviders
 	(async () => {
 		currentTab.then((tab) => {
-			chrome.scripting
-				.executeScript({
-					target: { tabId: tab.id },
-					func: getWebData,
-				})
-				.then((res) => {
-					webData.set(res[0].result);
-				});
+			onLoadData(tab.id);
 		});
 	})();
 
 	// FUNCTIONS: Listeners
 
+	async function onLoadData(tabId) {
+		onLoadInputData.set([]);
+		for (let provider of inputManifest) {
+			let funcy = await import(
+				`../scripts/input_providers/${provider.id}/rules.ts`
+			);
+			if (funcy) {
+				let inProvider = provider;
+				chrome.scripting
+					.executeScript({
+						target: { tabId: tabId },
+						func: funcy.default.onLoad.func,
+					})
+					.then((res) => {
+						inProvider.data = res[0].result;
+						if ($onLoadInputData.length > 0) {
+							onLoadInputData.set([...$onLoadInputData, inProvider]);
+						} else {
+							onLoadInputData.set([inProvider]);
+						}
+					});
+			}
+		}
+	}
+
 	chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 		if (changeInfo.status === "complete") {
-			chrome.scripting
-				.executeScript({
-					target: { tabId: tabId },
-					func: getWebData,
-				})
-				.then((res) => {
-					webData.set(res[0].result);
-				});
+			onLoadData(tabId);
 		}
 	});
+
+	$: console.log("On load input data:", $onLoadInputData);
 	//! FUNCTIONS
 
 	// chrome.storage.onChanged.addListener((changes, areaName) => {
@@ -174,17 +194,18 @@
 	class={`container ${theme}-mode`}
 	class:expanded={$appExpanded}
 	style={`width: ${$appExpanded ? "900px" : "400px"}; height: ${
-		$appExpanded ? $maxSize.height + "px" : $dropdownExtraHeight ? $dropdownExtraHeight + "px" : "auto"
-	}; max-height: ${$maxSize.height}px; max-width: ${
-		$maxSize.width
-	}px;`}
+		$appExpanded
+			? $maxSize.height + "px"
+			: $dropdownExtraHeight
+			? $dropdownExtraHeight + "px"
+			: "auto"
+	}; max-height: ${$maxSize.height}px; max-width: ${$maxSize.width}px;`}
 >
+{#if instantCapture}
+<Instant />
+{:else}
 	<TitleBar />
-	<!-- {#if !userLoggedIn}
-		Not Logged In -->
-	<!-- {:else} -->
 	<Main />
-	<!-- {/if} -->
 	{#if $tooltipInfo}
 		<Tooltip
 			show={true}
@@ -197,6 +218,7 @@
 			delay={$tooltipInfo.delay}
 		/>
 	{/if}
+{/if}
 </div>
 
 <style

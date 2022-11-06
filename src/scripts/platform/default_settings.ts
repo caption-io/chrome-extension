@@ -116,7 +116,7 @@ export const defaultSettings: UserBrowserStorage = {
 			id: "colorMode",
 			group: "Extension",
 			type: "radio",
-			
+
 			options: [
 				{
 					name: "Light",
@@ -140,12 +140,16 @@ export const defaultSettings: UserBrowserStorage = {
 	inputProviders: [],
 	outputProviders: [],
 	tags: [],
+	appState: {
+		appExpanded: false,
+		appPopup: false,
+		selectedFlow: null,
+	}
 }
-
 async function idSetter() {
-	let nanoid = await import("nanoid");
-	let id = nanoid.nanoid(16);
-	return Promise.resolve(id);
+	let nanoid = await import("nanoid")
+	let id = nanoid.nanoid(16)
+	return Promise.resolve(id)
 }
 
 export let defaultFlow: Flow = {
@@ -159,7 +163,7 @@ export let defaultFlow: Flow = {
 	specialFormat: null,
 	favorite: false,
 	keyboardShortcut: null,
-	tags: [{value: "untagged", text: "Untagged"}],
+	tags: [{ value: "untagged", text: "Untagged" }],
 	behavior: "create",
 	type: "inputCapture",
 	autoCapture: false,

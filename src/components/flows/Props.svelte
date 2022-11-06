@@ -4,6 +4,7 @@
 	import { crossfade } from "svelte/transition";
 	import { flip } from "svelte/animate";
 	import { quintOut } from "svelte/easing";
+	import { includes } from "lodash-es";
 
 	export let options: Prop[];
 	export let values: Prop[] = options;
@@ -73,7 +74,7 @@
 </script>
 
 <div class="main props-main">
-	{#each options.filter((o) => o.visible) as prop, i (prop.id)}
+	{#each options.filter((o) => o.visible && !readOnly.includes(o.type)) as prop, i (prop.id)}
 		<div
 			class="prop"
 			in:receive={{ key: prop.id }}
@@ -171,9 +172,8 @@
 			@include flex(column, flex-start, flex-start);
 			overflow: hidden;
 			transition: height 0.2s ease-in-out;
-			row-gap: $p6;
+			row-gap: $p12;
 			width: 100%;
-			margin: $p12 0;
 			box-sizing: border-box;
 		}
 	}

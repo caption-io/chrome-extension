@@ -5,15 +5,14 @@
 	import DateTime from "src/components/ui/DateTime.svelte";
 	import Toggle from "src/components/ui/Toggle.svelte";
 
-
-	import { _flows } from "src/scripts/platform/flows-scripts";
+	import { _flows } from "src/scripts/platform/platform";
 	import { selectedFlow } from "src/scripts/platform/stores";
-  import InputData from "../InputData.svelte";
+	import InputData from "./InputData.svelte";
 
 	export let prop: Prop;
 
 	let showPropSettings = false;
-	let showInputSettings = false;
+	let showInputData = false;
 	let hovered = false;
 	export let visible = true;
 
@@ -40,15 +39,20 @@
 	];
 
 	function handleOptionClick(message) {
+		console.log("input label says: ",message);
 		if (message === "visible") {
 			prop.visible = !prop.visible;
 			_flows.updateProp($selectedFlow.id, prop.id, "visible", prop.visible);
 		} else if ((message = "settings")) {
 			showPropSettings = !showPropSettings;
-		} else if ((message = "input")) {
-			showInputSettings = !showInputSettings;
+		}
+		if ((message = "inputdata")) {
+			showInputData = !showInputData;
+			console.log("show input data: ", showInputData);
 		}
 	}
+
+	$: console.log("showinputdata: ", showInputData);
 
 	const isIcon = (p: Prop["type"] | Icons): p is Icons => {
 		return (p as Icons) !== undefined;
@@ -60,7 +64,6 @@
 	on:mouseenter={() => (hovered = true)}
 	on:mouseleave={() => (hovered = false)}
 >
-
 	<InputLabel
 		text={prop.name}
 		icon={isIcon(prop.type) ? prop.type : null}
@@ -70,7 +73,7 @@
 	/>
 	<div class="prop-input">
 		{#if selects.includes(prop.type)}
-			<Select {prop} />
+			<Select options={prop.options} />
 		{:else if textInputs.includes(prop.type)}
 			<TextInput {prop} />
 		{:else if prop.type === "date"}
@@ -87,7 +90,9 @@
 			</div>
 		{/if}
 	</div>
-	<InputData />
+	{#if showInputData}
+		<InputData prop={prop}/>
+	{/if}
 </div>
 
 <style lang="scss">
