@@ -621,12 +621,13 @@
 			}
 		}
 		.select-dropdown {
+			@include scrollbar();
 			position: absolute;
 			top: 100%;
 			left: 0;
 			width: 100%;
 			max-height: 20rem;
-			overflow-y: auto;
+			overflow-y: overlay;
 			border: 1px solid var(--border-color);
 			border-radius: var(--border-radius);
 			background-color: var(--bg);

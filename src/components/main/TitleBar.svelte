@@ -26,7 +26,7 @@
 			on:click={() => dispatch("close")}
 		>
 			{#if $selectedFlow !== null || $activePage !== "flows"}
-				{#if $minimized === false}
+				{#if $minimized === false && $appExpanded === false}
 					<Button
 						text="Back "
 						icon="back"
@@ -34,8 +34,11 @@
 						size="md"
 						style="minimal"
 						on:click={() => {
-							if ($selectedFlow) {
+							if ($selectedFlow && $activePage === "flowSettings") {
+								activePage.set("flow");
+							} else if ($selectedFlow) {
 								selectedFlow.set(null);
+								activePage.set("flows");
 							} else {
 								activePage.set("flows");
 							}

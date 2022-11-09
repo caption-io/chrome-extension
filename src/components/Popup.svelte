@@ -26,7 +26,7 @@
 		_flows,
 	} from "src/scripts/platform/platform";
 	import { getWebData } from "src/scripts/input_providers/webData/get";
-  import Instant from "./main/Instant.svelte";
+	import Instant from "./main/Instant.svelte";
 
 	//! IMPORTS
 
@@ -61,12 +61,14 @@
 
 	// VARS: Local Dyanmic
 	let colorMode = "light";
-	$: if (
-		$settingStore &&
-		$settingStore.find((s) => s.name === "colorMode") &&
-		$settingStore.find((s) => s.name === "colorMode").value
-	) {
-		colorMode = $settingStore.find((s) => s.name === "colorMode").value;
+	$: if ($settingStore) {
+		if (
+			$settingStore.find((s) => s.id === "colorMode") &&
+			$settingStore.find((s) => s.id === "colorMode").value
+		) {
+
+			colorMode = $settingStore.find((s) => s.id === "colorMode").value;
+		}
 	}
 	let theme = "light";
 	let sysPrefColor = window.matchMedia("(prefers-color-scheme: dark)");
@@ -169,16 +171,16 @@
 	// GRP: Color Mode Handler
 
 	$: if (colorMode === "system" && sysColorMode) {
+		console.log("System color mode");
 		colorHandler(sysColorMode);
 	} else {
+		console.log("Custom color mode");
 		colorHandler(colorMode);
 	}
 
+
 	function colorHandler(mode) {
-		body.style.setProperty(
-			"background-color",
-			`${mode === "light" ? "#fff" : "#14161f"}`
-		);
+		body.style.setProperty("background-color", "none transparent");
 		chrome.tabs.getCurrent().then((tab) => {
 			chrome.tabs.sendMessage(tab.id, {
 				message: "colorMode",
@@ -201,24 +203,24 @@
 			: "auto"
 	}; max-height: ${$maxSize.height}px; max-width: ${$maxSize.width}px;`}
 >
-{#if instantCapture}
-<Instant />
-{:else}
-	<TitleBar />
-	<Main />
-	{#if $tooltipInfo}
-		<Tooltip
-			show={true}
-			value={$tooltipInfo.text}
-			position={$tooltipInfo.position}
-			location={{
-				x: $tooltipInfo.location.x,
-				y: $tooltipInfo.location.y,
-			}}
-			delay={$tooltipInfo.delay}
-		/>
+	{#if instantCapture}
+		<Instant />
+	{:else}
+		<TitleBar />
+		<Main />
+		{#if $tooltipInfo}
+			<Tooltip
+				show={true}
+				value={$tooltipInfo.text}
+				position={$tooltipInfo.position}
+				location={{
+					x: $tooltipInfo.location.x,
+					y: $tooltipInfo.location.y,
+				}}
+				delay={$tooltipInfo.delay}
+			/>
+		{/if}
 	{/if}
-{/if}
 </div>
 
 <style

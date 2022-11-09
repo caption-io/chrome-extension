@@ -13,42 +13,25 @@
 	<title>Popup</title>
 </head>
 
-<body style>
+<body>
 	<div id="app"></div>
 	<script type="module" src="./index.ts" crossorigin unsafe-inline></script>
 </body>
 
 <style type="text/css">
 	html {
+		background: none transparent !important;
 		overflow: hidden;
-		height: auto;
-		transition: 200ms ease-in-out;
-	}
 
+	}
 	body {
 		font-family: var(--font-family);
 		margin: 0;
-		font-smooth: always;
 		position: relative;
-		height: fit-content;
-		width: fit-content;
-		transition: 200ms ease-in-out;
-		overflow: hidden;
+		background: none transparent !important;
 	}
-
-	body * {
-		pointer-events: auto;
-	}
-
-	p {
-		margin: 0;
-	}
-
 	#app {
-		backdrop-filter: blur(8px);
-		border-radius: 8px;
-
-		
+		background: none transparent !important;
 	}
 </style>
 

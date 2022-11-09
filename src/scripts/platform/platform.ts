@@ -160,6 +160,7 @@ function SettingsFunctions() {
 
 		// FUNC: Save Setting
 		async save(key: string, value: any) {
+			console.log(key, value)
 
 			_settings.loadAll().then((settings: CaptionSettings) => {
 				let s = settings.map((set) => {

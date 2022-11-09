@@ -161,17 +161,19 @@
 			}
 		}
 		.input-data-selector {
-			display: flex;
-			flex-direction: column;
+			@include flex(column, flex-start, flex-start);
+			@include scrollbar();
 			padding: $p12;
 			max-height: 250px;
 			width: 100%;
 			box-sizing: border-box;
 			background-color: var(--bg);
-			overflow: scroll;
+			overflow-y: overlay;
+			overflow-x: hidden;
 			position: relative;
 			.input-group {
 				margin-bottom: $p12;
+				width: 100%;
 				.input-group-label {
 					@include ui-text(var(--text-secondary), $p12, 500);
 					text-transform: uppercase;
@@ -188,6 +190,8 @@
 					cursor: pointer;
 					transition: $transition;
 					background-color: var(--bg-secondary);
+					width: 100%;
+					box-sizing: border-box;
 					.input-item-value {
 						@include ui-text(var(--text), $p14, 500);
 						transition: $transition;

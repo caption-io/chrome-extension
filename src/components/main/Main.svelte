@@ -111,10 +111,7 @@
 
 			<Settings />
 	{/if}
-	{#if $selectedFlow && $activePage === "flowSettings"}
-	<FlowSettings />
-	{/if}
-	{#if $selectedFlow && $activePage !== "flowSettings"}
+	{#if $selectedFlow}
 		{#key $selectedFlow.id}
 			<div
 				class="flow-editor"
@@ -164,7 +161,6 @@
 			.flow-list-container {
 				@include flex(column, flex-start, flex-start);
 				height: 100%;
-				padding: 0 $p12;
 				box-sizing: border-box;
 				width: 400px
 			}
@@ -173,6 +169,8 @@
 				column-gap: $p12;
 				background-color: var(--bg);
 				width: 100%;
+				padding: 0 $p12;
+				box-sizing: border-box;
 				.settings-option {
 					@include flex(row, center, center);
 					@include ui-text(var(--gray-500), 0.875rem, 600);

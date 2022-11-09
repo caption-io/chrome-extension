@@ -13,6 +13,7 @@
 		activeAccount,
 		maxSize,
 		accountStore,
+		activePage,
 	} from "src/scripts/platform/stores";
 	import { _flows, _settings } from "src/scripts/platform/platform";
 	import { fade, fly } from "svelte/transition";
@@ -106,7 +107,7 @@
 				size="sm"
 				color="blue"
 				style="minimal"
-				on:click={() => (showSettings = !showSettings)}
+				on:click={() => (activePage.set("flowSettings"))}
 			/>
 		</div>
 	</div>
@@ -114,9 +115,9 @@
 		class="animation-wrapper"
 		style:height="100%"
 	>
-		{#if showSettings}
+		{#if $activePage === "flowSettings"}
 			<FlowSettings />
-		{:else if !showSettings}
+		{:else}
 			<div
 				class="flow-body"
 				out:fly={{ duration: 200, x: -400 }}
@@ -176,6 +177,7 @@
 			</div>
 		{/if}
 	</div>
+	{#if $activePage !== "flowSettings"}
 	<div class="capture-button">
 		<div class="capture-button-icon">
 			<Icon
@@ -188,6 +190,7 @@
 			Capture
 		</div>
 	</div>
+	{/if}
 </div>
 
 <style lang="scss">
@@ -260,7 +263,7 @@
 			width: 100%;
 			padding-left: $p12;
 			padding-right: $p12;
-			margin: $p6 0 0 0;
+			margin: $p6 0 $p6 0;
 			box-sizing: border-box;
 			> h2 {
 				margin: 0;
@@ -274,7 +277,7 @@
 				overflow: hidden;
 				> input {
 					@include ui-text(var(--text), 1rem, 600);
-					margin: 0 0 1px 0;
+					margin: 1px 0 0 0;
 					width: 100%;
 					height: 100%;
 					transition: 200ms;

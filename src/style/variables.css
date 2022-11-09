@@ -209,16 +209,32 @@ body {
 	--brown-light: hsl(48, 52%, 80%);
 }
 .dark-mode {
-	--bg: var(--gray-800);
-	--bg-secondary: var(--gray-700);
-	--bg-tertiary: var(--gray-600);
-	--bg-quaternary: var(--gray-500);
-	--bg-colored: var(--blue-900);
-	--border-color: var(--gray-500);
-	--border-color-secondary: var(--gray-500);
-	--text: var(--white);
-	--text-secondary: var(--gray-200);
-	--text-tertiary: var(--gray-500);
-	--text-alpha: var(--white-alpha-700);
-	--shadow-color: var(--black-alpha-500);
+	--bg: #1E1E1E;
+	--bg-secondary: #252526;
+	--bg-tertiary: #2D2D2D;
+	--bg-quaternary: #3C3C3C;
+	--border-color: rgba(255, 255, 255, 0.1);
+	--border-color-secondary: rgba(255, 255, 255, 0.05);
+	--text: #E4E4E4;
+	--text-secondary: hsl(0, 0%, 80%);
+	--text-alpha: rgba(84, 84, 84, 90%);
+	--shadow-color: rgba(0, 0, 0, 0.1);
+	--shadow-color-light: rgba(0, 0, 0, 0.1);
+	--gray: var(--text-secondary);
+	--blue: #3d8fc2;
+	--blue-light: rgba(61, 143, 194, .25);
+	--green: #47bb78;
+	--green-light: hsl(145, 52%, 80%);
+	--red: #e53e3e;
+	--red-light: hsl(0, 77%, 90%);
+	--yellow: #ecc94a;
+	--yellow-light: hsl(48, 52%, 80%);
+	--orange: #de6b1f;
+	--orange-light: hsl(24, 75%, 80%);
+	--purple: #805ad5;
+	--purple-light: hsl(252, 52%, 80%);
+	--pink: #ed64a6;
+	--pink-light: hsl(325, 52%, 80%);
+	--brown: #b7791f;
+	--brown-light: hsl(48, 52%, 80%);
 }

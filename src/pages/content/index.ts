@@ -19,26 +19,27 @@ if (popupAllowed) {
 	document.addEventListener('DOMContentLoaded', () => {
 
 		let modal = document.createElement('iframe')
+		modal.setAttribute('allowtransparency', 'true')
 		modal.setAttribute('id', 'caption-popup')
 		modal.src = chrome.runtime.getURL('src/pages/popup/index.html')
-
+		modal.title = 'Caption'
 
 		modal.setAttribute('style',
 			`
-	top:24px;
-	right:24px;
-	position: fixed; 
-	z-index: 9999;
-	opacity: 0;
-	border-radius: 8px;
-	box-shadow: 0 0 4px rgba(0, 0, 0, 0.1), 0 0 1rem 0.5rem rgba(0, 0, 0, 0.10), 0 0 32px 0 rgba(255, 255, 255, 0.1);
-	offset-anchor: top right;
-	transition: 400ms ease;
-	border: 1px solid transparent;
-	outline: none;
-	overflow: hidden;
-	pointer-events: none;
-	`
+				top:24px;
+				right:24px;
+				position: fixed; 
+				z-index: 9999;
+				opacity: 0;
+				border-radius: 8px;
+				box-shadow: 0 0 4px rgba(0, 0, 0, 0.1), 0 0 1rem 0.5rem rgba(0, 0, 0, 0.10), 0 0 32px 0 rgba(255, 255, 255, 0.1);
+				offset-anchor: top right;
+				transition: 200ms ease;
+				border: 1px solid transparent;
+				outline: none;
+				overflow: hidden;
+				pointer-events: none;
+			`
 		)
 
 		document.body.appendChild(modal)
@@ -48,11 +49,11 @@ if (popupAllowed) {
 
 function colorMode(mode) {
 	if (mode === 'dark') {
-		popup.style.backgroundColor = '#1e1e1e'
+		popup.style.backgroundColor = 'transparent'
 		popup.style.border = '1px solid #4a5568'
 	} else {
-		popup.style.backgroundColor = '#fff'
-		popup.style.border = '1px solid #e2e8f0'
+		popup.style.backgroundColor = 'transparent'
+		popup.style.border = '1px solid rgb(41 43 47)'
 	}
 }
 

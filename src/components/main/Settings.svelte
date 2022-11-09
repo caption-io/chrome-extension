@@ -233,7 +233,7 @@
 				}
 				.label {
 					@include flex(row, space-between, center);
-					@include ui-text(var(--text-primary), $p14, 500);
+					@include ui-text(var(--text), $p14, 500);
 					width: 100%;
 					.info-icon {
 						padding-right: $p6;
