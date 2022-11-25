@@ -1,10 +1,10 @@
 <script lang="ts">
 	import Icon from "../ui/Icon.svelte";
 	import Radio from "../ui/Radio.svelte";
-	import Toggle from "../ui/Toggle.svelte";
+	import Toggle from "../ui/Boolean.svelte";
 	import Button from "../ui/Button.svelte";
 	import { accountStore, settingStore, flowStore, tooltipInfo } from "src/scripts/platform/stores";
-	import Select from "../ui/select/Select.svelte";
+	import Select from "../ui/Select.svelte";
 	import { fly, slide, fade, crossfade } from "svelte/transition";
 	import { quintOut } from "svelte/easing";
 	import {
@@ -38,6 +38,12 @@
 		activeTab = newTab;
 	}
 
+	// type check for RadioOptions
+	function isRadioOptionsArray(
+		options: any | RadioOptions | RadioOptions[]
+	): options is RadioOptions[] {
+		return Array.isArray(options);
+	}
 </script>
 
 <div
@@ -54,7 +60,7 @@
 				>
 					<Icon
 						icon={group.icon}
-						color={group.name === activeTab ? "blue" : "gray"}
+						color="inherit"
 						size={16}
 					/>
 					{group.name}
@@ -73,7 +79,6 @@
 						<div
 							class="setting"
 							class:radio={setting.type === "radio"}
-							class:row={setting.type === "boolean"}
 						>
 							<div class="label">
 								{setting.name}
@@ -83,7 +88,7 @@
 										on:mouseenter={(e) =>
 											tooltipInfo.set({
 												text: setting.description,
-												position: "bottom-right",
+												position: "bottom-left",
 												location: {
 													x: handleE(e.target).getBoundingClientRect().left,
 													y: handleE(e.target).getBoundingClientRect().top + 24,
@@ -94,7 +99,7 @@
 										<Icon
 											icon="info"
 											size={12}
-											color="gray"
+											color="inherit"
 										/>
 									</div>
 								{/if}
@@ -115,8 +120,9 @@
 										hasIcons={setting.options === "accounts"
 											? true
 											: false}
+											small={true}
 									/>
-								{:else if setting.type === "radio"}
+								{:else if setting.type === "radio" && isRadioOptionsArray(setting.options)}
 									<Radio
 										options={setting.options}
 										value={setting.value}
@@ -164,8 +170,6 @@
 	.caption-settings {
 		display: flex;
 		flex-direction: column;
-		gap: $p12;
-		padding: 0 0 $p24 0;
 		width: 100%;
 		:not(:first-child).header {
 			border-top: $border-light;
@@ -177,41 +181,39 @@
 			transition: $transition;
 			background-color: var(--bg);
 			overflow: hidden;
+			padding: 0 $p12;
+			column-gap: $p6;
+			height: $p42;
+			max-height: $p42;
 			min-height: $p42;
-
 			.settings-group-tab {
 				@include flex(row, center, center);
-				@include ui-text(var(--text-tertiary), $p14, 500);
+				@include ui-text(var(--text-secondary), $p14, 400);
 				column-gap: $p6;
-				padding: $p12 $p12 $p12 $p12;
+				padding: $p6 0;
 				transition: $transition;
 				width: 100%;
 				box-sizing: border-box;
 				cursor: pointer;
-				background-color: var(--bg-tertiary);
-				z-index: 1;
-				height: $p42;
+				border-radius: $p8;
+				border: 1px solid transparent;
 
 				&.active {
-					@include ui-text(var(--blue-400), $p14, 500);
-					background-color: var(--bg);
-					box-shadow: 0 0 $p12 0 var(--shadow-color);
-					z-index: 2;
+					@include ui-text(var(--blue), $p14, 400);
+					background-color: var(--bg-secondary);
+					box-shadow: var(--input-shadow);
+					border-color: var(--border-color-secondary);
 				}
 				&:hover:not(.active) {
-					background-color: var(--bg-secondary);
+					background-color: var(--bg-quaternary);
 				}
 			}
 		}
 		.settings-list {
-			@include flex(column, flex-start, center);
+			@include flex(column, space-between, center);
 			width: 100%;
-			height: 100%;
-			transform: translateX(-100%);
 			box-sizing: border-box;
-			&.active {
-				transform: translateX(0);
-			}
+
 			.button-box {
 				@include flex(row, flex-start, center);
 				width: 100%;
@@ -220,23 +222,25 @@
 				box-sizing: border-box;
 			}
 			.setting {
-				@include flex(column, flex-start, center);
+				@include flex(row, flex-start, center);
 				gap: $p12;
 				box-sizing: border-box;
 				width: 100%;
 				position: relative;
 				min-height: $p42;
 				padding: $p12 $p12;
-				border-bottom: 1px solid var(--border-color-secondary);
+				&:not(:last-child) {
+					border-bottom: 1px solid var(--border-color-secondary);
+				}
 				&.row {
 					flex-direction: row;
 				}
 				.label {
-					@include flex(row, space-between, center);
+					@include flex(row, flex-start, center);
 					@include ui-text(var(--text), $p14, 500);
 					width: 100%;
 					.info-icon {
-						padding-right: $p6;
+						padding-left: $p6;
 						opacity: 50%;
 					}
 				}
@@ -261,12 +265,6 @@
 							outline: none;
 							border-color: var(--color-primary);
 						}
-					}
-				}
-				&.radio {
-					@include flex(column, flex-start, flex-start);
-					.value {
-						width: 100%;
 					}
 				}
 			}

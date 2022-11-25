@@ -1,0 +1,60 @@
+Date : 2022-11-15 17:00:42
+Directory : /Users/eliwimmer/Web Development/notion-capture/chrome-extension/src
+Total : 22 files,  -9055 codes, -15 comments, -29 blanks, all -9099 lines
+
+Languages
++--------------------+------------+------------+------------+------------+------------+
+| language           | files      | code       | comment    | blank      | total      |
++--------------------+------------+------------+------------+------------+------------+
+| HTML               |          2 |         -2 |          0 |          0 |         -2 |
+| Markdown           |          1 |         -2 |          0 |         -2 |         -4 |
+| JavaScript         |          1 |         -8 |         -2 |         -4 |        -14 |
+| YAML               |          1 |        -18 |         -2 |         -3 |        -23 |
+| JSON with Comments |          1 |        -19 |         -6 |         -1 |        -26 |
+| TypeScript         |          2 |        -49 |         -2 |         -9 |        -60 |
+| XML                |          8 |        -59 |          0 |         -6 |        -65 |
+| JSON               |          6 |     -8,898 |         -3 |         -4 |     -8,905 |
++--------------------+------------+------------+------------+------------+------------+
+
+Directories
++-----------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                | files      | code       | comment    | blank      | total      |
++-----------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                   |         22 |     -9,055 |        -15 |        -29 |     -9,099 |
+| ..                                                                                                  |         22 |     -9,055 |        -15 |        -29 |     -9,099 |
+| ../.github                                                                                          |          1 |        -18 |         -2 |         -3 |        -23 |
+| ../.github/workflows                                                                                |          1 |        -18 |         -2 |         -3 |        -23 |
+| ../public                                                                                           |          9 |       -121 |         -2 |         -6 |       -129 |
+| ../public/icons                                                                                     |          4 |        -13 |          0 |         -2 |        -15 |
+| ../public/media                                                                                     |          4 |        -46 |          0 |         -4 |        -50 |
+| ../vscode                                                                                           |          1 |        -11 |          0 |         -1 |        -12 |
++-----------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++-----------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| filename                                                                                            | language           | code       | comment    | blank      | total      |
++-----------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/.github/workflows/test.yml         | YAML               |        -18 |         -2 |         -3 |        -23 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/.prettierrc                        | JSON               |         -9 |          0 |          0 |         -9 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/README.md                          | Markdown           |         -2 |          0 |         -2 |         -4 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/auto-imports.d.ts                  | TypeScript         |         -4 |         -1 |         -1 |         -6 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/package-lock.json                  | JSON               |     -8,756 |          0 |         -1 |     -8,757 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/package.json                       | JSON               |        -52 |          0 |         -1 |        -53 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/privacypolicy.html                 | HTML               |         -1 |          0 |          0 |         -1 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/public/icons/backspace-outline.svg | XML                |         -1 |          0 |          0 |         -1 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/public/icons/check.svg             | XML                |         -5 |          0 |         -1 |         -6 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/public/icons/chevron-down.svg      | XML                |         -1 |          0 |          0 |         -1 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/public/icons/close.svg             | XML                |         -6 |          0 |         -1 |         -7 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/public/manifest.json               | JSON               |        -62 |         -2 |          0 |        -64 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/public/media/darkThumb.svg         | XML                |         -8 |          0 |         -1 |         -9 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/public/media/lightThumb.svg        | XML                |         -8 |          0 |         -1 |         -9 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/public/media/logomark.svg          | XML                |         -4 |          0 |         -1 |         -5 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/public/media/systemThumb.svg       | XML                |        -26 |          0 |         -1 |        -27 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/svelte.config.js                   | JavaScript         |         -8 |         -2 |         -4 |        -14 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/termsofuse.html                    | HTML               |         -1 |          0 |          0 |         -1 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/tsconfig.json                      | JSON with Comments |        -19 |         -6 |         -1 |        -26 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/tsconfig.node.json                 | JSON               |         -8 |         -1 |         -1 |        -10 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/vite.config.ts                     | TypeScript         |        -45 |         -1 |         -8 |        -54 |
+| /Users/eliwimmer/Web Development/notion-capture/chrome-extension/vscode/.favorites.json             | JSON               |        -11 |          0 |         -1 |        -12 |
+| Total                                                                                               |                    |     -9,055 |        -15 |        -29 |     -9,099 |
++-----------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+

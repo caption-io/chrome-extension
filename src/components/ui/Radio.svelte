@@ -1,18 +1,22 @@
 <script lang="ts">
 	import Icon from "./Icon.svelte";
 	import { media } from "src/media";
+  import { slide, crossfade } from "svelte/transition";
 
-	export let options: {
-		name: string;
-		id: string;
-		image?: string;
-		icon?: Icons;
-	}[] = [];
+	export let options: RadioOptions[] = [];
 	export let value;
 	export let name: string = null;
+	export let iconOnly: boolean = false;
+	export let asColumn: boolean = false;
+
+	const [send, receive] = crossfade({
+		duration: d => Math.sqrt(d * 300)
+	});
 </script>
 
-<div class="radio-container">
+<div class="radio-container"
+class:column={asColumn}
+>
 	{#each options as option}
 		<label
 			class="radio-label"
@@ -29,11 +33,17 @@
 				{@html media[option.image]}
 			{:else if option.icon}
 				<Icon
-					name={option.icon}
+					icon={option.icon}
 					size={16}
+					color="inherit"
 				/>
 			{/if}
-			<span class="radio-name">{option.name}</span>
+			{#if !iconOnly}
+				<span class="radio-name">{option.name}</span>
+			{/if}
+			{#if option.id === value}
+				<div class="radio-indicator" in:receive={{key: "radio-indicator"}} out:send={{key: "radio-indicator"}} />
+			{/if}
 		</label>
 	{/each}
 </div>
@@ -44,24 +54,44 @@
 		width: 100%;
 	}
 	.radio-container {
-		@include flex(row, space-between, flex-start);
-		width: 100%;
-		gap: $p12;
+		@include flex(row, flex-start, center);
+		gap: $p4;
+		padding: $p4;
 		box-sizing: border-box;
+		background-color: var(--bg-secondary);
+		border-radius: var(--border-radius);
+		box-shadow: var(--inset-shadow);
+		width: 100%;
+		
 		input[type="radio"] {
 			display: none;
 		}
+		.radio-indicator {
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			border-radius: $p4;
+			background-color: var(--bg);
+			box-shadow: var(--input-shadow);
+			z-index: -1;
+
+		}
 		.radio-label {
-			@include flex(column, center, center);
-			padding: 0 $p3 $p4 $p3;
+			@include flex(row, center, center);
+			@include ui-text(var(--text-secondary), $p12, 500);
+			position: relative;
+			gap: $p3;
+			padding: $p4 $p8;
 			border-radius: $border-radius;
-			background-color: var(--bg-tertiary);
+			flex-grow: 1;
+			box-sizing: border-box;
+			z-index: 0;
 			&.active {
-				background-color: var(--blue-alpha-300);
-				@include ui-text(var(--blue-400), $p14, 500);
+				color: var(--blue);
 			}
 			.radio-button {
 				@include flex(row, center, center);
+				gap: $p3;
 				width: $p6;
 				height: $p6;
 				border-radius: 50%;
@@ -85,7 +115,12 @@
 				object-fit: cover;
 			}
 			.radio-name {
-				@include ui-text(var(--text-secondary), $p12, 500);
+			}
+		}
+		&.column {
+			@include flex(column, flex-start, flex-start);
+			.radio-label {
+				width: 100%;
 			}
 		}
 	}

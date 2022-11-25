@@ -8,8 +8,8 @@
 
 	// IMPT: Components
 	import Button from "../ui/Button.svelte";
-	import FlowEditor from "../flows/FlowEditor.svelte";
-	import FlowList from "../flows/FlowList.svelte";
+	import FlowEditor from "../flows/flow-editor/FlowEditor.svelte";
+	import FlowList from "../flows/flow-list/FlowList.svelte";
 	import Settings from "./Settings.svelte";
 
 	// IMPT: Stores
@@ -22,7 +22,7 @@
 
 	// IMPT: Local Scripts
 	import { _outputProviders, _flows } from "src/scripts/platform/platform";
-  import FlowSettings from "../flows/FlowSettings.svelte";
+  import FlowSettings from "../flows/flow-editor/FlowSettings.svelte";
 
 	//! IMPTS
 

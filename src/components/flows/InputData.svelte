@@ -4,10 +4,15 @@
 	import { inputManifest } from "src/scripts/provider_manifest";
 	import { onLoadInputData } from "src/scripts/platform/stores";
 
-	import { fly, slide } from "svelte/transition";
+	import { fly, slide, fade } from "svelte/transition";
 	import { compatibleDataTypes } from "src/scripts/platform/platform";
 
+	import { createEventDispatcher } from "svelte";
+
+	const dispatch = createEventDispatcher();
+
 	export let prop;
+	export let savedInput;
 	let activeTab = $onLoadInputData[0].id;
 	let open = false;
 	let compat = prop.showAllCompatible ? "compat" : "exact";
@@ -31,6 +36,14 @@
 			activeTab = tabId;
 		}
 	}
+
+	function inputSelected(item: InputItem, data: InputGroup) {
+		dispatch("selected", {
+			inputItem: item,
+			inputItemGroup: data,
+			inputItemProvider: inputManifest.find((p) => p.id === activeTab),
+		});
+	}
 </script>
 
 <div
@@ -47,7 +60,7 @@
 				<div class="tab-icon">
 					<Icon
 						icon={tab.icon}
-						color="blue"
+						color="inherit"
 						size={12}
 					/>
 				</div>
@@ -55,7 +68,7 @@
 			</div>
 		{/each}
 	</div>
-	<div class="input-data-selector">
+	<div class="view-options">
 		<div
 			class="show-compat"
 			class:showCompatible
@@ -72,6 +85,8 @@
 			</div>
 			Show all compatible
 		</div>
+	</div>
+	<div class="input-data-selector">
 		{#if $onLoadInputData.find((p) => p.id === activeTab).data.length > 0}
 			{#each $onLoadInputData.find((p) => p.id === activeTab).data as data}
 				{#if isInputGroup(data)}
@@ -81,7 +96,10 @@
 								{data.label}
 							</div>
 							{#each data.items as item}
-								<div class="input-item">
+								<div
+									class="input-item"
+									on:click={() => inputSelected(item, data)}
+								>
 									<div class="input-item-value">
 										{item.item}
 									</div>
@@ -94,12 +112,18 @@
 					{/if}
 
 					{#if showCompatible && compatibleDataTypes(data.type, prop.type).compat}
-						<div class="input-group">
+						<div
+							class="input-group"
+							transition:fade={{ duration: 200 }}
+						>
 							<div class="input-group-label">
 								{data.label}
 							</div>
 							{#each data.items as item}
-								<div class="input-item">
+								<div
+									class="input-item"
+									on:click={() => inputSelected(item, data)}
+								>
 									<div class="input-item-value">
 										{item.item}
 									</div>
@@ -131,15 +155,18 @@
 		@include flex(column, flex-start, center);
 		width: 100%;
 		border-radius: $p8;
-		border: 1px solid var(--blue);
-		background-color: var(--blue-light);
+		border: 1px solid var(--border-color);
+		background-color: var(--bg-secondary);
 		box-sizing: border-box;
 		overflow: hidden;
 		margin-top: $p12;
+		box-shadow: var(--input-shadow-heavy);
 		.tab-container {
 			@include flex(row, flex-start, flex-end);
 			box-sizing: border-box;
 			width: 100%;
+			padding: $p6 $p6 0 $p6;
+			z-index: 1;
 			.tab {
 				display: flex;
 				flex-direction: row;
@@ -148,91 +175,34 @@
 				transition: $transition;
 				cursor: pointer;
 				box-sizing: border-box;
+				border-radius: $p4;
+				@include ui-text(var(--text-secondary), $p12, 400);
 				.tab-icon {
 					margin-right: $p3;
 				}
 				.tab-text {
-					@include ui-text(var(--blue), $p12, 500);
 					white-space: nowrap;
 				}
 				&.active {
 					background-color: var(--bg);
+					color: var(--blue);
+					box-shadow: var(--input-shadow-light);
 				}
 			}
 		}
-		.input-data-selector {
-			@include flex(column, flex-start, flex-start);
-			@include scrollbar();
-			padding: $p12;
-			max-height: 250px;
+		.view-options {
+			@include flex(row, flex-end, center);
 			width: 100%;
+			padding: 0 $p12;
 			box-sizing: border-box;
-			background-color: var(--bg);
-			overflow-y: overlay;
-			overflow-x: hidden;
-			position: relative;
-			.input-group {
-				margin-bottom: $p12;
-				width: 100%;
-				.input-group-label {
-					@include ui-text(var(--text-secondary), $p12, 500);
-					text-transform: uppercase;
-					margin: 0 0 $p6 $p12;
-				}
-				.input-item {
-					display: flex;
-					flex-direction: column;
-					align-items: flex-start;
-					justify-content: flex-start;
-					margin-bottom: $p6;
-					padding: $p6 $p12;
-					border-radius: var(--border-radius);
-					cursor: pointer;
-					transition: $transition;
-					background-color: var(--bg-secondary);
-					width: 100%;
-					box-sizing: border-box;
-					.input-item-value {
-						@include ui-text(var(--text), $p14, 500);
-						transition: $transition;
-						font-size: 0.875rem;
-						margin-bottom: 0.375rem;
-						width: 100%;
-						padding-right: 12px;
-						overflow: hidden;
-						text-overflow: ellipsis;
-						box-sizing: border-box;
-					}
-					.input-item-source {
-						@include ui-text(var(--text-secondary), $p12, 500);
-						transition: $transition;
-						align-self: flex-end;
-					}
-					&:hover {
-						background-color: var(--blue-light);
-						.input-item-value {
-							color: var(--blue);
-						}
-						.input-item-source {
-							color: var(--blue);
-							opacity: 0.6;
-						}
-					}
-				}
-			}
+			border-bottom: 1px solid var(--border-color-secondary);
 			.show-compat {
 				@include flex(row, center, center);
-				@include ui-text(var(--text-secondary), $p12, 500);
-				border-radius: var(--border-radius);
-				padding: $p6 $p6;
+				@include ui-text(var(--text-secondary), $p12, 400);
+				padding: $p8 $p6;
 				transition: $transition;
 				align-self: flex-end;
 				cursor: pointer;
-				background-color: var(--bg-secondary);
-				position: sticky;
-				top: 0;
-				right: 0;
-				z-index: 99;
 				.checkbox {
 					margin-right: $p6;
 					border: 1px solid var(--border-color);
@@ -263,6 +233,64 @@
 						background-color: var(--blue);
 						.checkmark {
 							display: block;
+						}
+					}
+				}
+			}
+		}
+		.input-data-selector {
+			@include flex(column, flex-start, flex-start);
+			@include scrollbar();
+			padding: $p12 $p12 $p12 $p12;
+			max-height: 250px;
+			width: 100%;
+			box-sizing: border-box;
+			overflow-y: overlay;
+			overflow-x: hidden;
+			position: relative;
+			background-color: var(--bg);
+			.input-group {
+				margin-bottom: $p12;
+				width: 100%;
+				.input-group-label {
+					@include ui-text(var(--text-secondary), $p12, 500);
+					margin: 0 0 $p6 $p6;
+				}
+				.input-item {
+					display: flex;
+					flex-direction: column;
+					align-items: flex-start;
+					justify-content: flex-start;
+					margin-bottom: $p6;
+					padding: $p12;
+					border-radius: $p4;
+					cursor: pointer;
+					width: 100%;
+					box-sizing: border-box;
+					border: 1px solid var(--border-color-secondary);
+					background-color: var(--bg-quaternary);
+					transition: 100ms ease-in-out;
+					.input-item-value {
+						@include ui-text(var(--text), $p14, 400);
+						font-size: 0.875rem;
+						margin-bottom: 0.375rem;
+						width: 100%;
+						padding-right: 12px;
+						overflow: hidden;
+						text-overflow: ellipsis;
+						box-sizing: border-box;
+						transition: 100ms ease-in-out
+					}
+					.input-item-source {
+						@include ui-text(var(--text-secondary), $p12, 400);
+						transition: $transition;
+						align-self: flex-end;
+						opacity: 0.75;
+					}
+					&:hover {
+						box-shadow: var(--input-shadow-light);
+						.input-item-value {
+							color: var(--blue);
 						}
 					}
 				}

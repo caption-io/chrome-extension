@@ -15,12 +15,15 @@ declare type OutputProvider = {
 	accounts: ProviderAccount[]
 }
 
-declare type NotionDatabase = {
+declare type OutputDestination = {
 	name: string
 	id: string
-	icon?: Icons | string | (() => string),
-	props?: NotionProp[],
+	provider: OutputProvider['id']
+	icon?: Icons | string | (() => string)
+	props?: FlowProp[]
 	raw?: any
+	lostProps?: FlowProp[]
+	defaultSort?: boolean
 }
 
 declare type NotionProp = {

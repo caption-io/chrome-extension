@@ -7,6 +7,7 @@
 	export let alt: string = null;
 	// id is svg file
 	// get content of svg file
+
 </script>
 
 <div

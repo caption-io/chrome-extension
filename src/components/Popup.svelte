@@ -24,6 +24,7 @@
 		_settings,
 		_outputProviders,
 		_flows,
+		_tags,
 	} from "src/scripts/platform/platform";
 	import { getWebData } from "src/scripts/input_providers/webData/get";
 	import Instant from "./main/Instant.svelte";
@@ -34,6 +35,8 @@
 	_settings.loadAll();
 	_outputProviders.loadAccounts();
 	_flows.load();
+	_tags.load();
+
 
 	_settings.load("defaultAccount").then((account) => {
 		if (!account) {
@@ -45,7 +48,7 @@
 	});
 
 	maxSize.set({
-		height: window.outerHeight - 172,
+		height: window.outerHeight - 132,
 		width: window.outerWidth - 48,
 	});
 
@@ -119,7 +122,6 @@
 		}
 	});
 
-	$: console.log("On load input data:", $onLoadInputData);
 	//! FUNCTIONS
 
 	// chrome.storage.onChanged.addListener((changes, areaName) => {
@@ -171,16 +173,16 @@
 	// GRP: Color Mode Handler
 
 	$: if (colorMode === "system" && sysColorMode) {
-		console.log("System color mode");
 		colorHandler(sysColorMode);
 	} else {
-		console.log("Custom color mode");
 		colorHandler(colorMode);
 	}
 
 
 	function colorHandler(mode) {
-		body.style.setProperty("background-color", "none transparent");
+		body.style.setProperty("background-color", mode === "light" ? "#fff" : "#161819");
+		body.classList.remove("light", "dark");
+		body.classList.add(`${mode}-mode`);
 		chrome.tabs.getCurrent().then((tab) => {
 			chrome.tabs.sendMessage(tab.id, {
 				message: "colorMode",

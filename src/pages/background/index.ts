@@ -2,7 +2,9 @@ import { defaultSettings } from '../../scripts/platform/default_settings'
 // FUNC: On Installed
 
 
+
 chrome.runtime.onInstalled.addListener(() => {
+	console.log(defaultSettings)
 	chrome.storage.local.set(defaultSettings)
 	chrome.storage.local.get().then((data: UserBrowserStorage) => {
 		if (data.outputProviders.length > 0) return
@@ -32,7 +34,13 @@ chrome.runtime.onInstalled.addListener(() => {
 
 // on action click send message "togglePopup" to content script
 chrome.action.onClicked.addListener((tabs) => {
+	let currentUrl = tabs.url
+	let popupAllowed = (currentUrl.startsWith('http'))
+	console.log(currentUrl, popupAllowed)
+
+	if (popupAllowed) {
 	chrome.tabs.sendMessage(tabs.id, 'togglePopup')
+	}
 })
 
 export { }

@@ -1,6 +1,7 @@
 import { writable, type Writable } from "svelte/store"
-export const flowStore: Writable<Flow[]> = flowStoreFunc()
-function flowStoreFunc() {
+
+// FUNC: STORE FUNCTIONS
+function basicArrayStoreFunc() {
 	const { subscribe, set, update } = writable([])
 
 	return {
@@ -14,21 +15,10 @@ function flowStoreFunc() {
 	}
 }
 
-export const outputProvidersStore: Writable<OutputProvider[]> = outputProvidersStoreFunc()
-
-function outputProvidersStoreFunc() {
-	const { subscribe, set, update } = writable([])
-	return {
-		subscribe,
-		set: providers => {
-			set(providers)
-		},
-		new: (provider) => update(providers => [...providers, provider]),
-		remove: (provider) => update(providers => providers.filter(p => p !== provider)),
-		update: (provider) => update(providers => providers.map(p => p.id === provider.id ? provider : p))
-	}
-}
-
+// VARS: HIGH LEVEL STORES
+export const flowStore: Writable<Flow[]> = basicArrayStoreFunc()
+export const tagStore: Writable<Tag[]> = basicArrayStoreFunc()
+export const outputProvidersStore: Writable<OutputProvider[]> = basicArrayStoreFunc()
 export const settingStore: Writable<CaptionSettings> = writable()
 export const accountStore: Writable<ProviderAccount[]> = writable([])
 

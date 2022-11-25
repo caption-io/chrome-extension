@@ -1,7 +1,6 @@
 <script lang="ts">
 	import Icon from "./Icon.svelte";
 	import Button from "./Button.svelte";
-	import WebDataSelect from "./WebDataSelect.svelte";
 
 
 	import { createEventDispatcher } from "svelte";
@@ -14,23 +13,15 @@
 	export let useWebdata: boolean = false;
 	export let savedValue: string;
 	export let savedInput: InputItem;
+	export let value: string;
 
 	const dispatch = createEventDispatcher();
 
-	let value: string;
-	let webdataValue: InputItem;
 	let focused: boolean = false;
 	let invalid: boolean = false;
 
-	$: if (webdataValue) {
-		value = webdataValue.text;
-	}
-	if (savedInput) {
-		webdataValue = savedInput;
-	}
-	if (savedValue) {
-		value = savedValue;
-	}
+	let inputEl;
+
 
 	const handleFocus = (focus) => {
 		if (focus) {
@@ -52,7 +43,7 @@
 		<div class="input-icon">
 			<Icon
 				{icon}
-				color="gray"
+				color="inherit"
 				size={20}
 			/>
 		</div>
@@ -66,6 +57,7 @@
 		on:blur={() => (focused = false)}
 		contenteditable
 		bind:textContent={value}
+		bind:this={inputEl}
 	/>
 	{#if value && clearable}
 		<div class="clear-button">
@@ -74,7 +66,12 @@
 				size="sm"
 				color="red"
 				style="minimal"
-				on:click={() => (value = null)}
+				on:click={(e) => {
+					e.stopPropagation();
+					value = null;
+					inputEl.blur();
+					focused = false;
+				}}
 			/>
 		</div>
 	{/if}
@@ -83,12 +80,6 @@
 			class="placeholder"
 			class:icon>{placeholder}</span
 		>
-	{/if}
-	{#if useWebdata}
-		<WebDataSelect
-			bind:value={webdataValue}
-			{type}
-		/>
 	{/if}
 </div>
 
@@ -106,6 +97,8 @@
 		transition: $transition;
 		overflow: hidden;
 		padding: $p6 $p6 0 $p12;
+		box-shadow: var(--input-shadow-light);
+		color: var(--text-secondary);
 
 		.input-icon {
 			@include flex(row, center, center);
@@ -143,7 +136,7 @@
 		}
 		.placeholder {
 			@include flex(row, flex-start, center);
-			@include ui-text(var(--gray-500), $p14, 400);
+			@include ui-text(var(--text-secondary), $p14, 400);
 			height: $p28;
 			padding: 0 $p8 $p6 $p8;
 			box-sizing: border-box;
@@ -154,17 +147,15 @@
 			}
 		}
 		&:hover {
-			background-color: var(--bg);
-			box-shadow: 0 0 0 $p3 var(--blue-light);
 			border: $border-color var(--blue);
+			box-shadow: var(--input-shadow-light-hover);
 			.clear-button {
 				opacity: 1;
 			}
 		}
 		&.focused {
-			background-color: var(--bg);
-			box-shadow: 0 0 0 $p3 var(--blue-alpha-200);
-			border: $border-color var(--blue-300);
+			box-shadow: var(--input-shadow-light-hover);
+			border: $border-color var(--blue);
 			.clear-button {
 				opacity: 1;
 			}

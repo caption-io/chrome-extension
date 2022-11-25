@@ -8,20 +8,6 @@ export const outputManifest: OutputProvider[] = [
 		color: "blue",
 		accounts: [],
 	},
-	{
-		name: "Coda",
-		id: "coda",
-		icon: "coda",
-		color: "orange",
-		accounts: [],
-	},
-	{
-		name: "Evernote",
-		id: "evernote",
-		icon: "evernote",
-		color: "green",
-		accounts: [],
-	},
 	
 ]
 

@@ -47,6 +47,14 @@ export const defaultSettings: UserBrowserStorage = {
 			value: null,
 		},
 		{
+			name: "Auto Fill Web Data",
+			id: "autoFillWebData",
+			group: "Flows",
+			type: "boolean",
+			description: "Whether or not a Flow should be automatically filled with web data when it is opened",
+			value: true,
+		},
+		{
 			name: "Default Workspace",
 			id: "defaultAccount",
 			group: "Accounts",
@@ -121,17 +129,17 @@ export const defaultSettings: UserBrowserStorage = {
 				{
 					name: "Light",
 					id: "light",
-					image: "darkThumb"
+					icon: "sun"
 				},
 				{
 					name: "Dark",
 					id: "dark",
-					image: "lightThumb"
+					icon: "moon"
 				},
 				{
 					name: "System",
 					id: "system",
-					image: "systemThumb"
+					icon: "monitor"
 				},
 			],
 			value: "light",
@@ -141,9 +149,21 @@ export const defaultSettings: UserBrowserStorage = {
 	outputProviders: [],
 	tags: [],
 	appState: {
-		appExpanded: false,
-		appPopup: false,
-		selectedFlow: null,
+		window: {
+			appExpanded: false,
+			appPopup: false,
+		},
+		nav: {
+			selectedFlow: null,
+		},
+		flowList: {
+			listView: "byAll",
+			sortMode: {
+				byAll: "lastUsed",
+				byTag: "name",
+				byFolder: "name",
+			}
+		}
 	}
 }
 async function idSetter() {
@@ -163,7 +183,8 @@ export let defaultFlow: Flow = {
 	specialFormat: null,
 	favorite: false,
 	keyboardShortcut: null,
-	tags: [{ value: "untagged", text: "Untagged" }],
+	shortcutBehavior: "open",
+	tags: [],
 	behavior: "create",
 	type: "inputCapture",
 	autoCapture: false,
@@ -172,4 +193,52 @@ export let defaultFlow: Flow = {
 	autofillDescription: true,
 	autofillCover: true,
 	autofillIcon: true,
+}
+
+export const propData = {
+	defaultSort: [
+		"title",
+		"url",
+		"pageIcon",
+		"coverImage",
+		"select",
+		"multi_select",
+		"checkbox",
+		"date",
+		"rich_text",
+		"status",
+		"number",
+		"people",
+		"files",
+		"email",
+		"phone_number",
+		"relation",
+		"formula",
+		"created_time",
+		"last_edited_time",
+		"created_by",
+		"last_edited_by",
+		"rollup",
+	],
+	selectProps: ["select", "multi_select", "status", "relation"],
+	textInputProps: [
+		"title",
+		"rich_text",
+		"number",
+		"email",
+		"phone_number",
+		"url",
+		"files",
+	],
+	readOnlyProps: [
+		"formula",
+		"created_time",
+		"last_edited_time",
+		"created_by",
+		"last_edited_by",
+		"rollup",
+		"people",
+		"pageIcon",
+		"coverImage",
+	]
 }

@@ -1,127 +1,211 @@
 <script lang="ts">
 	import Prop from "src/components/flows/Prop.svelte";
 	import Icon from "src/components/ui/Icon.svelte";
+
 	import { crossfade } from "svelte/transition";
 	import { flip } from "svelte/animate";
+	import { dndzone } from "svelte-dnd-action";
 	import { quintOut } from "svelte/easing";
-	import { includes } from "lodash-es";
+	import {createEventDispatcher} from "svelte";
 
-	export let options: Prop[];
-	export let values: Prop[] = options;
-	export let value = null;
+	import { maxSize, selectedFlow } from "src/scripts/platform/stores";
+	import { _flows } from "src/scripts/platform/platform";
+	import { propData } from "src/scripts/platform/default_settings";
+
+	export let options: FlowProp[];
+	export let values = optionsSorter();
 
 	let showMore = false;
+
+	const dispatch = createEventDispatcher();
+
+	$: if (values) {
+		dispatch("propvaluechange", values);
+	}
+
 
 	const [send, receive] = crossfade({
 		duration: 400,
 		easing: quintOut,
 	});
 
-	let selects = ["select", "multi_select", "status"];
-	let textInputs = [
-		"title",
-		"rich_text",
-		"number",
-		"email",
-		"phone_number",
-		"url",
-		"files",
-	];
-	let readOnly = [
-		"formula",
-		"created_time",
-		"last_edited_time",
-		"created_by",
-		"last_edited_by",
-		"rollup",
-		"people",
-		"pageIcon",
-		"coverImage",
-	];
+	function optionsSorter() {
+		if ($selectedFlow.defaultDestination.defaultSort) {
+			return {
+				visible: options.filter(
+					(o) =>
+						o.visible &&
+						!o.readOnly &&
+						o.id !== "pageIcon" &&
+						o.id !== "coverImage" &&
+						o.id !== "pageCover"
+				),
+				hidden: options.filter(
+					(o) =>
+						!o.visible &&
+						!o.readOnly &&
+						o.id !== "pageIcon" &&
+						o.id !== "coverImage" &&
+						o.id !== "pageCover"
+				),
+			};
+		} else {
+			_flows.update($selectedFlow.id, "defaultDestination", {
+				...$selectedFlow.defaultDestination,
+				defaultSort: true,
+			});
+			return {
+				visible: options
+					.sort(
+						(a, b) =>
+							propData.defaultSort.indexOf(a.type) -
+							propData.defaultSort.indexOf(b.type)
+					)
+					.filter(
+						(o) =>
+							o.visible &&
+							!o.readOnly &&
+							o.id !== "pageIcon" &&
+							o.id !== "coverImage"
+					),
+				hidden: [],
+			};
+		}
+	}
+	async function requestedFuncs() {
+		for (let v of values.visible) {
+			if (v.requestFunction) {
+				let func = v.requestFunction;
+				console.log(func);
+				let funcy = await import(
+					`../../scripts/output-providers/${$selectedFlow.defaultDestination.provider}/get.ts`
+				);
+				const results = await funcy[func.func](...func.args);
+				values.visible = values.visible.map((o) => {
+					if (o.id === v.id) {
+						return {
+							...o,
+							options: results,
+						};
+					} else {
+						return o;
+					}
+				});
+				console.log("Requested Func:", await results);
+			}
+		}
+	}
+	requestedFuncs();
+	function handleDndConsider(e) {
+		values = {
+			...values,
+			visible: e.detail.items,
+		};
+	}
+	function handleDndFinalize(e) {
+		values = {
+			...values,
+			visible: e.detail.items,
+		};
+		_flows.update($selectedFlow.id, "defaultDestination", {
+			...$selectedFlow.defaultDestination,
+			props: [...values.visible, ...values.hidden],
+		});
+	}
 
-	const propDefaultSort = [
-		"title",
-		"url",
-		"pageIcon",
-		"coverImage",
-		"select",
-		"multi_select",
-		"checkbox",
-		"date",
-		"rich_text",
-		"status",
-		"number",
-		"people",
-		"files",
-		"email",
-		"phone_number",
-		"relation",
-		"formula",
-		"created_time",
-		"last_edited_time",
-		"created_by",
-		"last_edited_by",
-		"rollup",
-	];
-
-	// sort options by propDefaultSort
-	options.sort((a, b) => {
-		return propDefaultSort.indexOf(a.type) - propDefaultSort.indexOf(b.type);
-	});
-	$: options.filter((p) => {
-		return p.visible;
-	});
+	function handleVisChange(e) {
+		console.log(e);
+		if (e.visible) {
+			values = {
+				visible: [...values.visible, e],
+				hidden: values.hidden.filter((h) => h.id !== e.id),
+			};
+		} else {
+			values = {
+				visible: values.visible.filter((v) => v.id !== e.id),
+				hidden: [...values.hidden, e],
+			};
+		}
+	}
 </script>
 
-<div class="main props-main">
-	{#each options.filter((o) => o.visible && !readOnly.includes(o.type)) as prop, i (prop.id)}
-		<div
-			class="prop"
-			in:receive={{ key: prop.id }}
-			out:send={{ key: prop.id }}
-			animate:flip={{ duration: 400 }}
-		>
-			<Prop
-				bind:prop
-				flip={{ duration: 200 }}
-				bind:visible={prop.visible}
-			/>
-		</div>
-	{/each}
-	<div class="show-more">
-		<div
-			class="show-more-button"
-			on:click={() => (showMore = !showMore)}
-		>
-			Show More
-			<div
-				class="icon"
-				class:showMore
-			>
-				<Icon
-					icon="chevronRight"
-					color="gray"
-					size={16}
-				/>
-			</div>
-		</div>
+{#if options}
+	<div
+		class="main props-main"
+		style={"max-height: " + ($maxSize.height - 204) + "px;"}
+	>
 		<div
 			class="show-more-content"
-			style:height={showMore ? "auto" : "0px"}
+			use:dndzone={{
+				items: values.visible,
+				flipDurationMs: 200,
+				type: "visibleProps",
+			}}
+			on:consider={handleDndConsider}
+			on:finalize={handleDndFinalize}
 		>
-			{#each options.filter((o) => !o.visible) as prop, i (prop.id)}
+			{#each values.visible as prop, i (prop.id)}
 				<div
 					class="prop"
-					in:receive={{ key: prop.id }}
-					out:send={{ key: prop.id }}
-					animate:flip={{ duration: 400 }}
+					animate:flip={{ duration: 200 }}
 				>
-					<Prop bind:prop />
+					{#if prop.requestFunction}
+							<Prop
+								bind:prop
+								inputData={null}
+								on:vischange={(e) => handleVisChange(e.detail)}
+							/>
+					{:else}
+						<Prop
+							bind:prop
+							inputData={null}
+							on:vischange={(e) => handleVisChange(e.detail)}
+						/>
+					{/if}
 				</div>
 			{/each}
 		</div>
+		{#if values.hidden.length > 0}
+			<div class="show-more">
+				<div
+					class="show-more-button"
+					on:click={() => (showMore = !showMore)}
+				>
+					{showMore ? "Hide" : "Show Hidden"}
+					<div
+						class="icon"
+						class:showMore
+					>
+						<Icon
+							icon="chevronRight"
+							color="gray"
+							size={16}
+						/>
+					</div>
+				</div>
+			</div>
+		{/if}
+		<div class="show-more-content">
+			{#if showMore}
+				{#each values.hidden as prop, i (prop.id)}
+					<div
+						class="prop"
+						style={!values.hidden || values.hidden.length > 0
+							? "margin-bottom: 2px;"
+							: ""}
+						animate:flip={{ duration: 200 }}
+					>
+						<Prop
+							bind:prop
+							inputData={null}
+							on:vischange={(e) => handleVisChange(e.detail)}
+						/>
+					</div>
+				{/each}
+			{/if}
+		</div>
 	</div>
-</div>
+{/if}
 
 <style lang="scss">
 	@use "src/style/global" as *;
@@ -129,22 +213,21 @@
 	.main {
 		@include flex(column, flex-start, flex-start);
 		@include scrollbar();
-		overflow-y: auto;
-		overflow-x: hidden;
+		overflow-y: overlay;
+		overflow-x: visible;
 		flex-grow: 1;
 		background-color: var(--bg);
-		row-gap: $p12;
 		width: 100%;
 		border-top: $border-light;
-		padding: $p16 $p12;
+		padding: $p16 0;
 		box-sizing: border-box;
-		margin-top: $p12;
-		box-shadow: 0 $p12 $p12 0 var(--shadow-color-light) inset;
 		height: 100%;
 	}
 
 	.prop {
 		width: 100%;
+		padding: 0 $p12;
+		box-sizing: border-box;
 	}
 
 	.show-more {
@@ -168,14 +251,14 @@
 				}
 			}
 		}
-		.show-more-content {
-			@include flex(column, flex-start, flex-start);
-			overflow: hidden;
-			transition: height 0.2s ease-in-out;
-			row-gap: $p12;
-			width: 100%;
-			box-sizing: border-box;
-		}
+	}
+	.show-more-content {
+		@include flex(column, flex-start, flex-start);
+		overflow: visible;
+		transition: height 0.2s ease-in-out;
+		row-gap: $p12;
+		width: 100%;
+		box-sizing: border-box;
 	}
 
 	.tabs {

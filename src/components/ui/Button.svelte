@@ -90,6 +90,7 @@
 			font-weight: 500;
 			.button-text {
 				order: 1;
+				white-space: nowrap;
 			}
 			&.sm {
 				padding: 0 $p2;
@@ -125,9 +126,9 @@
 			}
 			&.secondary {
 				background-color: var(--btn-color-light);
-				color: var(--text-alpha);
+				color: var(--btn-color);
 				&:hover {
-					filter: brightness(1.04);
+					filter: brightness(1.05);
 				}
 			}
 			&.outline {

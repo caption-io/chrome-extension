@@ -1,13 +1,13 @@
 // IMPORTS: Imports 
 
 // IMPT: Stores
-import { selectedFlow, flowStore, outputProvidersStore, accountStore, settingStore } from "src/scripts/platform/stores"
+import { selectedFlow, flowStore, outputProvidersStore, accountStore, settingStore, tagStore } from "src/scripts/platform/stores"
 import { get } from "svelte/store"
 // IMPT: Local
 import { defaultFlow } from "./default_settings"
 import { nanoid } from "nanoid"
 import { outputManifest } from "src/scripts/provider_manifest"
-import type InputData from "src/components/InputData.svelte"
+import { browser } from "webextension-polyfill-ts"
 
 //! IMPORTS 
 
@@ -31,6 +31,8 @@ function FlowFunctions() {
 			const storedFlows = await _flows.load()
 			let newFlow = defaultFlow
 			newFlow.id = nanoid() // generate a new ID for the flow
+			newFlow.defaultAccount = await _settings.load("defaultAccount")
+			newFlow.type = await _settings.load("autoFillWebData") ? "inputCapture" : "quickAdd"
 			const updatedFlows: Flow[] = [...storedFlows, newFlow]
 			await chrome.storage.local.set({ flows: updatedFlows })
 				.then(() => {
@@ -44,17 +46,22 @@ function FlowFunctions() {
 
 			let updatedSettings = flows.map((f) => {
 				if (f.id === flowId) {
-					f[setting] = newValue
-					return f
+					return {
+						...f,
+					[setting]: newValue
+					}
 				} else {
 					return f
 				}
 			})
 			await chrome.storage.local.set({ flows: updatedSettings }).then(() => {
-				_flows.load()
+				_flows.load().then((f) => {
+					console.log("FLOW UPDATED:", f)
+				})
 			})
 		},
 
+		// FUNC: Update Prop
 		async updateProp(flowId: Flow['id'], propId: Flow['defaultDestination']['props'][0]['id'], setting, newValue) {
 			let flows = await _flows.load()
 
@@ -78,6 +85,28 @@ function FlowFunctions() {
 			})
 
 		},
+		async updatePropSortVis(flowId: Flow['id'], propId: Flow['defaultDestination']['props'][0]['id'], propVis: boolean) {
+			let flows = await _flows.load()
+
+			let updatedSettings = flows.map((f) => {
+				if (f.id === flowId) {
+					if (propVis) {
+						f.defaultDestination.propSort.visible.push(f.defaultDestination.props.find((p) => p.id === propId))
+						f.defaultDestination.propSort.hidden = f.defaultDestination.propSort.hidden.filter((p) => p.id !== propId)
+					}
+					else {
+						f.defaultDestination.propSort.hidden.push(f.defaultDestination.props.find((p) => p.id === propId))
+						f.defaultDestination.propSort.visible = f.defaultDestination.propSort.visible.filter((p) => p.id !== propId)
+					}
+					return f
+				} else {
+					return f
+				}
+			})
+			await chrome.storage.local.set({ flows: updatedSettings }).then(() => {
+				_flows.load()
+			})
+		},
 
 		// FUNC: Delete
 		async delete(id: Flow['id']) {
@@ -85,6 +114,13 @@ function FlowFunctions() {
 			chrome.storage.local.set({
 				flows: storedFlows.filter(f => f.id !== id)
 			}).then((result) => {
+				_flows.load()
+			})
+		},
+
+		// FUNC: Save All (Careful)
+		async saveAll(flows: Flow[]) {
+			chrome.storage.local.set({ flows: flows }).then((result) => {
 				_flows.load()
 			})
 		}
@@ -118,6 +154,11 @@ function OutputProviderFunctions() {
 			}
 			accountStore.set(accts)
 			return accts
+		},
+		async loadAccount(id: ProviderAccount['id']): Promise<ProviderAccount> {
+			const accts = await _outputProviders.loadAccounts()
+			let acct = accts.find(a => a.id === id)
+			return acct
 		},
 
 		// FUNC: Add Account
@@ -160,8 +201,6 @@ function SettingsFunctions() {
 
 		// FUNC: Save Setting
 		async save(key: string, value: any) {
-			console.log(key, value)
-
 			_settings.loadAll().then((settings: CaptionSettings) => {
 				let s = settings.map((set) => {
 					if (set.id === key) {
@@ -181,12 +220,46 @@ function SettingsFunctions() {
 	}
 	return settings
 }
+
+function TagFunctions() {
+	const tags = {
+
+		// FUNC: Load All Tags
+		async load(): Promise<Tag[]> {
+			return await chrome.storage.local.get("tags")
+				.then((result: Promise<UserBrowserStorage>) => {
+					tagStore.set(result['tags'])
+					return result['tags']
+				})
+		},
+		async update(newList: Tag[]) {
+			_tags.load().then((tags: Tag[]) => {
+
+				let newListAlphabetized = newList.sort((a, b) => {
+					if (a.name < b.name) {
+						return -1
+					} else if (a.name > b.name) {
+						return 1
+					} else {
+						return 0
+					}
+				})
+				chrome.storage.local.set({ tags: newListAlphabetized }).then((result) => {
+					_tags.load()
+					return result
+				})
+			})
+		},
+	}
+	return tags
+}
 //! FUNCTIONS
 
 // VARIABLES: Function Exports
 export const _flows = FlowFunctions()
 export const _outputProviders = OutputProviderFunctions()
 export const _settings = SettingsFunctions()
+export const _tags = TagFunctions()
 
 //! VARIABLES
 
@@ -201,8 +274,7 @@ export const goBack = () => selectedFlow.set(null)
 
 //! FUNCTIONS
 
-export function compatibleDataTypes(input: InputData['type'], prop: Prop['type']) {
-	console.log(input, prop)
+export function compatibleDataTypes(input: InputItem['type'], prop: FlowProp['type']) {
 	let types = {
 		title: {
 			exact: "title",
@@ -372,25 +444,49 @@ export function compatibleDataTypes(input: InputData['type'], prop: Prop['type']
 				items: ["thumbnail", "image", "icon"]
 			}
 		},
+		text: {
+			exact: ["text", "description"],
+			compat: {
+				whiteList: false,
+				items: ["recipe", "file", "pdf", "epub", "json", "xml", "html", "markdown", "table", "array", "object", "map"]
+			}
+		},
 	}
 	let typeChecked = {
 		exact: false,
 		compat: false
 	}
-	if (types[prop].exact === input[0]) {
-		typeChecked.exact = true
-	}
-	if (types[prop].compat.whiteList) {
-		if (types[prop].compat.items.includes(input[0])) {
-			typeChecked.compat = true
+	for (let inpt of input) {
+		if (types[prop] && types[prop].exact.includes(inpt)) {
+			typeChecked.exact = true
+			break;
+		} else if (!types[prop]) {
+			console.log("Unknown input type: " + prop)
+		} else {
+			typeChecked.exact = false
 		}
-	} else {
-		if (!types[prop].compat.items.includes(input[0])) {
-			typeChecked.compat = true
+
+		if (types[inpt] && types[inpt].compat.whiteList) {
+			if (types[prop].compat.items.includes(inpt)) {
+				typeChecked.compat = true
+				break;
+			} else if (!types[prop]) {
+				console.log("Unknown input type: " + prop)
+			} else {
+				typeChecked.compat = false
+			}
+		} else {
+			if (types[prop] && !types[prop].compat.items.includes(inpt)) {
+				typeChecked.compat = true
+				break;
+			} else if (!types[prop]) {
+				console.log("Unknown input type: " + prop)
+
+			} else {
+				typeChecked.compat = false
+			}
 		}
 	}
-	if (types[prop].compat.items === "none") {
-		typeChecked.compat = false
-	}
+
 	return typeChecked
 }

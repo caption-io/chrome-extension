@@ -1,18 +1,27 @@
 import { Client, isFullDatabase, isFullPage } from '@notionhq/client'
-import type { DatabaseObjectResponse } from '@notionhq/client/build/src/api-endpoints'
-import { activeAccount, accountStore } from '../../platform/stores'
+import { type DatabaseObjectResponse, type QueryDatabaseResponse, type PageObjectResponse, getPage } from '@notionhq/client/build/src/api-endpoints'
+import { activeAccount, accountStore, flowStore } from '../../platform/stores'
 import { get } from 'svelte/store'
 
 
 const readOnlyProps: PropTypes[] = ["rollup", "created_time", "last_edited_time", "created_by", "last_edited_by", "formula"]
 
-function setToken() {
+function isDatabaseObject(data: any): data is QueryDatabaseResponse {
+	return data.title !== undefined
+}
+function isPageObjectResponse(data: any): data is PageObjectResponse {
+	return data.title !== undefined
+}
+function setToken(token: ProviderAccount['token'] = null) {
 	let accts = get(accountStore)
 	let acct = accts.find(acct => acct.id === get(activeAccount))
-
-	return new Client({
-		auth: acct.token
-	})
+	if (token) {
+		return new Client({ auth: token })
+	} else {
+		return new Client({
+			auth: acct.token
+		})
+	}
 
 }
 
@@ -23,11 +32,24 @@ export async function queryDatabase(databaseId: string, filterInput?, sortInput?
 		filter: filterInput,
 		sorts: sortInput,
 	})
-	console.log("FOCUS: ", response.results.map((result) => {
-		if (isFullPage(result))
-			Object.values(result.properties).find((prop) => prop.type === "title").title.length > 0 ? Object.values(result.properties).find((prop) => prop.type === "title").title[0].plain_text : "untitled"
-	}))
-	return response
+	return response.results.map((result) => {
+		return getPages(result.id).then(page => {
+			return {
+				name: page.id,
+				id: page.id,
+			}
+		})
+	})
+}
+
+async function getPages(pageid: string) {
+	let notion = setToken()
+	let page = await notion.pages.retrieve({
+		page_id: pageid
+	}).then(page => {
+		return page
+	})
+	return Promise.resolve(page)
 }
 
 const propFormatter = (result: DatabaseObjectResponse, prop: string) => {
@@ -86,7 +108,7 @@ export async function GetAllDatabases(token: ProviderAccount['token']): Promise<
 		return {
 			name: result.title.length > 0 ? result.title[0].plain_text : "Untitled",
 			id: result.id,
-			provider: "Notion",
+			provider: "notion",
 			icon: !result.icon ? null
 				: result.icon.type === "emoji"
 					? result.icon.emoji
@@ -105,7 +127,8 @@ export async function GetAllDatabases(token: ProviderAccount['token']): Promise<
 					visible: true,
 					showAllCompatible: false,
 					savedValue: null,
-					savedInput: null
+					savedInput: null,
+					requestFunction: result.properties[prop].type === "relation" ? { func: "queryDatabase", args: [result.properties[prop].relation.database_id] } : null,
 				}
 			}),
 			raw: result
@@ -134,12 +157,22 @@ export async function GetAllDatabases(token: ProviderAccount['token']): Promise<
 			savedValue: null,
 			savedInput: null
 		})
+		database.props.push({
+			name: "Page Content",
+			id: "pageContent",
+			type: "pageContent",
+			readOnly: false,
+			visible: true,
+			showAllCompatible: false,
+			savedValue: null,
+			savedInput: null
+		})
 	})
 
 
-	console.log("Formatted Response: ", formattedResponse)
-	return formattedResponse
-}
+		console.log("Formatted Response: ", formattedResponse)
+		return formattedResponse
+	}
 
 // export async function CreatePage(pageInfo) {
 // 	const response = await notion.pages.create(pageInfo)

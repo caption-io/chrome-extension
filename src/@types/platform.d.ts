@@ -1,4 +1,5 @@
 
+// TYPES: Platform Storage
 type UserBrowserStorage = {
 	flows: Flow[],
 	settings: CaptionSettings,
@@ -6,11 +7,25 @@ type UserBrowserStorage = {
 	outputProviders: OutputProvider[]
 	tags: Tag[]
 	appState: {
-		appExpanded: boolean,
-		appPopup: boolean,
-		selectedFlow: Flow,
+		window: {
+			appExpanded: boolean,
+			appPopup: boolean
+		},
+		nav: {
+			selectedFlow: Flow
+		}
+		flowList: {
+			listView: "byTag" | "byFolder" | "byAll",
+			sortMode: {
+				byTag: "name" | "destinationName" | "lastUsed" | "captureCount",
+				byFolder: "name" | "destinationName" | "lastUsed" | "captureCount",
+				byAll: "Name" | "destinationName" | "lastUsed" | "captureCount"
+			}
+		}
 	}
 }
+
+// TYPES: Flow Data
 declare type Flow = {
 	name: string
 	id: string
@@ -23,7 +38,7 @@ declare type Flow = {
 	favorite: boolean
 	keyboardShortcut: string
 	shortcutBehavior: "open" | "instantCapture"
-	tags: Tag[]
+	tags: Tag['id'][]
 	behavior: "create" | "append" | "update" // default create, others unused currently
 	type: "inputCapture" | "quickAdd"
 	autoCapture: boolean
@@ -35,23 +50,29 @@ declare type Flow = {
 }
 
 declare type Tag = {
-	value: string,
-	text: string,
-	$created?: boolean
+	name: string,
+	id: string,
 }
 
+// TYPES: Settings Data
 declare type CaptionSettings = CaptionSettingOption[]
 declare type CaptionSettingOption = {
 	name: string
 	id: string
 	icon?: Icons
 	group: string
-	description?: string;
+	description?: string
 	type: "select" | "boolean" | "text" | "number" | "header" | "radio"
-	options?: any[] | "flows" | "accounts"
+	options?: any[] | "flows" | "accounts" | RadioOptions[]
 	value?: any
 }
 
+declare type RadioOptions = {
+	name: string
+	id: string
+	icon?: Icons
+	image?: string
+}
 
 declare type FlowProperty = Flow<keyof Flow> // for later use
 
@@ -59,16 +80,9 @@ declare type CaptureData = {}
 declare type CustomFlowFormat = {}
 
 
-declare type OutputDestination = {
-	name: string
-	id: string
-	provider: OutputProvider['name']
-	icon?: Icons | string | (() => string)
-	props?: Prop[]
-	raw?: any
-}
 
-declare type Prop = {
+
+declare type FlowProp = {
 	name: string
 	id: string
 	type: PropTypes
@@ -77,7 +91,13 @@ declare type Prop = {
 	visible: boolean
 	showAllCompatible: boolean
 	savedValue: any
-	savedInput: InputItem
+	requestFunction?: { func: string, args: any} | false
+	savedInput: {
+		inputItem: InputItem,
+		inputItemGroup: InputGroup,
+		inputItemProvider: InputProvider,
+	}
+	value?: any;
 }
 
 declare type PropTypes = "title" |
@@ -104,6 +124,7 @@ declare type PropTypes = "title" |
 	"rollup" |
 	"pageIcon" |
 	"coverImage" |
-	"image"
+	"image" |
+	"pageContent"
 
 declare type Icons = import('../icons').CaptionIcons
