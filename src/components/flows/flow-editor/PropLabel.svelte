@@ -16,7 +16,7 @@
 	export let saveState;
 	export let prop: FlowProp;
 
-	let inputDataOpen = false;
+	export let showInputData;
 
 	const dispatch = createEventDispatcher();
 </script>
@@ -47,9 +47,8 @@
 		</div>
 		<div
 			class="input-data-button"
-			on:click={() => {
-				dispatch("optionclick", "inputdata"), (inputDataOpen = !inputDataOpen);
-			}}
+			on:click={() => dispatch("optionclick", "inputdata")}
+			class:inputDataOpen={showInputData === prop.id}
 		>
 			<Icon
 				icon="web"
@@ -71,66 +70,65 @@
 
 <style lang="scss">
 	@use "src/style/global" as *;
-:global() {
-
-	.input-label {
-		@include flex(row, flex-start, center);
-		width: 100%;
-		padding: $p6 0 $p3 0;
-		box-sizing: border-box;
-		.label-text {
+	:global() {
+		.input-label {
 			@include flex(row, flex-start, center);
-			margin: 0 0 0 $p3;
 			width: 100%;
-			cursor: grab;
-			.text {
-				@include ui-text(var(--text-secondary), $p12, 500);
-				display: block;
-				flex-grow: 1;
-				margin: 0 0 0 $p6;
-			}
-		}
-		.options {
-			@include flex(row, center, center);
-			column-gap: $p6;
-			justify-self: flex-end;
-			// transition: $transition;
-			.input-data-button {
-				@include flex(row, center, center);
-				border-radius: $p4;
-				border: 1px solid transparent;
-				transition: $transition;
-				cursor: pointer;
-				height: $p24;
-				width: $p24;
-				box-sizing: border-box;
-				z-index: 0;
-				position: relative;
-				color: var(--text-secondary);
-				opacity: 0;
-
-				&:not(.open):hover {
-					filter: brightness(1.05);
-				}
-				&.active {
-					color: var(--blue);
-					border: 1px solid var(--blue);
-					background-color: var(--blue-light);
+			padding: $p6 0 $p3 0;
+			box-sizing: border-box;
+			.label-text {
+				@include flex(row, flex-start, center);
+				margin: 0 0 0 $p3;
+				width: 100%;
+				cursor: grab;
+				.text {
+					@include ui-text(var(--text-secondary), $p12, 500);
+					display: block;
+					flex-grow: 1;
+					margin: 0 0 0 $p6;
 				}
 			}
-			.visible-button {
-				opacity: 0;
-				transition: $transition;
-
-			}
-		}
-		&.hovered {
 			.options {
-				.input-data-button, .visible-button {
-					opacity: 1;
+				@include flex(row, center, center);
+				column-gap: $p6;
+				justify-self: flex-end;
+				// transition: $transition;
+				.input-data-button {
+					@include flex(row, center, center);
+					border-radius: $p4;
+					border: 1px solid transparent;
+					transition: $transition;
+					cursor: pointer;
+					height: $p24;
+					width: $p24;
+					box-sizing: border-box;
+					z-index: 0;
+					position: relative;
+					color: var(--text-secondary);
+					opacity: 0;
+
+					&:not(.open):hover {
+						filter: brightness(1.05);
+					}
+					&.active {
+						color: var(--blue);
+						border: 1px solid var(--blue);
+						background-color: var(--blue-light);
+					}
+				}
+				.visible-button {
+					opacity: 0;
+					transition: $transition;
+				}
+			}
+			&.hovered {
+				.options {
+					.input-data-button,
+					.visible-button {
+						opacity: 1;
+					}
 				}
 			}
 		}
 	}
-}
 </style>

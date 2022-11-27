@@ -1,3 +1,7 @@
+<script context="module" lang="ts">
+	let showInputData: FlowProp['id']
+</script>
+
 <script lang="ts">
 	import PropLabel from "./flow-editor/PropLabel.svelte";
 	import TextInput from "src/components/ui/TextInput.svelte";
@@ -19,13 +23,13 @@
 	export let propValue = null;
 
 	let showPropSettings = false;
-	let showInputData = false;
 	let hovered = false;
 	let pendingChanges = {
 		value: false,
 		state: "never",
 	};
 	let saveState = "never";
+	let inputDataOpen;
 
 	$: prop.value = propValue;
 
@@ -80,7 +84,13 @@
 			showPropSettings = !showPropSettings;
 		}
 		if ((message = "inputdata")) {
-			showInputData = !showInputData;
+			if (showInputData !== prop.id) {
+				showInputData = null;
+				inputDataOpen = false;
+			} else {
+				inputDataOpen = !inputDataOpen;
+			}
+			showInputData = prop.id;
 		}
 	}
 
@@ -142,7 +152,7 @@
 		}
 		inputData = e.detail;
 		propValue = e.detail.inputItem.item;
-		showInputData = false;
+		showInputData = null;
 	}
 
 	$: if (propValue && !prop.savedInput) {
@@ -185,6 +195,7 @@
 		{saveState}
 		bind:pendingChanges
 		bind:prop
+		bind:showInputData
 	/>
 	<div class="prop-input">
 		{#if propData.selectProps.includes(prop.type)}
@@ -219,7 +230,7 @@
 			</div>
 		{/if}
 	</div>
-	{#if showInputData}
+	{#if inputDataOpen && showInputData === prop.id}
 		<InputData
 			{prop}
 			savedInput={null}
